@@ -376,8 +376,8 @@ app.get('/users', async (req, res) => {
      
 
       // Insere os usuários no banco de dados
-      for (const group in usersData) {
-        for (const user of usersData[group]) {
+      for (const group in generatedUsers) {
+        for (const user of generatedUsers[group]) {
           const newUser = new User(user);
           await newUser.save();
         }
@@ -393,6 +393,40 @@ app.get('/users', async (req, res) => {
   } catch (err) {
     console.error("Erro ao obter os usuários", err);
     res.status(500).send("Erro ao obter os usuários");
+  }
+});
+
+// Criar um novo usuário
+app.post("/users", async (req, res) => {
+  const { username, email, password } = req.body;
+  const hashedPassword = await bcrypt.hash(password, 12);
+  try {
+    const newUser = new User({ username, email, password:hashedPassword });
+
+    await newUser.save();
+    res.status(201).json(newUser);
+  } catch (err) {
+    res.status(500).json({ message: "Erro ao criar usuário" });
+  }
+});
+
+// Atualizar usuário
+app.put("/users/:id", async (req, res) => {
+  try {
+    const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(updatedUser);
+  } catch (err) {
+    res.status(500).json({ message: "Erro ao atualizar usuário" });
+  }
+});
+
+// Excluir usuário
+app.delete("/users/:id", async (req, res) => {
+  try {
+    await User.findByIdAndDelete(req.params.id);
+    res.status(204).send();
+  } catch (err) {
+    res.status(500).json({ message: "Erro ao excluir usuário" });
   }
 });
 

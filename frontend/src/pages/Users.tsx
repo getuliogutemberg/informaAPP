@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { Typography, Button, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Dialog, DialogActions, DialogContent, DialogTitle, TextField, CircularProgress, Alert } from "@mui/material";
-import { CheckCircle, Close } from "@mui/icons-material";
+import { Typography, Button, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Dialog, DialogActions, DialogContent, DialogTitle, TextField, CircularProgress, Alert, IconButton, Checkbox, FormControlLabel, InputAdornment } from "@mui/material";
+import { Add, CheckCircle, Close, Delete, Edit, Search  } from "@mui/icons-material";
 import { motion } from "framer-motion";
+import SwapVertIcon from '@mui/icons-material/SwapVert';
 import axios from "axios";
 
 // Tipo para o usuário
@@ -25,94 +26,115 @@ interface User {
 const Users = () => {
   // Tipando o estado de users com User[]
   const [users, setUsers] = useState<User[]>([]); // Estado para lista de usuários
-  const [open, setOpen] = useState(false); // Estado para controlar o modal de edição
-  const [openCreateModal, setOpenCreateModal] = useState(false); // Estado para controlar o modal de criação
+  const [open, setOpen] = useState<boolean>(false); // Estado para controlar o modal de edição
+  const [openCreateModal, setOpenCreateModal] = useState<boolean>(false); // Estado para controlar o modal de criação
   const [selectedUser, setSelectedUser] = useState<User | null>(null); // Estado para armazenar o usuário selecionado para edição
+  const [editData, setEditData] = useState<Partial<User>>({ name: "", email: "", password: "", category: "", className: "", isActive: false });
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [name, setName] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [category, setCategory] = useState<string>("");
+  const [formData, setFormData] = useState<Partial<User>>({ name: "", email: "", password: "", category: "", className: "" });
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false); // Estado para controle do modal de confirmação de exclusão
+  const [userToDelete, setUserToDelete] = useState<string | null>(null); // Estado para armazenar o ID do usuário a ser deletado
+
+  const [searchQuery, setSearchQuery] = useState<string>(""); // Estado para filtrar usuários
+  const [sortField, setSortField] = useState<keyof User>("name"); // Estado para controle da ordenação
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc"); // Estado para controle da ordem de ordenação
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/users');
-        setUsers(response.data); // Atualiza o estado com os dados recebidos
-      } catch (error) {
-        console.error('Erro ao buscar os usuários:', error);
-      }
-    };
-
     fetchUsers();
   }, []);
 
-  // Função para abrir o modal de criação
-  const handleOpenCreateModal = () => {
-    setOpenCreateModal(true);
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get<User[]>('http://localhost:5000/users');
+      setUsers(response.data); // Atualiza o estado com os dados recebidos
+    } catch (error) {
+      console.error('Erro ao buscar os usuários:', error);
+      setError("Erro ao buscar usuários");
+    }
   };
 
-  // Função para fechar o modal de criação
+  const handleOpenCreateModal = () => setOpenCreateModal(true);
   const handleCloseCreateModal = () => {
     setOpenCreateModal(false);
-    setName("");
-    setEmail("");
-    setPassword("");
-    setCategory("");
+    setFormData({ name: "", email: "", password: "", category: "" });
   };
 
-  // Função para salvar o novo usuário
   const handleCreateUser = async () => {
     setLoading(true);
     try {
-      await axios.post("http://localhost:5000/users", { name, email, password, category });
-      setUsers((prevUsers) => [...prevUsers, { name, email, password, category, _id: "", status: "ativo", className: "", position: [], customIcon: "", createAt: "", updateAt: "", __v: 0, refreshToken: "", isActive: true }]);
+      await axios.post("http://localhost:5000/users", { ...formData, className: "CLIENT" });
+      fetchUsers();
       handleCloseCreateModal();
-    } catch {
-      setError("Ocorreu um erro ao criar o usuário.");
+    } catch (err) {
+      console.error(err);
+      setError("Erro ao criar usuário");
     }
     setLoading(false);
   };
 
-  // Função para abrir o modal e preencher com os dados do usuário
   const handleEditClick = (user: User) => {
     setSelectedUser(user);
+    setEditData({ ...user });
     setOpen(true);
   };
 
-  // Função para fechar o modal
   const handleClose = () => {
     setOpen(false);
     setSelectedUser(null);
+    setEditData({ name: "", email: "", password: "", category: "", className: "", isActive: false });
   };
 
-  // Função para salvar as alterações
-  const handleSave = () => {
-    setUsers((prevUsers) =>
-      prevUsers.map((user) =>
-        user._id === selectedUser?._id ? { ...user, ...selectedUser } : user
-      )
-    );
-  };
-
-  // Função para alternar o status do usuário
-  const handleToggleStatus = () => {
-    if (selectedUser) {
-      setSelectedUser({
-        ...selectedUser,
-        status: selectedUser.status === "ativo" ? "inativo" : "ativo",
-      });
+  const handleSave = async () => {
+    if (editData && editData._id) {
+      try {
+        await axios.put(`http://localhost:5000/users/${editData._id}`, editData);
+        fetchUsers();
+        handleClose();
+      } catch (err) {
+        console.error(err);
+        setError("Erro ao atualizar usuário");
+      }
     }
   };
 
-  // Função para excluir um usuário
-  const handleDeleteUser = () => {
-    if (selectedUser) {
-      setUsers((prevUsers) => prevUsers.filter((user) => user._id !== selectedUser._id));
-      setOpen(false);
+  const handleDeleteUser = async (userId: string) => {
+    try {
+      await axios.delete(`http://localhost:5000/users/${userId}`);
+      fetchUsers();
+      setDeleteDialogOpen(false); // Fecha o modal após a exclusão
+    } catch (err) {
+      console.error(err);
+      setError("Erro ao excluir usuário");
     }
   };
+
+  const handleOpenDeleteDialog = (userId: string) => {
+    setUserToDelete(userId);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleCloseDeleteDialog = () => setDeleteDialogOpen(false);
+
+  const handleDeleteConfirm = () => {
+    if (userToDelete) {
+      handleDeleteUser(userToDelete);
+    }
+  };
+
+  // Função para filtrar usuários
+  const filteredUsers = users.filter((user) => {
+    return user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+           user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+           user.category.toLowerCase().includes(searchQuery.toLowerCase());
+  });
+
+  // Função para ordenar usuários
+  const sortedUsers = filteredUsers.sort((a, b) => {
+    if (a[sortField] < b[sortField]) return sortOrder === "asc" ? -1 : 1;
+    if (a[sortField] > b[sortField]) return sortOrder === "asc" ? 1 : -1;
+    return 0;
+  });
 
   return (
     <Box sx={{
@@ -132,48 +154,156 @@ const Users = () => {
           Gestão de Usuários
         </Typography>
         <Typography variant="h6" sx={{ color: "#666", mb: 4, fontSize: { xs: "1rem", sm: "1rem", md: "1rem" } }}>
-          Atualmente, você possui {users.length}  {users.length > 1 ? 'usuários' : 'usuário'}.
+          Atualmente, você possui {users.length} {users.length > 1 ? 'usuários' : 'usuário'}.
         </Typography>
       </motion.div>
 
+      <Box
+      component={Paper} 
+      sx={{
+          width: '100%',
+          overflowX: "auto",
+          border: "1px solid #ccc",
+          borderRadius: "4px",
+          display: "flex",
+          flexDirection: "row",
+          mb:2
+          
+          
+      }}
+      >
+
+      {/* Campo de busca */}
+      
+      <TextField
+        placeholder="Buscar Usuário"
+        variant="outlined"
+        fullWidth
+        // label={`Buscar Usuário`}
+        value={searchQuery}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <Search /> {/* Ícone de busca */}
+            </InputAdornment>
+          ),
+        }}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        sx={{flex: 1}}
+        />
       {/* Botão para criar novo usuário */}
-      <Button variant="contained" color="primary" onClick={handleOpenCreateModal} sx={{ mb: 2 }}>
-        Criar Novo Usuário
+      <Button 
+        title="Criar Usuário"
+        variant="contained" 
+        color="primary" 
+        onClick={handleOpenCreateModal} 
+        sx={{ flex: 0, background: '#007bff'}}
+      >
+        <Add />
       </Button>
 
-      {/* Tabela de Usuários */}
-      {users.length > 0 ? (
+        </Box>
+
+
         <TableContainer component={Paper}>
-          <Table sx={{}} aria-label="tabela de usuários">
-            <TableHead>
-              <TableRow>
-                <TableCell align="left">Nome</TableCell>
-                <TableCell align="center" sx={{ display: { xs: "none", sm: "table-cell" } }}>Email</TableCell>
-                <TableCell align="center" sx={{ display: { xs: "none", sm: "table-cell" } }}>Autorização</TableCell>
-                <TableCell align="center" sx={{ display: { xs: "none", sm: "table-cell" } }}>Status</TableCell>
-                <TableCell align="right">Ação</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {users.map(user => (
-                <TableRow key={user._id}>
-                  <TableCell align="left">{user.name}</TableCell>
-                  <TableCell align="center" sx={{ display: { xs: "none", sm: "table-cell" } }}>{user.email}</TableCell>
-                  <TableCell align="center" sx={{ display: { xs: "none", sm: "table-cell" } }}>{user.className}</TableCell>
-                  <TableCell align="center" sx={{ display: { xs: "none", sm: "table-cell" } }}>
-                    {user.status === "ativo" ? <CheckCircle /> : <Close />}
-                  </TableCell>
-                  <TableCell align="right">
-                    <Button variant="contained" size="small" color="primary" onClick={() => handleEditClick(user)}>
-                      Editar
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      ) : <span>Nenhum usuário.</span>}
+  <Table>
+    <TableHead>
+      <TableRow>
+        <TableCell
+          onClick={() => { setSortField("name"); setSortOrder(sortOrder === "asc" ? "desc" : "asc"); }}
+          sx={{
+            cursor: "pointer",
+            display: { xs: "table-cell", sm: "table-cell" }, // sempre visível
+          }}
+        >
+          Nome {sortOrder === "asc" && sortField === 'name' ? <SwapVertIcon sx={{ maxHeight: "16px" }} /> : null}
+        </TableCell>
+        <TableCell
+          onClick={() => { setSortField("email"); setSortOrder(sortOrder === "asc" ? "desc" : "asc"); }}
+          sx={{
+            cursor: "pointer",
+            display: { xs: "none", sm: "table-cell" }, // esconde em telas pequenas
+          }}
+        >
+          Email {sortOrder === "asc" && sortField === 'email' ? <SwapVertIcon sx={{ maxHeight: "16px" }} /> : null}
+        </TableCell>
+        <TableCell
+          onClick={() => { setSortField("category"); setSortOrder(sortOrder === "asc" ? "desc" : "asc"); }}
+          sx={{
+            cursor: "pointer",
+            display: { xs: "none", sm: "table-cell" }, // esconde em telas pequenas
+          }}
+        >
+          Categoria {sortOrder === "asc" && sortField === 'category' ? <SwapVertIcon sx={{ maxHeight: "16px" }} /> : null}
+        </TableCell>
+        <TableCell
+          onClick={() => { setSortField("className"); setSortOrder(sortOrder === "asc" ? "desc" : "asc"); }}
+          sx={{
+            cursor: "pointer",
+            display: { xs: "none", sm: "table-cell" }, // esconde em telas pequenas
+          }}
+        >
+          Classe {sortOrder === "asc" && sortField === 'className' ? <SwapVertIcon sx={{ maxHeight: "16px" }} /> : null}
+        </TableCell>
+        <TableCell
+          onClick={() => { setSortField("status"); setSortOrder(sortOrder === "asc" ? "desc" : "asc"); }}
+          sx={{
+            cursor: "pointer",
+            display: { xs: "none", sm: "table-cell" }, // esconde em telas pequenas
+          }}
+        >
+          Status {sortOrder === "asc" && sortField === 'status' ? <SwapVertIcon sx={{ maxHeight: "16px" }} /> : null}
+        </TableCell>
+        <TableCell
+          onClick={() => { setSortField("isActive"); setSortOrder(sortOrder === "asc" ? "desc" : "asc"); }}
+          sx={{
+            cursor: "pointer",
+            display: { xs: "none", sm: "table-cell" }, // esconde em telas pequenas
+          }}
+        >
+          Ativo {sortOrder === "asc" && sortField === 'isActive' ? <SwapVertIcon sx={{ maxHeight: "16px" }} /> : null}
+        </TableCell>
+        <TableCell
+          align="right"
+          sx={{
+            display: { xs: "table-cell", sm: "table-cell" }, // sempre visível
+          }}
+        >
+          Ações
+        </TableCell>
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      {sortedUsers.map((user) => (
+        <TableRow key={user._id}>
+          <TableCell sx={{ display: { xs: "table-cell", sm: "table-cell" } }}>{user.name}</TableCell>
+          <TableCell sx={{ display: { xs: "none", sm: "table-cell" } }}>{user.email}</TableCell>
+          <TableCell sx={{ display: { xs: "none", sm: "table-cell" } }}>{user.category}</TableCell>
+          <TableCell sx={{ display: { xs: "none", sm: "table-cell" } }}>{user.className}</TableCell>
+          <TableCell sx={{ display: { xs: "none", sm: "table-cell" } }}>{user.status}</TableCell>
+          <TableCell sx={{ display: { xs: "none", sm: "table-cell" } }}>{user.isActive ? <CheckCircle /> : <Close />}</TableCell>
+          <TableCell align="right" sx={{ display: { xs: "table-cell", sm: "table-cell" } }}>
+            <IconButton onClick={() => handleEditClick(user)}><Edit /></IconButton>
+            <IconButton onClick={() => handleOpenDeleteDialog(user._id)} color="error"><Delete /></IconButton>
+          </TableCell>
+        </TableRow>
+      ))}
+    </TableBody>
+  </Table>
+</TableContainer>
+
+
+      {/* Modal de Confirmação de Deleção */}
+      <Dialog open={deleteDialogOpen} onClose={handleCloseDeleteDialog}>
+        <DialogTitle>Confirmar Exclusão</DialogTitle>
+        <DialogContent>
+          <Typography>Tem certeza de que deseja excluir este usuário?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDeleteDialog} color="secondary">Cancelar</Button>
+          <Button onClick={handleDeleteConfirm} color="error">Excluir</Button>
+        </DialogActions>
+      </Dialog>
 
       {/* Modal de Edição */}
       <Dialog open={open} onClose={handleClose}>
@@ -181,42 +311,18 @@ const Users = () => {
         <DialogContent>
           {selectedUser && (
             <>
-              <TextField
-                label="Nome"
-                fullWidth
-                value={selectedUser.name}
-                onChange={(e) => setSelectedUser({ ...selectedUser, name: e.target.value })}
-                sx={{ mb: 2 }}
-              />
-              <TextField
-                label="Email"
-                fullWidth
-                value={selectedUser.email}
-                onChange={(e) => setSelectedUser({ ...selectedUser, email: e.target.value })}
-                sx={{ mb: 2 }}
-              />
-              <TextField
-                label="Autorização"
-                fullWidth
-                value={selectedUser.className}
-                onChange={(e) => setSelectedUser({ ...selectedUser, className: e.target.value })}
-                sx={{ mb: 2 }}
-              />
-              <TextField
-                label="Status"
-                fullWidth
-                value={selectedUser.status}
-                onChange={(e) => setSelectedUser({ ...selectedUser, status: e.target.value })}
-                sx={{ mb: 2 }}
-              />
+              <TextField label="Nome" fullWidth value={editData.name} onChange={(e) => setEditData({ ...editData, name: e.target.value })} sx={{ mb: 2 ,mt:2}} />
+              <TextField label="Email" fullWidth value={editData.email} onChange={(e) => setEditData({ ...editData, email: e.target.value })} sx={{ mb: 2 }} />
+              <TextField label="Status" fullWidth value={editData.status} onChange={(e) => setEditData({ ...editData, status: e.target.value })} sx={{ mb: 2 }} />
+              <TextField label="Categoria" fullWidth value={editData.category} onChange={(e) => setEditData({ ...editData, category: e.target.value })} sx={{ mb: 2 }} />
+              <TextField label="Classe" fullWidth value={editData.className} onChange={(e) => setEditData({ ...editData, className: e.target.value })} sx={{ mb: 2 }} />
+              <FormControlLabel control={<Checkbox checked={editData?.isActive || false} onChange={(e) => setEditData({ ...editData, isActive: e.target.checked })} />} label="Ativo" sx={{ mb: 2 }} />
             </>
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="secondary">Cancelar</Button>
+          <Button onClick={handleClose}>Cancelar</Button>
           <Button onClick={handleSave} color="primary">Salvar</Button>
-          <Button onClick={handleDeleteUser} color="error">Excluir</Button>
-          <Button onClick={handleToggleStatus} color="warning">Alternar Status</Button>
         </DialogActions>
       </Dialog>
 
@@ -224,40 +330,13 @@ const Users = () => {
       <Dialog open={openCreateModal} onClose={handleCloseCreateModal}>
         <DialogTitle>Criar Novo Usuário</DialogTitle>
         <DialogContent>
-          <TextField
-            label="Nome"
-            fullWidth
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            label="Email"
-            fullWidth
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            label="Senha"
-            fullWidth
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            label="Categoria"
-            fullWidth
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            sx={{ mb: 2 }}
-          />
+          <TextField label="Nome" fullWidth value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} sx={{ mb: 2 ,mt:2}} />
+          <TextField label="Email" fullWidth value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} sx={{ mb: 2 }} />
+          <TextField label="Senha" fullWidth type="password" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} sx={{ mb: 2 }} />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseCreateModal} color="secondary">Cancelar</Button>
-          <Button onClick={handleCreateUser} color="primary" disabled={loading}>
-            {loading ? <CircularProgress size={24} /> : 'Criar'}
-          </Button>
+          <Button onClick={handleCreateUser} color="primary" disabled={loading}>{loading ? <CircularProgress size={24} /> : 'Criar'}</Button>
         </DialogActions>
       </Dialog>
 

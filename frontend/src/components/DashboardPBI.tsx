@@ -111,6 +111,7 @@ interface DashboardPBIPageProps {
 
 const DashboardPBI: React.FC<DashboardPBIPageProps> = ({ pageId }) => {
   const [reportDetails, setReportDetails] = useState<ReportDetails | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>()
 
   useEffect(() => {
     if (!pageId) return;
@@ -124,6 +125,7 @@ const DashboardPBI: React.FC<DashboardPBIPageProps> = ({ pageId }) => {
           pageId,
         });
       } catch (error) {
+        setErrorMessage('Erro ao buscar detalhes do relatório');
         console.error('Erro ao buscar detalhes do relatório:', error);
       }
     };
@@ -150,7 +152,7 @@ const DashboardPBI: React.FC<DashboardPBIPageProps> = ({ pageId }) => {
         padding:'10px'
       }}
     >
-      {reportDetails ? (
+      {reportDetails ? 
         <div style={{ background:'transparent'}}>
         <PowerBIReport
           key={reportDetails.pageId} // **Força a recriação do componente ao mudar**
@@ -158,9 +160,9 @@ const DashboardPBI: React.FC<DashboardPBIPageProps> = ({ pageId }) => {
           accessToken={reportDetails.accessToken}
           pageId={reportDetails.pageId}
         /></div>
-      ) : (
-        <p>Carregando relatório...</p>
-      )}
+      : errorMessage ? <p style={{ display: "flex", background:"rgba(49, 131, 207, 0)",width:'100%',justifyContent:"center"}}>{errorMessage}</p> : 
+        <p style={{ display: "flex", background:"rgba(49, 131, 207, 0)",width:'100%',justifyContent:"center"}}>Carregando relatório...</p>
+      }
     </div>
   );
 };
