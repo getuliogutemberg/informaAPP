@@ -85,62 +85,23 @@ export default function Settings() {
           
           {settings ? <Box sx={{ display: "flex",flexDirection: "row",flexShrink:1, flexGrow:1, justifyContent: "start", flexWrap: "wrap", gap: 2, overflow: "auto", height: "calc(100vh - 235px)" }}>
          
-            {[
            
-            { title: "Rotas", icon: <FaBell fontSize="large" />, color: deepPurple[500], path: "/rotas" },
-            
-          ].map((section, index) => (
-          <Fade in key={index} timeout={500}>
-            <Box sx={{ 
-              width: 400,
-              minWidth: 300,
-              height: "fit-content",
-              // flexGrow: 1,
-              boxShadow: 1,
-              transition: "transform 0.3s, box-shadow 0.3s",
-              "&:hover": {
-                transform: "scale(1.02)",
-                boxShadow: 6,
-              }
-            }}>
-              <Card
-                sx={{
-                  // minHeight: 180,
-                  boxShadow: 3,
-                  transition: "transform 0.3s, box-shadow 0.3s",
-                  "&:hover": {
-                    transform: "scale(1.02)",
-                    boxShadow: 6,
-                  }
-                }}
-              >
-                <CardContent sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                  <Box sx={{
-                    width: 56, height: 56, bgcolor: section.color, color: "white", borderRadius: "50%", 
-                    display: "flex", justifyContent: "center", alignItems: "center", mb: 2
-                  }}>
-                    {section.icon}
-                  </Box>
-                  <Typography variant="h6" fontWeight="bold">{section.title}</Typography>
-                  <Button
-                    variant="contained"
-                    sx={{ mt: 2 }}
-                    
-                    onClick={() => navigate(section.path)} // Correção aqui
-                  >
-                    Acessar
-                  </Button>
-                </CardContent>
-              </Card>
-            </Box>
-          </Fade>
-        ))}
         
             {Object.keys(settings).map((key, index) => {
               const setting = settings[key as keyof Configuration];
               return (
                 <Fade in key={index} timeout={500}>
-                  <Box sx={{ width: "fit-content",minWidth:"400px",height: "fit-content", boxShadow: 1 ,flex:1 }}>
+                  <Box sx={{  width: 400,
+             minWidth: 300,
+             height: "fit-content",
+             // flexGrow: 1,
+             boxShadow: 1,
+             transition: "transform 0.3s, box-shadow 0.3s",
+             "&:hover": {
+               transform: "scale(1.02)",
+               boxShadow: 6,
+             }
+           }} >
                     <Card sx={{ boxShadow: 3, display: "flex", flexDirection: "column", justifyContent: "center" ,flex:1}}>
                       <CardContent sx={{ display: "flex", flexDirection: "column", alignItems: "center"}}>
                         <Box
@@ -234,6 +195,56 @@ export default function Settings() {
                 </Fade>
               );
             })}
+             {[
+           
+           { title: "Rotas", icon: <FaBell fontSize="large" />, color: deepPurple[500], path: "/rotas" },
+           
+         ].map((section, index) => (
+         <Fade in key={index} timeout={500}>
+           <Box sx={{ 
+             width: 400,
+             minWidth: 300,
+             height: "fit-content",
+             // flexGrow: 1,
+             boxShadow: 1,
+             transition: "transform 0.3s, box-shadow 0.3s",
+             "&:hover": {
+               transform: "scale(1.02)",
+               boxShadow: 6,
+             }
+           }}>
+             <Card
+               sx={{
+                 // minHeight: 180,
+                 boxShadow: 3,
+                 transition: "transform 0.3s, box-shadow 0.3s",
+                 "&:hover": {
+                   transform: "scale(1.02)",
+                   boxShadow: 6,
+                 }
+               }}
+             >
+               <CardContent sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                 <Box sx={{
+                   width: 56, height: 56, bgcolor: section.color, color: "white", borderRadius: "50%", 
+                   display: "flex", justifyContent: "center", alignItems: "center", mb: 2
+                 }}>
+                   {section.icon}
+                 </Box>
+                 <Typography variant="h6" fontWeight="bold">{section.title}</Typography>
+                 <Button
+                   variant="contained"
+                   sx={{ mt: 2 }}
+                   
+                   onClick={() => navigate(section.path)} // Correção aqui
+                 >
+                   Acessar
+                 </Button>
+               </CardContent>
+             </Card>
+           </Box>
+         </Fade>
+       ))}
           </Box>: <div>Carregando configurações...</div> }
 
           

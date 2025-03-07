@@ -94,11 +94,13 @@ export default function Login() {
         throw new Error("Dados inválidos recebidos.");
       }
 
-      if (!user.isActive) {
+      if (user.isActive === false) {
         setError("Conta inativa.")
-        
-        throw new Error("Conta inativa.");
-      }
+        setAnimating(false);
+        setTimeout(() => setError(null), 5000);
+        // throw new Error("Conta inativa.");
+      } else {
+         
       // Salva os dados no localStorage
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
@@ -113,6 +115,8 @@ export default function Login() {
       }, 100);  // Atraso para a animação
       navigate(routes[0].path as string);
 
+      }
+     
       
     } catch (err: unknown) {
       
