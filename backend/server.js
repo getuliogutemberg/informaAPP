@@ -42,14 +42,14 @@ const User = mongoose.model("User", new mongoose.Schema({
   updateAt: { type: String, default: new Date},
   status: { type: String, default: ''},
   isActive: { type: Boolean, default: false },
-}));
+}, { timestamps: true }));
 
 const Route = mongoose.model("Route", new mongoose.Schema({
   path: { type: String, required: true },
   component: { type: String, required: true },
   requiredRole: { type: [String], default: [] }, // Role de usuários que podem acessar
   pageId: { type: String, required: false } // Adiciona o pageId para Dashboards, se necessário
-}));
+}, { timestamps: true }));
 
 const Configuration = mongoose.model("Configuration", new mongoose.Schema({
   notifications: { type: Boolean, default: true },
@@ -72,6 +72,17 @@ const Configuration = mongoose.model("Configuration", new mongoose.Schema({
     authority: { type: String, default: "https://login.microsoftonline.com/80899d73-a5f2-4a53-b252-077af6003b36" },
   },
 }, { timestamps: true }));
+
+// Definição do modelo de Alerta
+const Alert = mongoose.model("Alerts", new mongoose.Schema({
+  type: String,
+  title: String,
+  description: String,
+  color: String,
+  icon: String,
+  deletedAt: { type: Date, default: null },
+}, { timestamps: true }));
+
 
 
 
@@ -531,6 +542,68 @@ app.put("/configuration", async (req, res) => {
     res.status(500).json({ message: "Erro ao atualizar configurações" });
   }
 });
+
+// Rota para listar todos os alertas
+app.get('/alerts', async (req, res) => {
+  try {
+    const alerts = (await Alert.find()).filter(alert => !alert.deletedAt);
+    res.json(alerts);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Rota para criar um novo alerta
+app.post('/alerts', async (req, res) => {
+  const { type, title, description, color, icon } = req.body;
+  const alert = new Alert({ type, title, description, color, icon });
+
+  try {
+    const newAlert = await alert.save();
+    res.status(201).json(newAlert);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+// Rota para atualizar um alerta
+app.put('/alerts/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { type, title, description, color, icon, deleteAt } = req.body;
+
+    const updatedAlert = await Alert.findByIdAndUpdate(id, {
+      type,
+      title,
+      description,
+      color,
+      icon,
+      deleteAt // se você quiser alterar esse campo também
+    }, { new: true });
+
+    if (!updatedAlert) {
+      return res.status(404).json({ message: "Alerta não encontrado!" });
+    }
+
+    res.json(updatedAlert);
+  } catch (error) {
+    console.error("Erro ao editar o alerta:", error);
+    res.status(500).json({ message: "Erro ao editar o alerta" });
+  }
+});
+
+
+// Rota para excluir um alerta
+app.delete('/alerts/:id', async (req, res) => {
+  try {
+    await Alert.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Alerta removido com sucesso!' });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+
 
 
 const server = http.createServer(app);
