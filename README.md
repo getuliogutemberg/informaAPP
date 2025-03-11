@@ -4,6 +4,7 @@ Este projeto contém o **backend** e o **frontend** de uma plataforma com divers
 
 
 ![Platform Architecture](platform-architecture.svg)
+![Platform](plataform.jpg)
 
 ## Backend
 
