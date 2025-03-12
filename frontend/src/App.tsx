@@ -17,6 +17,7 @@ import Profile from './pages/Profile.tsx';
 import Register from './pages/Register.tsx'; 
 import Settings from './pages/Settings';
 import Unauthorized from './pages/Unauthorized.tsx';
+import Estrategica from './pages/Estrategica.tsx';
 import socket from  'socket.io-client';
 import Users from './pages/Users.tsx';
 import RoutesEdit from './pages/RoutesEdit.tsx';
@@ -110,6 +111,8 @@ function App() {
             }
           />
         ))}
+
+
         {/* <Route path="/" element={<Home />} /> */}
         <Route path="/" element={<Navigate to={"/login"} />} />
         
@@ -157,7 +160,13 @@ function App() {
               <Settings />
     
         </ProtectedRoute>} /> 
-       
+
+        
+        <Route path="/estrategica" element={ <ProtectedRoute  >
+              <Estrategica />
+    
+        </ProtectedRoute>} /> 
+
         <Route path="/rota-restrita" element={ <Unauthorized/> } /> 
         <Route path="*" element={<NotFound />} />
         

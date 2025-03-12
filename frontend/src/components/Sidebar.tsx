@@ -37,6 +37,7 @@ const Sidebar = () => {
           <>
             <li title="Indicadores"><Link to="/indicadores"><FaTachometerAlt /><span>Indicadores</span></Link></li>
             <li title="Gestão"><Link to="/gestão"><FaFileAlt /><span>Gestão</span></Link></li>
+            <li title="Estrategica"><Link to="/estrategica"><FaFileAlt /><span>Estrategica</span></Link></li>
             
             {/* <li title="Funcionários"><Link to="/employees"><FaUserTie /><span>Funcionários</span></Link></li>
             <li title="Moradores"><Link to="/residents"><FaUsers /><span>Moradores</span></Link></li>
