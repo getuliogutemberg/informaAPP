@@ -36,7 +36,7 @@ const Users = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false); // Estado para controle do modal de confirmação de exclusão
   const [userToDelete, setUserToDelete] = useState<string | null>(null); // Estado para armazenar o ID do usuário a ser deletado
 
-  const [searchQuery, setSearchQuery] = useState<string>(""); // Estado para filtrar usuários
+  // const [searchQuery, setSearchQuery] = useState<string>(""); // Estado para filtrar usuários
   const [sortField, setSortField] = useState<keyof User>("name"); // Estado para controle da ordenação
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc"); // Estado para controle da ordem de ordenação
 
@@ -63,7 +63,7 @@ const Users = () => {
   const handleCreateUser = async () => {
     setLoading(true);
     try {
-      await axios.post("http://localhost:5000/users", { ...formData, className: "CLIENT" });
+      await axios.post("http://localhost:5000/users", { ...formData });
       fetchUsers();
       handleCloseCreateModal();
     } catch (err) {
@@ -123,11 +123,14 @@ const Users = () => {
   };
 
   // Função para filtrar usuários
-  const filteredUsers = users.filter((user) => {
-    return user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-           user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-           user.category.toLowerCase().includes(searchQuery.toLowerCase());
-  });
+  const filteredUsers = users
+  // .filter(
+    // (user) => {
+    // return user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    //        user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    //        user.category.toLowerCase().includes(searchQuery.toLowerCase());
+  // }
+// );
 
   // Função para ordenar usuários
   const sortedUsers = filteredUsers.sort((a, b) => {
@@ -180,7 +183,7 @@ const Users = () => {
         variant="outlined"
         fullWidth
         // label={`Buscar Usuário`}
-        value={searchQuery}
+        
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
@@ -188,7 +191,7 @@ const Users = () => {
             </InputAdornment>
           ),
         }}
-        onChange={(e) => setSearchQuery(e.target.value)}
+
         sx={{flex: 1}}
         />
       {/* Botão para criar novo usuário */}

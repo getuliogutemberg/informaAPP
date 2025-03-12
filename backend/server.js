@@ -409,10 +409,10 @@ app.get('/users', async (req, res) => {
 
 // Criar um novo usuário
 app.post("/users", async (req, res) => {
-  const { username, email, password } = req.body;
+  const { name, email, password } = req.body;
   const hashedPassword = await bcrypt.hash(password, 12);
   try {
-    const newUser = new User({ username, email, password:hashedPassword });
+    const newUser = new User({ name, email, password:hashedPassword,className: 'CLIENT',isActive: true });
 
     await newUser.save();
     res.status(201).json(newUser);
