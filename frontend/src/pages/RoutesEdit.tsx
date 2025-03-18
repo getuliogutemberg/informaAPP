@@ -154,49 +154,104 @@ const RoutesEdit = () => {
   
 
   return (
-    <Box sx={{ background: "rgba(16, 28, 68, 1)", width: 'calc(100vw - 120px)', height: "calc(100vh - 40px)", pl: "100px", pt: "130px", pr: "20px", display: "flex", flexDirection: "column", justifyContent: "start", alignItems: "center" }}>
-      <motion.div initial={{ opacity: 0, y: -50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }}>
-        <Typography variant="h3" sx={{ fontWeight: "bold", color: "white", mb: 2, fontSize: { xs: "1.5rem", sm: "2rem", md: "2.5rem" } }}>
-          Lista de Módulos
-        </Typography>
-        <Typography variant="h6" sx={{ color: "#666", mb: 4, fontSize: { xs: "1rem", sm: "1rem", md: "1rem" } }}>
-          Atualmente, você possui {routes.length} módulo(s) cadastrados.
-        </Typography>
-      </motion.div>
-
-      {error && (
-        <Alert severity="error" sx={{ mb: 2, width: "100%", maxWidth: "650px" }}>
-          {error}
-        </Alert>
-      )}
-
-      <Box component={Paper} sx={{ width: '100%', mb: 2, display: "flex", flexDirection: "row" }}>
-        <TextField
-          placeholder="Buscar Módulo"
-          variant="outlined"
-          fullWidth
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <Search />
-              </InputAdornment>
-            ),
+   
+    <Box sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'start',
+      px: 2,
+      ml: "80px",
+      background: "#0A1C44",
+      width: "calc(100vw - 110px)",
+      height: "calc(100vh - 70px)",
+      mt: "60px",
+      pt: 3,
+        gap: 2
+      }}>
+        <motion.div initial={{ opacity: 0, y: -50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }}>
+          <Typography variant="h3" sx={{ 
+            fontWeight: "bold", 
+            color: "white", 
+            mb: 2,
+            fontSize:{ xs: "1.5rem", sm: "2rem", md: "2.5rem" } 
+          }}>
+            Lista de Módulos
+          </Typography>
+          <Typography variant="h6" sx={{ 
+            color: "#fff", 
+            mb: 4, 
+            fontSize: { xs: "1rem", sm: "1rem", md: "1rem" },
+            opacity: 0.7
+          }}>
+            Atualmente, você possui {routes.length} módulo(s) cadastrados.
+          </Typography>
+        </motion.div>
+        {error && (
+      <Alert severity="error" sx={{ mb: 2, width: "100%", maxWidth: "650px" }}>
+        {error}
+      </Alert>
+    )}
+        <Box
+          component={Paper} 
+          sx={{
+            width: '100%',
+            backgroundColor: '#1F2A4C',
+            borderRadius: "8px",
+            display: "flex",
+            flexDirection: "row",
+            mb: 2
           }}
-          sx={{ flex: 1 }}
-        />
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleOpenCreateModal}
-          sx={{ flex: 0, background: '#007bff' }}
         >
-          <Add />
-        </Button>
-      </Box>
+          <TextField
+            placeholder="Buscar Módulo"
+            variant="outlined"
+            fullWidth
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Search sx={{ color: '#fff' }} />
+                </InputAdornment>
+              ),
+            }}
+            sx={{ 
+              flex: 1,
+              '& .MuiOutlinedInput-root': {
+                color: '#fff',
+                '& fieldset': {
+                  borderColor: 'rgba(255, 255, 255, 0.23)',
+                },
+              },
+              '& .MuiInputBase-input::placeholder': {
+                color: 'rgba(255, 255, 255, 0.7)',
+              },
+            }}
+          />
+          <Button 
+            variant="contained" 
+            onClick={handleOpenCreateModal} 
+            sx={{ 
+              flex: 0,
+              backgroundColor: '#0A1C44',
+              '&:hover': {
+                backgroundColor: '#152347'
+              }
+            }}
+          >
+            <Add />
+          </Button>
+        </Box>
 
-      <TableContainer component={Paper}>
+        <TableContainer 
+        component={Paper} 
+        sx={{ 
+          backgroundColor: '#1F2A4C',
+          '& .MuiTableCell-root': {
+            color: '#fff'
+          }
+        }}
+      >
         <Table>
           <TableHead>
             <TableRow>
