@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { Box, Card, CardContent, Typography, FormControlLabel, Switch, TextField, Slider, Fade, FormControl, Select, MenuItem, InputLabel, Button } from "@mui/material";
+import { Box, Card, CardContent, Typography, FormControlLabel, Switch, TextField, Slider, Fade, FormControl, Select, MenuItem, InputLabel,  } from "@mui/material";
 import { deepPurple } from "@mui/material/colors";
 import { motion } from "framer-motion";
 import { FaBell } from "react-icons/fa";
 import { createTheme, ThemeProvider, PaletteMode } from "@mui/material/styles";
 
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+
 
 
 // Tipagem de configuração
@@ -32,7 +32,7 @@ interface Configuration {
 
 export default function Settings() {
   const [settings, setSettings] = useState<Configuration | null>(null);
-  const navigate = useNavigate(); // Hook para navegação
+ 
   useEffect(() => {
     // Buscar configurações do backend
     const fetchSettings = async () => {
@@ -195,56 +195,7 @@ export default function Settings() {
                 </Fade>
               );
             })}
-             {[
            
-           { title: "Rotas", icon: <FaBell fontSize="large" />, color: deepPurple[500], path: "/rotas" },
-           
-         ].map((section, index) => (
-         <Fade in key={index} timeout={500}>
-           <Box sx={{ 
-             width: 400,
-             minWidth: 300,
-             height: "fit-content",
-             // flexGrow: 1,
-             boxShadow: 1,
-             transition: "transform 0.3s, box-shadow 0.3s",
-             "&:hover": {
-               transform: "scale(1.02)",
-               boxShadow: 6,
-             }
-           }}>
-             <Card
-               sx={{
-                 // minHeight: 180,
-                 boxShadow: 3,
-                 transition: "transform 0.3s, box-shadow 0.3s",
-                 "&:hover": {
-                   transform: "scale(1.02)",
-                   boxShadow: 6,
-                 }
-               }}
-             >
-               <CardContent sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                 <Box sx={{
-                   width: 56, height: 56, bgcolor: section.color, color: "white", borderRadius: "50%", 
-                   display: "flex", justifyContent: "center", alignItems: "center", mb: 2
-                 }}>
-                   {section.icon}
-                 </Box>
-                 <Typography variant="h6" fontWeight="bold">{section.title}</Typography>
-                 <Button
-                   variant="contained"
-                   sx={{ mt: 2 }}
-                   
-                   onClick={() => navigate(section.path)} // Correção aqui
-                 >
-                   Acessar
-                 </Button>
-               </CardContent>
-             </Card>
-           </Box>
-         </Fade>
-       ))}
           </Box>: <div>Carregando configurações...</div> }
 
           

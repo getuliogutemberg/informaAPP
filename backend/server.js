@@ -23,7 +23,10 @@ const config = {
   pageId: "d7d35c6daec9e7e50737",
 };
 
-mongoose.connect(process.env.MONGO_URI).then(() => console.log("Banco de dados conectado"))
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+}).then(() => console.log("Banco de dados conectado"))
 .catch((err) => console.log("Erro ao conectar ao banco de dados:", err));
 
 
@@ -304,6 +307,7 @@ app.post("/login", async (req, res) => {
     const refreshToken = generateRefreshToken(user);
 
     user.refreshToken = refreshToken;
+    // console.log(user)
     await user.save();
 
     res.json({ message: "Login bem-sucedido!", accessToken, refreshToken, route:'/',user });
@@ -375,44 +379,48 @@ app.get("/admin", verifyToken, verifyCategory("admin"), (req, res) => {
 // Endpoint para pegar os residentes
 app.get('/users', async (req, res) => {
   try {
-    // Verifica se já existe algum usuário no banco de dados
-    const existingUsers = await User.find();
-    
-    // Se não houver usuários no banco, cria-os
-    if (existingUsers.length === 0) {
-      const groups = ["A", "B", "C"]; // Exemplo de grupos
-      const tags = ["1", "2", "3", "4"]; // Exemplo de tags
+    const { category } = req.query; // Obtém className da query string
+    let filter = {}; // Define um filtro vazio por padrão
 
-      const generatedUsers = generateUsers(groups, tags);
-     
-
-      // Insere os usuários no banco de dados
-      for (const group in generatedUsers) {
-        for (const user of generatedUsers[group]) {
-          const newUser = new User(user);
-          await newUser.save();
-        }
-      }
-
-      console.log("Usuários criados com sucesso!");
+    if (category) {
+      filter.category = category; // Aplica o filtro se className for informado
     }
 
-    // Retorna os usuários do banco de dados
-    const usersFromDB = await User.find();
-    res.status(200).json(usersFromDB);
+    let existingUsers = await User.find(filter);
 
+    if (existingUsers.length === 0) {
+      const groups = ["A", "B", "C"];
+      const tags = ["1", "2", "3", "4"];
+      const generatedUsers = generateUsers(groups, tags);
+
+      // Cria um array de usuários para inserção em lote
+      const usersToInsert = Object.values(generatedUsers)
+        .flat()
+        .map(user => ({ ...user, className })); // Adiciona className aos novos usuários
+      
+      if (usersToInsert.length > 0) {
+        await User.insertMany(usersToInsert);
+        console.log("Usuários criados com sucesso!");
+      }
+
+      // Recupera os usuários recém-criados com o filtro aplicado
+      existingUsers = await User.find(filter);
+    }
+
+    res.status(200).json(existingUsers);
   } catch (err) {
-    console.error("Erro ao obter os usuários", err);
-    res.status(500).send("Erro ao obter os usuários");
+    console.error("Erro ao obter os usuários:", err.message);
+    res.status(500).json({ error: "Erro ao obter os usuários" });
   }
 });
 
+
 // Criar um novo usuário
 app.post("/users", async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password,category,className } = req.body;
   const hashedPassword = await bcrypt.hash(password, 12);
   try {
-    const newUser = new User({ name, email, password:hashedPassword,className: 'CLIENT',isActive: true });
+    const newUser = new User({ name, email, password:hashedPassword,category:category,className: className ,isActive: true });
 
     await newUser.save();
     res.status(201).json(newUser);
@@ -428,6 +436,32 @@ app.put("/users/:id", async (req, res) => {
     res.json(updatedUser);
   } catch (err) {
     res.status(500).json({ message: "Erro ao atualizar usuário" });
+  }
+});
+
+app.put("/users/:id/password", async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({ message: "Usuário não encontrado" });
+    }
+
+    // Verifica se a senha atual está correta
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Senha atual incorreta" });
+    }
+
+    // Hash da nova senha
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
+    user.password = hashedPassword;
+    await user.save();
+
+    res.json({ message: "Senha alterada com sucesso" });
+  } catch (err) {
+    res.status(500).json({ message: "Erro ao alterar senha", error: err.message });
   }
 });
 
@@ -481,31 +515,39 @@ app.get("/routes", async (req, res) => {
 
 
 app.get("/getPBIToken/:pageId", async (req, res) => {
-  const pageId = req.params.pageId
-  try {
-    const response = await msalClient.acquireTokenByClientCredential({
-      scopes: ["https://analysis.windows.net/powerbi/api/.default"],
-    });
-    
-    if (!response || !response.accessToken) {
-      throw new Error("Falha ao obter token de acesso");
+    const pageId = req.params.pageId;
+
+    try {
+       
+
+        const response = await msalClient.acquireTokenByClientCredential({
+            scopes: ["https://analysis.windows.net/powerbi/api/.default"],
+        });
+        
+        if (!response || !response.accessToken) {
+            throw new Error("Falha ao obter token de acesso");
+        }
+
+        const reportDetails = await getReportDetails(response.accessToken, pageId);
+        const embedTokenResponse = await generateEmbedToken(
+            response.accessToken, 
+            reportDetails.datasetId,
+            pageId
+        );
+        
+        res.status(200).json({
+            accessToken: embedTokenResponse.token,
+            embedUrl: reportDetails.embedUrl,
+            expiry: embedTokenResponse.expiration,
+            pageId: pageId,
+        });
+    } catch (error) {
+        console.error("Erro ao adquirir token:", error);
+        res.status(500).json({ 
+            error: "Falha ao adquirir token", 
+            details: error.message 
+        });
     }
-
-
-    
-    const reportDetails = await getReportDetails(response.accessToken);
-    const embedTokenResponse = await generateEmbedToken(response.accessToken, reportDetails.datasetId);
-    
-    res.status(200).json({
-      accessToken: embedTokenResponse.token,
-      embedUrl: reportDetails.embedUrl,
-      expiry: embedTokenResponse.expiration,
-      pageId: pageId,
-    });
-  } catch (error) {
-    console.error("Erro ao adquirir token:", error);
-    res.status(500).json({ error: "Falha ao adquirir token", details: error.message });
-  }
 });
 
 app.get("/configuration", async (req, res) => {

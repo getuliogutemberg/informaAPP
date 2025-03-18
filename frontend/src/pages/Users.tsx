@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
-import { Typography, Button, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Dialog, DialogActions, DialogContent, DialogTitle, TextField, CircularProgress, Alert, IconButton, Checkbox, FormControlLabel, InputAdornment } from "@mui/material";
+import { useCallback, useContext, useEffect, useState } from "react";
+import { Typography, Button, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Dialog, DialogActions, DialogContent, DialogTitle, TextField, CircularProgress, Alert, IconButton, Checkbox, FormControlLabel, InputAdornment, Avatar } from "@mui/material";
 import { Add, CheckCircle, Close, Delete, Edit, Search  } from "@mui/icons-material";
 import { motion } from "framer-motion";
 import SwapVertIcon from '@mui/icons-material/SwapVert';
 import axios from "axios";
+import { AuthContext } from "../context/AuthContext";
 
 // Tipo para o usuário
 interface User {
@@ -32,27 +33,38 @@ const Users = () => {
   const [editData, setEditData] = useState<Partial<User>>({ name: "", email: "", password: "", category: "", className: "", isActive: false });
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [formData, setFormData] = useState<Partial<User>>({ name: "", email: "", password: "", category: "", className: "" });
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false); // Estado para controle do modal de confirmação de exclusão
   const [userToDelete, setUserToDelete] = useState<string | null>(null); // Estado para armazenar o ID do usuário a ser deletado
-
-  // const [searchQuery, setSearchQuery] = useState<string>(""); // Estado para filtrar usuários
+  
+  const [searchQuery, setSearchQuery] = useState<string>(""); // Estado para filtrar usuários
   const [sortField, setSortField] = useState<keyof User>("name"); // Estado para controle da ordenação
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc"); // Estado para controle da ordem de ordenação
-
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-  const fetchUsers = async () => {
+  const { user  } = useContext(AuthContext);
+  const isOwner = user?.className === "OWNER";
+  const [formData, setFormData] = useState<Partial<User>>({ name: "", email: "", password: "", category: "" , className: "CLIENT" });
+  const fetchUsers = useCallback(async () => {
     try {
-      const response = await axios.get<User[]>('http://localhost:5000/users');
-      setUsers(response.data); // Atualiza o estado com os dados recebidos
+      
+  
+      const url = isOwner 
+        ? "http://localhost:5000/users" 
+        : `http://localhost:5000/users?category=${user?.category}`;
+        const response = await axios.get<User[]>(url);
+        setUsers(response.data);
+        setFormData({ name: "", email: "", password: "", category: isOwner ? "" : user?.category , className: "CLIENT" })
     } catch (error) {
-      console.error('Erro ao buscar os usuários:', error);
+      console.error("Erro ao buscar os usuários:", error);
       setError("Erro ao buscar usuários");
     }
-  };
+  },[isOwner, user?.category]);
+
+  useEffect(() => {
+    
+    
+    fetchUsers();
+  }, [fetchUsers]);
+
+  
 
   const handleOpenCreateModal = () => setOpenCreateModal(true);
   const handleCloseCreateModal = () => {
@@ -124,13 +136,13 @@ const Users = () => {
 
   // Função para filtrar usuários
   const filteredUsers = users
-  // .filter(
-    // (user) => {
-    // return user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    //        user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    //        user.category.toLowerCase().includes(searchQuery.toLowerCase());
-  // }
-// );
+  .filter(
+    (user) => {
+    return user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+           user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+           user.category.toLowerCase().includes(searchQuery.toLowerCase());
+  }
+);
 
   // Função para ordenar usuários
   const sortedUsers = filteredUsers.sort((a, b) => {
@@ -154,10 +166,10 @@ const Users = () => {
     }}>
       <motion.div initial={{ opacity: 0, y: -50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }}>
         <Typography variant="h3" sx={{ fontWeight: "bold", color: "white", mb: 2, fontSize: { xs: "1.5rem", sm: "2rem", md: "2.5rem" } }}>
-          Gestão de Usuários
+          Lista de Usuários
         </Typography>
         <Typography variant="h6" sx={{ color: "#666", mb: 4, fontSize: { xs: "1rem", sm: "1rem", md: "1rem" } }}>
-          Atualmente, você possui {users.length} {users.length > 1 ? 'usuários' : 'usuário'}.
+          Atualmente, exite {users.length} {users.length > 1 ? 'usuários' : 'usuário'} encontrados.
         </Typography>
       </motion.div>
 
@@ -183,6 +195,13 @@ const Users = () => {
         variant="outlined"
         fullWidth
         // label={`Buscar Usuário`}
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+
+        InputLabelProps={{
+          shrink: true,
+        }}
+
         
         InputProps={{
           startAdornment: (
@@ -212,6 +231,11 @@ const Users = () => {
   <Table>
     <TableHead>
       <TableRow>
+      <TableCell
+         
+        >
+         
+        </TableCell>
         <TableCell
           onClick={() => { setSortField("name"); setSortOrder(sortOrder === "asc" ? "desc" : "asc"); }}
           sx={{
@@ -230,7 +254,8 @@ const Users = () => {
         >
           Email {sortOrder === "asc" && sortField === 'email' ? <SwapVertIcon sx={{ maxHeight: "16px" }} /> : null}
         </TableCell>
-        <TableCell
+        {isOwner && <TableCell
+        
           onClick={() => { setSortField("category"); setSortOrder(sortOrder === "asc" ? "desc" : "asc"); }}
           sx={{
             cursor: "pointer",
@@ -238,7 +263,7 @@ const Users = () => {
           }}
         >
           Categoria {sortOrder === "asc" && sortField === 'category' ? <SwapVertIcon sx={{ maxHeight: "16px" }} /> : null}
-        </TableCell>
+        </TableCell>}
         <TableCell
           onClick={() => { setSortField("className"); setSortOrder(sortOrder === "asc" ? "desc" : "asc"); }}
           sx={{
@@ -279,9 +304,11 @@ const Users = () => {
     <TableBody>
       {sortedUsers.map((user) => (
         <TableRow key={user._id}>
+          <TableCell sx={{ display: { xs: "table-cell", sm: "table-cell" } }}><Avatar src={user.customIcon} sx={{ width: 32, height: 32, mx: "auto" }} /></TableCell>
+
           <TableCell sx={{ display: { xs: "table-cell", sm: "table-cell" } }}>{user.name}</TableCell>
           <TableCell sx={{ display: { xs: "none", sm: "table-cell" } }}>{user.email}</TableCell>
-          <TableCell sx={{ display: { xs: "none", sm: "table-cell" } }}>{user.category}</TableCell>
+          {isOwner && <TableCell sx={{ display: { xs: "none", sm: "table-cell" } }}>{user.category}</TableCell>}
           <TableCell sx={{ display: { xs: "none", sm: "table-cell" } }}>{user.className}</TableCell>
           <TableCell sx={{ display: { xs: "none", sm: "table-cell" } }}>{user.status}</TableCell>
           <TableCell sx={{ display: { xs: "none", sm: "table-cell" } }}>{user.isActive ? <CheckCircle /> : <Close />}</TableCell>
@@ -317,7 +344,7 @@ const Users = () => {
               <TextField label="Nome" fullWidth value={editData.name} onChange={(e) => setEditData({ ...editData, name: e.target.value })} sx={{ mb: 2 ,mt:2}} />
               <TextField label="Email" fullWidth value={editData.email} onChange={(e) => setEditData({ ...editData, email: e.target.value })} sx={{ mb: 2 }} />
               <TextField label="Status" fullWidth value={editData.status} onChange={(e) => setEditData({ ...editData, status: e.target.value })} sx={{ mb: 2 }} />
-              <TextField label="Categoria" fullWidth value={editData.category} onChange={(e) => setEditData({ ...editData, category: e.target.value })} sx={{ mb: 2 }} />
+              {isOwner && <TextField label="Categoria" fullWidth value={editData.category} onChange={(e) => setEditData({ ...editData, category: e.target.value })} sx={{ mb: 2 }} />}
               <TextField label="Classe" fullWidth value={editData.className} onChange={(e) => setEditData({ ...editData, className: e.target.value })} sx={{ mb: 2 }} />
               <FormControlLabel control={<Checkbox checked={editData?.isActive || false} onChange={(e) => setEditData({ ...editData, isActive: e.target.checked })} />} label="Ativo" sx={{ mb: 2 }} />
             </>

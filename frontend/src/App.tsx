@@ -105,8 +105,11 @@ function App() {
             key={route._id}
             path={route.path}
             element={
-              <ProtectedRoute requiredRole={route.requiredRole} >
-                <DashPBI pageId={route.pageId} />
+              <ProtectedRoute  >
+                {route.component === "Dashboard Power BI" ? <DashPBI pageId={route.pageId} />:
+                route.component === "Gestão de Grupos e Materiais" ? <Estrategica /> :
+                 <></>
+                }
               </ProtectedRoute>
             }
           />
@@ -145,27 +148,24 @@ function App() {
               <Alerts />
             </ProtectedRoute>} /> 
 
-            <Route path="/controle" element={ <ProtectedRoute requiredRole={["ADMIN","BOSS"]}  >
+            <Route path="/controle" element={ <ProtectedRoute requiredRole={["ADMIN","OWNER"]}  >
               <Admin />
             </ProtectedRoute>} /> 
 
 
-            <Route path="/usuários" element={ <ProtectedRoute requiredRole={["ADMIN","BOSS"]}  >
+            <Route path="/usuários" element={ <ProtectedRoute requiredRole={["ADMIN","OWNER"]}  >
               <Users />
             </ProtectedRoute>} /> 
-            <Route path="/rotas" element={ <ProtectedRoute requiredRole={["BOSS"]}  >
+            <Route path="/módulos" element={ <ProtectedRoute requiredRole={["OWNER"]}  >
               <RoutesEdit />
             </ProtectedRoute>} /> 
-        <Route path="/opções" element={ <ProtectedRoute requiredRole={["ADMIN","BOSS"]} >
+        <Route path="/opções" element={ <ProtectedRoute requiredRole={["ADMIN","OWNER"]} >
               <Settings />
     
         </ProtectedRoute>} /> 
 
         
-        <Route path="/estrategica" element={ <ProtectedRoute  >
-              <Estrategica />
-    
-        </ProtectedRoute>} /> 
+       
 
         <Route path="/rota-restrita" element={ <Unauthorized/> } /> 
         <Route path="*" element={<NotFound />} />

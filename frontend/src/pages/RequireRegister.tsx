@@ -67,7 +67,7 @@ export default function RequireRegister() {
     "Diretor de Operações"
   ]);
 
-  const [secretKeys, setSecretKeys] = useState(["BOSS", "ADMIN", "CLIENT"]);
+  const [secretKeys, setSecretKeys] = useState(["OWNER", "ADMIN", "CLIENT"]);
 
 
 

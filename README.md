@@ -88,7 +88,7 @@ npm run dev
 * `/opções`: Configurações da plataforma
 
 **Proteção de Rotas**:
-* O componente **ProtectedRoute** garante que rotas restritas (como `/admin`) sejam acessíveis apenas por usuários com a permissão adequada (ADMIN ou BOSS).
+* O componente **ProtectedRoute** garante que rotas restritas (como `/admin`) sejam acessíveis apenas por usuários com a permissão adequada (ADMIN ou OWNER).
 
 **Configurações**:
 * As configurações da plataforma são dinamicamente obtidas do backend e incluem opções como habilitar registro de usuários e definir o tema visual.
