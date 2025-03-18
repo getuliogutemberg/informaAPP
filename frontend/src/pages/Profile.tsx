@@ -124,59 +124,119 @@ const handleChangePassword = async () => {
   }
 };
   return (
-    <Box sx={{ background:"rgba(16, 28, 68, 1)",width:'calc(100vw - 120px)',height:"calc(100vh - 40px)",pl:"100px",pt:"130px",pr:"20px",display:"flex",flexDirection:"column",justifyContent:"start",alignItems:"center"}}>
+    <Box sx={{ 
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'start',
+      px: 2,
+      ml: "80px",
+      background: "#0A1C44",
+      width: "calc(100vw - 110px)",
+      height: "calc(100vh - 70px)",
+      mt: "60px",
+      pt: 3,
+      gap: 2
+    }}>
       <motion.div initial={{ opacity: 0, y: -50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }}>
-        <Typography variant="h3" sx={{ fontWeight: "bold", color: "#fff", mb: 0, fontSize: { xs: "1.5rem", sm: "2rem", md: "2.5rem" } }}>
+        <Typography variant="h3" sx={{ 
+          fontWeight: "bold", 
+          color: "white", 
+          mb: 2,
+          fontSize:{ xs: "1.5rem", sm: "2rem", md: "2.5rem" } 
+        }}>
           Configurações da Conta
         </Typography>
-        <Typography variant="h6" sx={{ color: "#666", mb: 2, fontSize: { xs: "1.0rem", sm: "1.0rem", md: "1.0rem" } }}>
+        <Typography variant="h6" sx={{ 
+          color: "#fff", 
+          mb: 4, 
+          fontSize: { xs: "1rem", sm: "1rem", md: "1rem" },
+          opacity: 0.7
+        }}>
           Configure as suas informações pessoais e a foto de perfil!
         </Typography>
       </motion.div>
+
       {error && (
         <Alert severity="error" sx={{ mb: 2, width: "100%", maxWidth: "650px" }}>
           {error}
         </Alert>
       )}
+
       <Fade in timeout={1000}>
-        <Paper elevation={1} sx={{ p: 2,display:"flex",flexDirection:'column',justifyContent:"center",width:"100%",maxWidth:"650px"}}>
-          {/* 🔹 Foto de Perfil */}
+        <Paper elevation={1} sx={{ 
+          p: 4,
+          display: "flex",
+          flexDirection: 'column',
+          justifyContent: "center",
+          width: "100%",
+          maxWidth: "650px",
+          backgroundColor: '#1F2A4C',
+          borderRadius: "8px",
+        }}>
           <Box sx={{ position: "relative", mb: 4 }}>
             <Avatar src={profilePic} sx={{ width: 120, height: 120, mx: "auto" }} />
-            {editing && <IconButton
-              component="label"
-              sx={{
-                position: "absolute",
-                top: "100px",
-                right: "38%",
-                
-                bgcolor: "white",
-                boxShadow: 3
-              }}
-            >
-              <UploadFile />
-              <input type="file" hidden accept="image/*" onChange={handleFileChange} />
-            </IconButton>}
+            {editing && (
+              <IconButton
+                component="label"
+                sx={{
+                  position: "absolute",
+                  top: "100px",
+                  right: "38%",
+                  bgcolor: "#0A1C44",
+                  color: "white",
+                  boxShadow: 3,
+                  '&:hover': {
+                    bgcolor: '#152347'
+                  }
+                }}
+              >
+                <UploadFile />
+                <input type="file" hidden accept="image/*" onChange={handleFileChange} />
+              </IconButton>
+            )}
           </Box>
 
-          {/* 🔹 Formulário de Edição */}
           <TextField
             label="Nome"
             fullWidth
             value={name}
             onChange={(e) => setName(e.target.value)}
             disabled={!editing}
-            sx={{ mb: 2 }}
+            sx={{ 
+              mb: 2,
+              '& .MuiOutlinedInput-root': {
+                color: '#fff',
+                '& fieldset': {
+                  borderColor: 'rgba(255, 255, 255, 0.23)',
+                },
+              },
+              '& .MuiInputLabel-root': {
+                color: 'rgba(255, 255, 255, 0.7)',
+              },
+            }}
           />
+
           <TextField
             label="E-mail"
             fullWidth
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            disabled={!editing || user?.className !== "ADMIN" && user?.className !== "OWNER" }
-
-            sx={{ mb: 2 }}
+            disabled={!editing || (user?.className !== "ADMIN" && user?.className !== "OWNER")}
+            sx={{ 
+              mb: 2,
+              '& .MuiOutlinedInput-root': {
+                color: '#fff',
+                '& fieldset': {
+                  borderColor: 'rgba(255, 255, 255, 0.23)',
+                },
+              },
+              '& .MuiInputLabel-root': {
+                color: 'rgba(255, 255, 255, 0.7)',
+              },
+            }}
           />
+
           <TextField
             label="Biografia"
             fullWidth
@@ -185,23 +245,36 @@ const handleChangePassword = async () => {
             value={bio}
             onChange={(e) => setBio(e.target.value)}
             disabled={!editing}
-            sx={{ mb: 2 }}
+            sx={{ 
+              mb: 2,
+              '& .MuiOutlinedInput-root': {
+                color: '#fff',
+                '& fieldset': {
+                  borderColor: 'rgba(255, 255, 255, 0.23)',
+                },
+              },
+              '& .MuiInputLabel-root': {
+                color: 'rgba(255, 255, 255, 0.7)',
+              },
+            }}
           />
 
-          {/* 🔹 Botões de Ação */}
-          <Box sx={{ mt: 2,display:"flex",justifyContent:"center", flexDirection:"column" }}>
-            <Stack sx={{
-              spacing: 2,
-              width: "100%",
-              justifyContent: "space-between"
-            }} >
-            {editing && <Button
-        variant="contained"
-        color="primary"
-        onClick={() => setOpenPasswordModal(true)}
-      >
-        Alterar Senha
-      </Button>}
+          <Box sx={{ mt: 2, display: "flex", justifyContent: "center", flexDirection: "column", gap: 2 }}>
+            {editing && (
+              <Button
+                variant="contained"
+                onClick={() => setOpenPasswordModal(true)}
+                sx={{ 
+                  backgroundColor: '#0A1C44',
+                  '&:hover': {
+                    backgroundColor: '#152347'
+                  }
+                }}
+              >
+                Alterar Senha
+              </Button>
+            )}
+            
             {editing ? (
               <Button 
                 variant="contained" 
@@ -214,18 +287,33 @@ const handleChangePassword = async () => {
               </Button>
             ) : (
               <Button 
-                variant="text" 
-                color="primary"   
+                variant="contained" 
                 startIcon={<Edit />}
                 onClick={() => setEditing(true)}
-                // disabled={user?.className !== "ADMIN" && user?.className !== "OWNER" }
+                sx={{ 
+                  backgroundColor: '#0A1C44',
+                  '&:hover': {
+                    backgroundColor: '#152347'
+                  }
+                }}
               >
                 Editar Perfil
               </Button>
             )}
+          </Box>
+        </Paper>
+      </Fade>
 
-           </Stack>
-           <Dialog open={openPasswordModal} onClose={() => setOpenPasswordModal(false)}>
+      <Dialog 
+        open={openPasswordModal} 
+        onClose={() => setOpenPasswordModal(false)}
+        PaperProps={{
+          sx: {
+            backgroundColor: '#1F2A4C',
+            color: '#fff'
+          }
+        }}
+      >
         <DialogTitle>Alterar Senha</DialogTitle>
         <DialogContent>
           {passwordError && (
@@ -239,7 +327,19 @@ const handleChangePassword = async () => {
             fullWidth
             value={passwordData.currentPassword}
             onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
-            sx={{ mb: 2, mt: 2 }}
+            sx={{ 
+              mb: 2, 
+              mt: 2,
+              '& .MuiOutlinedInput-root': {
+                color: '#fff',
+                '& fieldset': {
+                  borderColor: 'rgba(255, 255, 255, 0.23)',
+                },
+              },
+              '& .MuiInputLabel-root': {
+                color: 'rgba(255, 255, 255, 0.7)',
+              },
+            }}
           />
           <TextField
             label="Nova Senha"
@@ -247,7 +347,18 @@ const handleChangePassword = async () => {
             fullWidth
             value={passwordData.newPassword}
             onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-            sx={{ mb: 2 }}
+            sx={{ 
+              mb: 2,
+              '& .MuiOutlinedInput-root': {
+                color: '#fff',
+                '& fieldset': {
+                  borderColor: 'rgba(255, 255, 255, 0.23)',
+                },
+              },
+              '& .MuiInputLabel-root': {
+                color: 'rgba(255, 255, 255, 0.7)',
+              },
+            }}
           />
           <TextField
             label="Confirmar Nova Senha"
@@ -255,39 +366,39 @@ const handleChangePassword = async () => {
             fullWidth
             value={passwordData.confirmPassword}
             onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
-            sx={{ mb: 2 }}
+            sx={{ 
+              mb: 2,
+              '& .MuiOutlinedInput-root': {
+                color: '#fff',
+                '& fieldset': {
+                  borderColor: 'rgba(255, 255, 255, 0.23)',
+                },
+              },
+              '& .MuiInputLabel-root': {
+                color: 'rgba(255, 255, 255, 0.7)',
+              },
+            }}
           />
         </DialogContent>
         <DialogActions>
-          <Button 
-            onClick={() => {
-              setOpenPasswordModal(false);
-              setPasswordData({
-                currentPassword: '',
-                newPassword: '',
-                confirmPassword: ''
-              });
-              setPasswordError(null);
-            }}
-          >
+          <Button onClick={() => setOpenPasswordModal(false)} sx={{ color: '#fff' }}>
             Cancelar
           </Button>
           <Button 
             onClick={handleChangePassword}
             variant="contained" 
-            color="primary"
             disabled={passwordLoading}
+            sx={{ 
+              backgroundColor: '#0A1C44',
+              '&:hover': {
+                backgroundColor: '#152347'
+              }
+            }}
           >
             {passwordLoading ? "Alterando..." : "Alterar Senha"}
           </Button>
         </DialogActions>
       </Dialog>
-            
-      
-            
-          </Box>
-        </Paper>
-      </Fade>
     </Box>
   );
 }
