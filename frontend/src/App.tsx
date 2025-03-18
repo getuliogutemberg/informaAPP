@@ -26,6 +26,7 @@ import { Key, useEffect, useState } from 'react';
 import DashPBI from './pages/DashPBI.tsx';
 import RequireRegister from './pages/RequireRegister.tsx';
 import { PaletteMode } from '@mui/material';
+import Teste from './pages/Teste.tsx';
 
 interface Configuration {
   notifications: boolean;
@@ -105,9 +106,10 @@ function App() {
             key={route._id}
             path={route.path}
             element={
-              <ProtectedRoute  >
+              <ProtectedRoute requiredCategory={route.requiredRole}   >
                 {route.component === "Dashboard Power BI" ? <DashPBI pageId={route.pageId} />:
                 route.component === "Gestão de Grupos e Materiais" ? <Estrategica /> :
+                route.component === "Teste" ? <Teste /> :
                  <></>
                 }
               </ProtectedRoute>

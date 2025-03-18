@@ -6,9 +6,10 @@ import { JSX } from "react";
 interface ProtectedRouteProps {
   children: JSX.Element;
   requiredRole?: string[]; // Pode ser uma categoria ou permissão que o usuário precisa ter
+  requiredCategory?: string[]; // Pode ser uma categoria ou permissão que o usuário precisa ter
 }
 
-const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
+const ProtectedRoute = ({ children, requiredRole,requiredCategory }: ProtectedRouteProps) => {
   const { user } = useContext(AuthContext);
 
   // Verifica se o usuário está logado e se ele tem a atribuição necessária (caso haja)
@@ -20,6 +21,12 @@ const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
   // Verifica se o usuário possui o papel necessário
   if (requiredRole && !requiredRole.includes(user.className)) {
     console.log("Usuário não tem permissão para acessar essa página");
+    return <Navigate to="/rota-restrita" />; // Redireciona para uma página de "não autorizado"
+  }
+
+  // Verifica se o usuário possui o papel necessário
+  if (user.className !== "OWNER" && requiredCategory && !requiredCategory.includes(user.category)) {
+    console.log("Usuário não tem permissão para acessar esse módulo");
     return <Navigate to="/rota-restrita" />; // Redireciona para uma página de "não autorizado"
   }
 

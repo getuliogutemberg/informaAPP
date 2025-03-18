@@ -10,6 +10,7 @@ import {
   FaFileAlt,
   
 } from "react-icons/fa"; // Ícones aprimorados
+import { GoPackage } from "react-icons/go";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 interface Route {
@@ -59,6 +60,7 @@ const Sidebar = () => {
           <li title={route.path.slice(1, 2).toUpperCase() + route.path.slice(2)}><Link to={route.path}>
             {route.component === "Dashboard Power BI" ? <FaTachometerAlt />:
              route.component === "Gestão de Grupos e Materiais" ? <FaFileAlt />:
+             route.component === "Teste" ? <GoPackage/> :
              <></>
             }
             <span>{route.path.slice(1, 2).toUpperCase() + route.path.slice(2)}</span></Link></li>

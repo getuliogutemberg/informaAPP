@@ -3,7 +3,10 @@ import {
   Typography, Button, Box, Table, TableBody, TableCell, 
   TableContainer, TableHead, TableRow, Paper, Dialog, 
   DialogActions, DialogContent, DialogTitle, TextField,
-  IconButton, Alert, CircularProgress, InputAdornment
+  IconButton, Alert, CircularProgress, InputAdornment,
+  MenuItem,
+  Select,
+  Chip
 } from "@mui/material";
 import { Add, Delete, Edit, Search } from "@mui/icons-material";
 import { motion } from "framer-motion";
@@ -18,6 +21,11 @@ interface Route {
   __v: number;
 }
 
+// Definindo as opções disponíveis
+const componentes = ["Dashboard Power BI", "Gestão de Grupos e Materiais", "Teste"];
+const categorias = ["Paraty", "Copel"];
+
+
 const RoutesEdit = () => {
   const [routes, setRoutes] = useState<Route[]>([]);
   const [open, setOpen] = useState(false);
@@ -29,8 +37,8 @@ const RoutesEdit = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [routeToDelete, setRouteToDelete] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<Route>>({
-    path: "",
-    component: "",
+    path: "/teste",
+    component: "Teste",
     requiredRole: [],
     pageId: ""
   });
@@ -74,6 +82,7 @@ const RoutesEdit = () => {
       const response = await axios.post("http://localhost:5000/routes", formData);
       setRoutes([...routes, response.data]);
       handleCloseCreateModal();
+      
     } catch (error) {
       if (axios.isAxiosError(error)) {
         setError(error.response?.data?.message || "Erro ao criar rota");
@@ -141,6 +150,8 @@ const RoutesEdit = () => {
     route.path.toLowerCase().includes(searchQuery.toLowerCase()) ||
     route.component.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  
 
   return (
     <Box sx={{ background: "rgba(16, 28, 68, 1)", width: 'calc(100vw - 120px)', height: "calc(100vh - 40px)", pl: "100px", pt: "130px", pr: "20px", display: "flex", flexDirection: "column", justifyContent: "start", alignItems: "center" }}>
@@ -224,30 +235,60 @@ const RoutesEdit = () => {
             onChange={(e) => setFormData({ ...formData, path: e.target.value })}
             sx={{ mb: 2, mt: 2 }}
           />
-          <TextField
-            label="Componente"
+          <Select
             fullWidth
             value={formData.component}
-            onChange={(e) => setFormData({ ...formData, component: e.target.value })}
+            onChange={(e) => {
+              const selectedComponent = e.target.value;
+              setFormData({ 
+                ...formData, 
+                component: selectedComponent,
+                pageId: selectedComponent === "Dashboard Power BI" ? (formData.pageId || "") : ""
+              });
+            }}
             sx={{ mb: 2 }}
-          />
-          <TextField
-            label="Autorização (separar por vírgulas)"
+          >
+            {componentes.map((option) => (
+              <MenuItem key={option} value={option}>
+                {option}
+              </MenuItem>
+            ))}
+          </Select>
+          {formData.component === "Dashboard Power BI" && (
+            <TextField
+              label="Page ID"
+              fullWidth
+              value={formData.pageId}
+              onChange={(e) => setFormData({ ...formData, pageId: e.target.value })}
+              sx={{ mb: 2 }}
+            />
+          )}
+          <Select
+            multiple
             fullWidth
-            value={formData.requiredRole?.join(", ")}
-            onChange={(e) => setFormData({ 
-              ...formData, 
-              requiredRole: e.target.value ? e.target.value.split(",").map(role => role.trim()) : [] 
-            })}
+            value={formData.requiredRole || []}
+            onChange={(e) => {
+              const value = e.target.value;
+              setFormData({ 
+                ...formData, 
+                requiredRole: typeof value === 'string' ? value.split(',') : value 
+              });
+            }}
+            renderValue={(selected) => (
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                {selected.map((value) => (
+                  <Chip key={value} label={value} />
+                ))}
+              </Box>
+            )}
             sx={{ mb: 2 }}
-          />
-          <TextField
-            label="Page ID"
-            fullWidth
-            value={formData.pageId}
-            onChange={(e) => setFormData({ ...formData, pageId: e.target.value })}
-            sx={{ mb: 2 }}
-          />
+          >
+            {categorias.map((categoria) => (
+              <MenuItem key={categoria} value={categoria}>
+                {categoria}
+              </MenuItem>
+            ))}
+          </Select>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseCreateModal}>Cancelar</Button>
@@ -270,30 +311,60 @@ const RoutesEdit = () => {
                 onChange={(e) => setSelectedRoute({ ...selectedRoute, path: e.target.value })}
                 sx={{ mb: 2, mt: 2 }}
               />
-              <TextField
-                label="Componente"
+              <Select
                 fullWidth
                 value={selectedRoute.component}
-                onChange={(e) => setSelectedRoute({ ...selectedRoute, component: e.target.value })}
+                onChange={(e) => {
+                  const selectedComponent = e.target.value;
+                  setSelectedRoute({ 
+                    ...selectedRoute, 
+                    component: selectedComponent,
+                    pageId: selectedComponent === "Dashboard Power BI" ? selectedRoute.pageId : ""
+                  });
+                }}
                 sx={{ mb: 2 }}
-              />
-              <TextField
-                label="Autorização (separar por vírgulas)"
+              >
+                {componentes.map((option) => (
+                  <MenuItem key={option} value={option}>
+                    {option}
+                  </MenuItem>
+                ))}
+              </Select>
+              {selectedRoute.component === "Dashboard Power BI" && (
+                <TextField
+                  label="Page ID"
+                  fullWidth
+                  value={selectedRoute.pageId}
+                  onChange={(e) => setSelectedRoute({ ...selectedRoute, pageId: e.target.value })}
+                  sx={{ mb: 2 }}
+                />
+              )}
+              <Select
+                multiple
                 fullWidth
-                value={selectedRoute.requiredRole ? selectedRoute.requiredRole.join(", ") : ""}
-                onChange={(e) => setSelectedRoute({
-                  ...selectedRoute,
-                  requiredRole: e.target.value ? e.target.value.split(",").map(role => role.trim()) : []
-                })}
+                value={selectedRoute.requiredRole || []}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setSelectedRoute({ 
+                    ...selectedRoute, 
+                    requiredRole: typeof value === 'string' ? value.split(',') : value 
+                  });
+                }}
+                renderValue={(selected) => (
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                    {selected.map((value) => (
+                      <Chip key={value} label={value} />
+                    ))}
+                  </Box>
+                )}
                 sx={{ mb: 2 }}
-              />
-              <TextField
-                label="Page ID"
-                fullWidth
-                value={selectedRoute.pageId}
-                onChange={(e) => setSelectedRoute({ ...selectedRoute, pageId: e.target.value })}
-                sx={{ mb: 2 }}
-              />
+              >
+                {categorias.map((categoria) => (
+                  <MenuItem key={categoria} value={categoria}>
+                    {categoria}
+                  </MenuItem>
+                ))}
+              </Select>
             </>
           )}
         </DialogContent>

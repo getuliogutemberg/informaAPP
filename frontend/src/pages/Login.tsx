@@ -71,7 +71,7 @@ export default function Login() {
 
   useEffect(() => {
     if (user && routes.length > 0) {
-      navigate(routes[0].path as string);
+      navigate(routes.filter(route => user.className !== 'OWNER' ? route.requiredRole?.includes(user.category): route)[0].path as string);
     }
   }, [user, navigate, routes]);
 

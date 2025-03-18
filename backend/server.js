@@ -513,6 +513,129 @@ app.get("/routes", async (req, res) => {
   }
 });
 
+// Rota POST para criar novas rotas
+app.post("/routes", async (req, res) => {
+  try {
+    const { path, component, requiredRole, pageId } = req.body;
+
+    // Validações básicas
+    if (!path || !component) {
+      return res.status(400).json({ 
+        message: "Path e component são campos obrigatórios" 
+      });
+    }
+
+    // Verifica se já existe uma rota com o mesmo path
+    const existingRoute = await Route.findOne({ path });
+    if (existingRoute) {
+      return res.status(400).json({ 
+        message: "Já existe uma rota com este path" 
+      });
+    }
+
+    // Cria a nova rota
+    const newRoute = new Route({
+      path,
+      component,
+      requiredRole: requiredRole || [], // Se não for fornecido, usa array vazio
+      pageId: pageId || "" // Se não for fornecido, usa string vazia
+    });
+
+    // Salva a nova rota no banco de dados
+    const savedRoute = await newRoute.save();
+
+    // Retorna a rota criada
+    res.status(201).json(savedRoute);
+
+  } catch (err) {
+    console.error("Erro ao criar rota:", err);
+    res.status(500).json({ 
+      message: "Erro ao criar rota", 
+      error: err.message 
+    });
+  }
+});
+
+// Rota PUT para atualizar rotas existentes
+app.put("/routes/:id", async (req, res) => {
+  try {
+    const { path, component, requiredRole, pageId } = req.body;
+    const routeId = req.params.id;
+
+    // Validações básicas
+    if (!path || !component) {
+      return res.status(400).json({ 
+        message: "Path e component são campos obrigatórios" 
+      });
+    }
+
+    // Verifica se existe uma rota com o mesmo path (exceto a própria rota)
+    const existingRoute = await Route.findOne({ 
+      path, 
+      _id: { $ne: routeId } 
+    });
+    
+    if (existingRoute) {
+      return res.status(400).json({ 
+        message: "Já existe outra rota com este path" 
+      });
+    }
+
+    // Atualiza a rota
+    const updatedRoute = await Route.findByIdAndUpdate(
+      routeId,
+      {
+        path,
+        component,
+        requiredRole: requiredRole || [],
+        pageId: pageId || ""
+      },
+      { new: true } // Retorna o documento atualizado
+    );
+
+    if (!updatedRoute) {
+      return res.status(404).json({ 
+        message: "Rota não encontrada" 
+      });
+    }
+
+    res.json(updatedRoute);
+
+  } catch (err) {
+    console.error("Erro ao atualizar rota:", err);
+    res.status(500).json({ 
+      message: "Erro ao atualizar rota", 
+      error: err.message 
+    });
+  }
+});
+
+// Rota DELETE para excluir rotas
+app.delete("/routes/:id", async (req, res) => {
+  try {
+    const routeId = req.params.id;
+    const deletedRoute = await Route.findByIdAndDelete(routeId);
+
+    if (!deletedRoute) {
+      return res.status(404).json({ 
+        message: "Rota não encontrada" 
+      });
+    }
+
+    res.json({ 
+      message: "Rota excluída com sucesso", 
+      route: deletedRoute 
+    });
+
+  } catch (err) {
+    console.error("Erro ao excluir rota:", err);
+    res.status(500).json({ 
+      message: "Erro ao excluir rota", 
+      error: err.message 
+    });
+  }
+});
+
 
 app.get("/getPBIToken/:pageId", async (req, res) => {
     const pageId = req.params.pageId;
