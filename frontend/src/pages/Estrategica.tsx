@@ -4,8 +4,6 @@ import { gruposMateriaisEolicos } from "../assets/gruposMateriaisEolicos";
 import { 
   Card, 
   Typography, 
- 
-  TextField, 
   Select, 
   MenuItem, 
   Table, 
@@ -14,10 +12,10 @@ import {
   TableRow, 
   TableCell, 
   Box, 
-  List, 
-  ListItem, 
-  ListItemText, 
-  Chip 
+  Grid,
+  Stack,
+  Button,
+  Chip
 } from "@mui/material";
 
 export default function TelaEstrategica() {
@@ -31,205 +29,202 @@ export default function TelaEstrategica() {
     <Box sx={{
       display: 'flex',
       flexDirection: 'column',
-      justifyContent: 'center',
       px: 2,
       ml: "80px",
-      background: "#0A1C44", // Cor de fundo mais suave
+      background: "#0A1C44",
       width: "calc(100vw - 110px)",
-      height: "calc(100vh - 70px)",
+      height: "calc(100vh - 60px)",
       mt: "60px",
-      pt: 3,
-      gap: 2
+      overflow: 'hidden',
     }}>
-      {/* Filtro e Informações */}
-      <Box sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        height: '45%',
-        gap: 2
-      }}>
-        {/* Filtro de Tipo */}
-        <Card sx={{
-          display: 'flex',
-          flexDirection: 'row',
-          p: 2,
-          gap: 2,
-          backgroundColor: '#1F2A4C', // Cor de fundo para card
-          
-          
-        }}>
-          <Typography variant="h6" align="left" sx={{ color: '#fff' }}>Filtro</Typography>
-          <Select 
-            fullWidth 
-            value={grupoSelecionado} 
-            onChange={(e) => setGrupoSelecionado(e.target.value)}
-            sx={{ backgroundColor: '#fff', borderRadius: '8px' }}
-          >
-            <MenuItem value="">Todos os Tipos</MenuItem>
-            {gruposMateriaisEolicos.map((grupo) => (
-              <MenuItem key={grupo.id} value={grupo.nome}>{grupo.nome}</MenuItem>
-            ))}
-          </Select>
-        </Card>
+      {/* <Box sx={{ pt: 3, pb: 2 }}>
+        <Typography variant="h4" sx={{ color: '#fff' }}>Estratégica</Typography>
+      </Box> */}
 
-        {/* Informações do Grupo */}
-        <Card sx={{
-          p: 2,
-          backgroundColor: '#1F2A4C',
-          overflow: 'auto'
-        }}>
-          <Typography variant="h6" align="left" sx={{ color: '#fff' }}>Informações do Tipo</Typography>
-          
-          {grupoSelecionado ? (
-            gruposMateriaisEolicos.map(grupo => grupo.nome === grupoSelecionado && (
-              <Box key={grupo.id} sx={{
-                display: "flex",
-                flexDirection: "row",
-                
-                gap: 2,
-                padding: 2,
-                
+      <Box sx={{ 
+        flex: 1,
+        overflow: 'auto',
+        '&::-webkit-scrollbar': {
+          width: '8px',
+          height: '8px',
+        },
+        '&::-webkit-scrollbar-track': {
+          background: 'rgba(0, 0, 0, 0.1)',
+          borderRadius: '4px',
+        },
+        '&::-webkit-scrollbar-thumb': {
+          background: 'rgba(255, 255, 255, 0.2)',
+          borderRadius: '4px',
+          '&:hover': {
+            background: 'rgba(255, 255, 255, 0.3)',
+          },
+        },
+      }}>
+        <Grid container spacing={2} sx={{ minHeight: '100%' }}>
+          {/* Coluna da Esquerda - Filtro e Info Geral */}
+          <Grid item xs={12} md={4}>
+            <Stack spacing={2}>
+              {/* Filtro Grupo */}
+              <Card sx={{
+                p: 2,
+                backgroundColor: '#1F2A4C',
               }}>
-               
-                  <Box sx={{
-                    flex: 1,
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 2,
-                  }} >
-                    
-                    <Typography variant="subtitle1" sx={{ color: '#fff' }}>Especificações:</Typography>
-                    <List>
-                      <ListItem sx={{color:'#fff'}}>
-                        <ListItemText 
-                          
-                          primary="Categorias" 
-                          secondary={grupo.especificacoes.categoriasDisponiveis.join(", ")} 
-                        />
-                      </ListItem>
-                      <ListItem sx={{color:'#fff'}}>
-                        <ListItemText 
-                        
-                          primary="Classificação de Risco" 
-                          secondary={grupo.especificacoes.classificacaoRisco.join(", ")} 
-                        />
-                      </ListItem>
-                      <ListItem sx={{color:'#fff'}}>
-                        <ListItemText 
-                          primary="Unidades de Medida" 
-                          secondary={grupo.especificacoes.unidadesMedida.join(", ")} 
-                        />
-                      </ListItem>
-                    </List>
+                <Typography variant="h6" sx={{ color: '#fff', mb: 2 }}>Filtro Grupo</Typography>
+                <Select 
+                  fullWidth 
+                  value={grupoSelecionado} 
+                  onChange={(e) => setGrupoSelecionado(e.target.value)}
+                  sx={{ backgroundColor: '#fff', borderRadius: '8px' }}
+                >
+                  <MenuItem value="">Todos os Grupos</MenuItem>
+                  {gruposMateriaisEolicos.map((grupo) => (
+                    <MenuItem key={grupo.id} value={grupo.nome}>{grupo.nome}</MenuItem>
+                  ))}
+                </Select>
+              </Card>
+
+              {/* Info Geral Grupo */}
+              <Card sx={{
+                p: 2,
+                backgroundColor: '#1F2A4C',
+                flex: 1,
+                overflow: 'auto'
+              }}>
+                <Typography variant="h6" sx={{ color: '#fff', mb: 2 }}>Info Geral Grupo</Typography>
+                {grupoSelecionado && (
+                  <Box>
+                    <Typography variant="subtitle1" sx={{ color: '#fff', mb: 1 }}>
+                      Grupo: {grupoSelecionado}
+                    </Typography>
+                    <Typography variant="subtitle2" sx={{ color: '#fff', opacity: 0.7, mb: 2 }}>
+                      ID: {gruposMateriaisEolicos.find(g => g.nome === grupoSelecionado)?.id}
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: '#fff', mb: 2 }}>
+                      Quantidade de Itens: {materiaisFiltrados.length}
+                    </Typography>
                   </Box>
-                
-                  <Box sx={{
-                    flex: 3,
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 2,
-                  }}>
-                    <TextField fullWidth  value={grupo.tipo}  margin="normal" sx={{ background: '#fff', color: '#000' }} />
-                    <TextField fullWidth  value={grupo.descricao}  margin="normal" multiline  sx={{ background: '#fff', color: '#000' }}  />
-                    
-                    
-                  </Box>
-              </Box>
-            ))
-          ) : (
-            <Table size="small" sx={{  }}>
-              <TableHead>
-                <TableRow sx={{ backgroundColor: '#0A1C44' }}>
-                  <TableCell sx={{ color: '#fff' }}>Tipo</TableCell>
-                  <TableCell sx={{ color: '#fff' }}>Descrição</TableCell>
-                  <TableCell sx={{ color: '#fff' }}>Itens</TableCell>
-                  <TableCell sx={{ color: '#fff' }}>Críticos</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {gruposMateriaisEolicos.map((grupo) => {
-                  const materiaisDoGrupo = materiaisEolicos.filter(m => m.grupo === grupo.nome);
-                  const materiaisCriticos = materiaisDoGrupo.filter(m => m.estoque <= m.estoqueMinimo);
-                  return (
-                    <TableRow key={grupo.id} sx={{ '&:hover': { backgroundColor: '#0A1C44' } }}>
-                      <TableCell sx={{ color: '#fff' }}>{grupo.tipo}</TableCell>
-                      <TableCell sx={{ color: '#fff' }}>{grupo.descricao}</TableCell>
-                      <TableCell sx={{ color: '#fff' }}>{materiaisDoGrupo.length}</TableCell>
-                      <TableCell>
+                )}
+              </Card>
+            </Stack>
+          </Grid>
+
+          {/* Coluna Central - Parâmetros do Grupo */}
+          <Grid item xs={12} md={4}>
+            <Card sx={{
+              p: 2,
+              backgroundColor: '#1F2A4C',
+              height: '100%',
+              overflow: 'auto',
+              '&::-webkit-scrollbar': {
+                width: '8px',
+              },
+              '&::-webkit-scrollbar-track': {
+                background: 'rgba(0, 0, 0, 0.1)',
+                borderRadius: '4px',
+              },
+              '&::-webkit-scrollbar-thumb': {
+                background: 'rgba(255, 255, 255, 0.2)',
+                borderRadius: '4px',
+                '&:hover': {
+                  background: 'rgba(255, 255, 255, 0.3)',
+                },
+              },
+            }}>
+              <Typography variant="h6" sx={{ color: '#fff', mb: 2 }}>Preenchimento Parâmetros Grupo</Typography>
+              {grupoSelecionado && (
+                <Table size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell sx={{ color: '#fff' }}>Código</TableCell>
+                      <TableCell sx={{ color: '#fff' }}>Unidade</TableCell>
+                      <TableCell sx={{ color: '#fff' }}>Classe</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {materiaisFiltrados.map((material) => (
+                      <TableRow key={material.id}>
+                        <TableCell sx={{ color: '#fff' }}>{material.codigoExterno}</TableCell>
+                        <TableCell sx={{ color: '#fff' }}>{material.unidadeMedida}</TableCell>
+                        <TableCell sx={{ color: '#fff' }}>{material.classeId}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </Card>
+          </Grid>
+
+          {/* Coluna da Direita - Edição Item a Item */}
+          <Grid item xs={12} md={4}>
+            <Card sx={{
+              p: 2,
+              backgroundColor: '#1F2A4C',
+              height: '100%',
+              overflow: 'auto',
+              '&::-webkit-scrollbar': {
+                width: '8px',
+              },
+              '&::-webkit-scrollbar-track': {
+                background: 'rgba(0, 0, 0, 0.1)',
+                borderRadius: '4px',
+              },
+              '&::-webkit-scrollbar-thumb': {
+                background: 'rgba(255, 255, 255, 0.2)',
+                borderRadius: '4px',
+                '&:hover': {
+                  background: 'rgba(255, 255, 255, 0.3)',
+                },
+              },
+            }}>
+              <Typography variant="h6" sx={{ color: '#fff', mb: 2 }}>Edição Parâmetro Item a Item</Typography>
+              <Table size="small">
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{ color: '#fff' }}>Item</TableCell>
+                    <TableCell sx={{ color: '#fff' }}>Número</TableCell>
+                    <TableCell sx={{ color: '#fff' }}>Ações</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {materiaisFiltrados.map((material) => (
+                    <TableRow key={material.id}>
+                      <TableCell sx={{ color: '#fff' }}>
+                        {material.nome}
                         <Chip 
-                          label={`${materiaisCriticos.length} críticos`}
-                          color={materiaisCriticos.length > 0 ? "error" : "success"}
+                          label={material.grupo}
                           size="small"
+                          sx={{ 
+                            ml: 1,
+                            backgroundColor: 'rgba(12, 114, 249, 0.2)',
+                            color: '#fff',
+                            borderColor: 'rgba(12, 114, 249, 1)'
+                          }}
+                          variant="outlined"
                         />
                       </TableCell>
+                      <TableCell sx={{ color: '#fff' }}>{material.numeroItem}</TableCell>
+                      <TableCell>
+                        <Button 
+                          variant="contained" 
+                          size="small"
+                          sx={{
+                            backgroundColor: 'rgba(12, 114, 249, 0.8)',
+                            '&:hover': {
+                              backgroundColor: 'rgba(12, 114, 249, 1)'
+                            }
+                          }}
+                        >
+                          Editar
+                        </Button>
+                      </TableCell>
                     </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          )}
-        </Card>
+                  ))}
+                </TableBody>
+              </Table>
+            </Card>
+          </Grid>
+        </Grid>
       </Box>
-
-      {/* Lista de Materiais */}
-      <Card sx={{
-        height: '46%',
-        p: 2,
-        backgroundColor: '#1F2A4C',
-       
-        overflow: 'auto'
-      }}>
-        <Typography variant="h6" align="left" sx={{ mb: 0, color: '#fff' }}>Materiais em Estoque</Typography>
-        <Table size="small" sx={{}}>
-          <TableHead>
-            <TableRow sx={{ backgroundColor: '#0A1C44' }}>
-              <TableCell sx={{ color: '#fff' }}>Código</TableCell>
-              <TableCell sx={{ color: '#fff' }}>Nome</TableCell>
-              <TableCell sx={{ color: '#fff' }}>Categoria</TableCell>
-              <TableCell sx={{ color: '#fff' }}>Risco</TableCell>
-              <TableCell sx={{ color: '#fff' }}>Un.</TableCell>
-              <TableCell sx={{ color: '#fff' }}>Estoque</TableCell>
-              <TableCell sx={{ color: '#fff' }}>Mínimo</TableCell>
-              <TableCell sx={{ color: '#fff' }}>Status</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {materiaisFiltrados.map((material) => (
-              <TableRow
-                key={material.id}
-                sx={{
-                  backgroundColor: material.estoque <= material.estoqueMinimo ? '#0A1C44' : 'inherit',
-                  '&:hover': { backgroundColor: '#0A1C44', color:"#000000"}
-                }}
-              >
-                <TableCell sx={{ color: '#fff' }}>{material.codigo}</TableCell>
-                <TableCell sx={{ color: '#fff' }}>{material.nome}</TableCell>
-                <TableCell sx={{ color: '#fff' }}>{material.categoria}</TableCell>
-                <TableCell sx={{ color: '#fff' }}>
-                  <Chip 
-                    label={material.classificacaoRisco}
-                    color={
-                      material.classificacaoRisco === "Alto" ? "error" :
-                      material.classificacaoRisco === "Médio" ? "warning" : "success"
-                    }
-                    size="small"
-                  />
-                </TableCell>
-                <TableCell sx={{ color: '#fff' }}>{material.unidadeMedida}</TableCell>
-                <TableCell sx={{ color: '#fff' }}>{material.estoque}</TableCell>
-                <TableCell sx={{ color: '#fff' }}>{material.estoqueMinimo}</TableCell>
-                <TableCell sx={{ color: '#fff' }}>
-                  {material.estoque <= material.estoqueMinimo ? (
-                    <Chip label="Estoque Crítico" color="error" size="small" />
-                  ) : (
-                    <Chip label="Normal" color="success" size="small" />
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Card>
     </Box>
   );
 }

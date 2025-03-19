@@ -199,9 +199,9 @@ export default function Login() {
 
             <Box component="form" onSubmit={settings ? handleLogin : ()=> {}}>
               <TextField
-                label="Usuário"
+                label="Email"
                 type="text"
-                variant="outlined"
+                 variant="filled"
                 fullWidth
                 sx={{
                   backgroundColor: "white",
@@ -215,7 +215,7 @@ export default function Login() {
               <TextField
                 label="Senha"
                 type="password"
-                variant="outlined"
+                variant="filled"
                 fullWidth
                 sx={{
                   backgroundColor: "white",
