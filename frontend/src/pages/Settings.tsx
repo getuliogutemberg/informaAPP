@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, Card, CardContent, Typography, FormControlLabel, Switch, TextField, Slider, Fade, FormControl, Select, MenuItem, InputLabel, Alert, Button, CircularProgress } from "@mui/material";
+import { Box, Card, CardContent, Typography, FormControlLabel, Switch, TextField, Fade, Alert, Button, CircularProgress ,Grid} from "@mui/material";
 import { motion } from "framer-motion";
 import { FaBell } from "react-icons/fa";
 import { createTheme, ThemeProvider, PaletteMode } from "@mui/material/styles";
@@ -128,6 +128,66 @@ export default function Settings() {
     }
   };
 
+  const renderSwitchSettings = (key: string, setting: boolean) => (
+    <Fade in timeout={500}>
+      <Box sx={{
+        width: 400,
+        minWidth: 300,
+        height: "fit-content",
+        transition: "transform 0.3s, box-shadow 0.3s",
+        "&:hover": {
+          transform: "scale(1.02)",
+          boxShadow: 6,
+        }
+      }}>
+        <Card sx={{ 
+          boxShadow: 3,
+          backgroundColor: '#1F2A4C',
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center"
+        }}>
+          <CardContent sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+            <Box sx={{
+              width: 56,
+              height: 56,
+              bgcolor: "#0A1C44",
+              color: "white",
+              borderRadius: "50%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              mb: 2,
+            }}>
+              <FaBell fontSize="large" />
+            </Box>
+
+            <Typography variant="h6" fontWeight="bold" sx={{ color: '#fff' }}>{key}</Typography>
+
+            <FormControlLabel
+              control={
+                <Switch 
+                  checked={setting} 
+                  onChange={(e) => handleSettingChange(key as keyof Configuration, e.target.checked)}
+                  sx={{
+                    '& .MuiSwitch-switchBase.Mui-checked': {
+                      color: 'rgba(12, 114, 249, 1)',
+                    },
+                    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                      backgroundColor: 'rgba(12, 114, 249, 0.5)',
+                    },
+                  }}
+                />
+              }
+              label={setting ? "Ativado" : "Desativado"}
+              sx={{ mt: 2, color: '#fff' }}
+            />
+          </CardContent>
+        </Card>
+      </Box>
+    </Fade>
+  );
+
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ 
@@ -184,172 +244,77 @@ export default function Settings() {
               overflow: "auto",
               height: "calc(100vh - 235px)"
             }}>
-              {Object.keys(settings).map((key, index) => {
-                const setting = settings[key as keyof Configuration];
-                return (
-                  <Fade in key={index} timeout={500}>
-                    <Box sx={{
-                      width: 400,
-                      minWidth: 300,
-                      height: "fit-content",
-                      transition: "transform 0.3s, box-shadow 0.3s",
-                      "&:hover": {
-                        transform: "scale(1.02)",
-                        boxShadow: 6,
-                      }
-                    }}>
-                      <Card sx={{ 
-                        boxShadow: 3,
-                        backgroundColor: '#1F2A4C',
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "center"
-                      }}>
-                        <CardContent sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-                          <Box sx={{
-                            width: 56,
-                            height: 56,
-                            bgcolor: "#0A1C44",
-                            color: "white",
-                            borderRadius: "50%",
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            mb: 2,
-                          }}>
-                            <FaBell fontSize="large" />
-                          </Box>
+              {/* PowerBI Settings Card */}
+              <Fade in timeout={500}>
+                <Box sx={{ width: '100%', maxWidth: 800 }}>
+                  <Card sx={{ 
+                    boxShadow: 3,
+                    backgroundColor: '#1F2A4C',
+                    p: 3
+                  }}>
+                    <Typography variant="h5" sx={{ color: '#fff', mb: 3 }}>Configurações do Power BI</Typography>
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} md={6}>
+                        <TextField
+                          fullWidth
+                          label="Client ID"
+                          value={settings.pbiKeys.clientId}
+                          onChange={(e) => handleSettingChange('pbiKeys', { clientId: e.target.value })}
+                          variant="filled"
+                          sx={{ background: "#fff", mb: 2 }}
+                        />
+                      </Grid>
+                      <Grid item xs={12} md={6}>
+                        <TextField
+                          fullWidth
+                          label="Client Secret"
+                          value={settings.pbiKeys.clientSecret}
+                          onChange={(e) => handleSettingChange('pbiKeys', { clientSecret: e.target.value })}
+                          variant="filled"
+                          sx={{ background: "#fff", mb: 2 }}
+                        />
+                      </Grid>
+                      <Grid item xs={12}>
+                        <TextField
+                          fullWidth
+                          label="Authority"
+                          value={settings.pbiKeys.authority}
+                          onChange={(e) => handleSettingChange('pbiKeys', { authority: e.target.value })}
+                          variant="filled"
+                          sx={{ background: "#fff", mb: 2 }}
+                        />
+                      </Grid>
+                      <Grid item xs={12} md={6}>
+                        <TextField
+                          fullWidth
+                          label="Workspace ID"
+                          value={settings.pbiKeys.workspaceId}
+                          onChange={(e) => handleSettingChange('pbiKeys', { workspaceId: e.target.value })}
+                          variant="filled"
+                          sx={{ background: "#fff", mb: 2 }}
+                        />
+                      </Grid>
+                      <Grid item xs={12} md={6}>
+                        <TextField
+                          fullWidth
+                          label="Report ID"
+                          value={settings.pbiKeys.reportId}
+                          onChange={(e) => handleSettingChange('pbiKeys', { reportId: e.target.value })}
+                          variant="filled"
+                          sx={{ background: "#fff" }}
+                        />
+                      </Grid>
+                    </Grid>
+                  </Card>
+                </Box>
+              </Fade>
 
-                          <Typography variant="h6" fontWeight="bold" sx={{ color: '#fff' }}>{key}</Typography>
-
-                          {typeof setting === "boolean" ? (
-                            <FormControlLabel
-                              control={
-                                <Switch 
-                                  checked={setting} 
-                                  onChange={(e) => handleSettingChange(key as keyof Configuration, e.target.checked)}
-                                  sx={{
-                                    '& .MuiSwitch-switchBase.Mui-checked': {
-                                      color: 'rgba(12, 114, 249, 1)',
-                                    },
-                                    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-                                      backgroundColor: 'rgba(12, 114, 249, 0.5)',
-                                    },
-                                  }}
-                                />
-                              }
-                              label={setting ? "Ativado" : "Desativado"}
-                              sx={{ mt: 2, color: '#fff' }}
-                            />
-                          ) : typeof setting === "string" && key === "fontFamily" ? (
-                            <FormControl sx={{ mt: 2, minWidth: 200 }}>
-                              <InputLabel sx={{ color: '#fff' }}>Fonte</InputLabel>
-                              <Select
-                                value={setting}
-                                onChange={(e) => handleSettingChange(key as keyof Configuration, e.target.value)}
-                                label="Fonte"
-                                variant="filled"
-                                sx={{ background: "#fff" }}
-                              >
-                                <MenuItem value="Arial">Arial</MenuItem>
-                                <MenuItem value="Verdana">Verdana</MenuItem>
-                                <MenuItem value="Times New Roman">Times New Roman</MenuItem>
-                                <MenuItem value="Courier New">Courier New</MenuItem>
-                                <MenuItem value="Tahoma">Tahoma</MenuItem>
-                              </Select>
-                            </FormControl>
-                          ) : typeof setting === "string" && key === "pageTitle" ? (
-                            <TextField
-                              value={setting}
-                              onChange={(e) => handleSettingChange(key as keyof Configuration, e.target.value)}
-                              label="Título da Página"
-                              variant="filled"
-                              sx={{ mt: 2, background: "#fff" }}
-                            />
-                          ) : typeof setting === "number" ? (
-                            <Slider
-                              value={setting}
-                              onChange={(_, value: number | number[]) => handleSettingChange(key as keyof Configuration, typeof value === 'number' ? value : value[0])}
-                              min={0}
-                              max={360}
-                              sx={{ 
-                                width: 200, 
-                                mt: 2,
-                                color: 'rgba(12, 114, 249, 1)',
-                                '& .MuiSlider-thumb': {
-                                  backgroundColor: '#fff',
-                                },
-                                '& .MuiSlider-track': {
-                                  backgroundColor: 'rgba(12, 114, 249, 1)',
-                                },
-                                '& .MuiSlider-rail': {
-                                  backgroundColor: 'rgba(255, 255, 255, 0.3)',
-                                },
-                              }}
-                            />
-                          ) : key === "pbiKeys" && typeof setting !== "string" ? (
-                            <Card sx={{ 
-                              mt: 2, 
-                              p: 2, 
-                              width: 300,
-                              backgroundColor: '#0A1C44'
-                            }}>
-                              <CardContent>
-                                <Typography variant="h6" sx={{ color: '#fff' }}>Credenciais do PowerBI</Typography>
-                                <TextField
-                                  fullWidth
-                                  label="Client ID"
-                                  value={setting.clientId}
-                                  onChange={(e) => handleSettingChange('pbiKeys', { clientId: e.target.value })}
-                                  margin="dense"
-                                  variant="filled"
-                                  sx={{ background: "#fff" }}
-                                />
-                                <TextField
-                                  fullWidth
-                                  label="Client Secret"
-                                  type="text"
-                                  value={setting.clientSecret}
-                                  onChange={(e) => handleSettingChange('pbiKeys', { clientSecret: e.target.value })}
-                                  margin="dense"
-                                  variant="filled"
-                                  sx={{ background: "#fff" }}
-                                />
-                                <TextField
-                                  fullWidth
-                                  label="Authority"
-                                  value={setting.authority}
-                                  onChange={(e) => handleSettingChange('pbiKeys', { authority: e.target.value })}
-                                  margin="dense"
-                                  variant="filled"
-                                  sx={{ background: "#fff" }}
-                                />
-                                <TextField
-                                  fullWidth
-                                  label="Workspace ID"
-                                  value={setting.workspaceId}
-                                  onChange={(e) => handleSettingChange('pbiKeys', { workspaceId: e.target.value })}
-                                  margin="dense"
-                                  variant="filled"
-                                  sx={{ background: "#fff" }}
-                                />
-                                <TextField
-                                  fullWidth
-                                  label="Report ID"
-                                  value={setting.reportId}
-                                  onChange={(e) => handleSettingChange('pbiKeys', { reportId: e.target.value })}
-                                  margin="dense"
-                                  variant="filled"
-                                  sx={{ background: "#fff" }}
-                                />
-                              </CardContent>
-                            </Card>
-                          ) : null}
-                        </CardContent>
-                      </Card>
-                    </Box>
-                  </Fade>
-                );
+              {/* Switch Settings */}
+              {Object.entries(settings).map(([key, value]) => {
+                if (key !== 'pbiKeys' && typeof value === 'boolean') {
+                  return renderSwitchSettings(key, value);
+                }
+                return null;
               })}
             </Box>
             <Button

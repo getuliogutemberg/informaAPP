@@ -30,8 +30,12 @@ const PowerBIReport: React.FC<ReportDetails> = ({ embedUrl, accessToken, pageId 
           pageNavigation: { visible: false },
         },
         navContentPaneEnabled: false,
-       
-        // background: models.BackgroundType.Transparent, 
+        background: models.BackgroundType.Default, // Adiciona background transparente
+        layoutType: models.LayoutType.Custom, // Permite layout customizado
+        customLayout: { // Ajusta o layout para remover margens
+          displayOption: models.DisplayOption.FitToWidth,
+        },
+         
       },
     };
 
@@ -81,28 +85,23 @@ const PowerBIReport: React.FC<ReportDetails> = ({ embedUrl, accessToken, pageId 
   }, [accessToken, embedUrl, pageId]); // **Agora depende corretamente do pageId**
 
   return <div 
-  style={{
-    width: "calc(100vw - 80px)", 
-    height: "100vh", // Garante que ocupe toda a tela
-    display: 'flex', 
-    flexDirection: 'column', 
-    justifyContent: 'start', // Centraliza verticalmente
-    alignItems: 'center' // Centraliza horizontalmente
-  }}
->
-  <div 
     style={{
-      marginTop: "30px",
-      aspectRatio: '16/9', 
-      maxHeight: "calc(87.9vh)", 
-      maxWidth: "calc(77vw)", 
-      width: "100%", // Garante responsividade
+      // marginTop: "0px",
+      // padding:"0",
+     
+      // aspectRatio: '159/91', 
+      // background: 'red',
+      height: "calc(100vh - 40px)", 
+      width:'100%',
+      maxWidth: "calc(100vw - 40px)", 
+    scale: 1,
+    // zoom: 1.05,
+      // width: "100%", // Garante responsividade
       position: 'relative', 
-      scale:1.05
     }} 
     id={`powerbi-container-${pageId}`} 
   />
-</div>
+
 };
 
 interface DashboardPBIPageProps {
@@ -138,28 +137,30 @@ const DashboardPBI: React.FC<DashboardPBIPageProps> = ({ pageId }) => {
       className="powerbi-container"
       style={{
         position: 'fixed',
-        top: '60px',
-        right: '0px',
-        bottom: '0px',
-        left: '70px',
-        border:"none",
-        width: 'calc(100vw - 79px)',
-        // height: 'calc(100vh)',
+        top: '30px',
+        // right: '10px',
+        // bottom: '0px',
+        left: '60px',
+        // border:"none",
+        width: 'calc(100vw - 0px)',
+        height: 'calc(100% - 0px)',
         backgroundColor: '#101C44',
         display: 'flex',
-        justifyContent: 'flex-start',
-        alignItems: 'flex-start',
-        padding:'10px'
+        justifyContent: 'center',
+        alignItems: 'center',
+        margin: '0px',
+        padding:'0px'
       }}
     >
       {reportDetails ? 
-        <div style={{ background:'transparent'}}>
+        
         <PowerBIReport
+          
           key={reportDetails.pageId} // **Força a recriação do componente ao mudar**
           embedUrl={reportDetails.embedUrl}
           accessToken={reportDetails.accessToken}
           pageId={reportDetails.pageId}
-        /></div>
+        />
       : errorMessage ? <p style={{ display: "flex", background:"rgba(49, 131, 207, 0)",width:'100%',justifyContent:"center"}}>{errorMessage}</p> : 
         <p style={{ display: "flex", background:"rgba(49, 131, 207, 0)",width:'100%',justifyContent:"center"}}>Carregando relatório...</p>
       }
