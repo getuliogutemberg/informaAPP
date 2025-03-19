@@ -280,7 +280,16 @@ const RoutesEdit = () => {
       </TableContainer>
 
       {/* Modal de Criação */}
-      <Dialog open={openCreateModal} onClose={handleCloseCreateModal}>
+      <Dialog 
+        open={openCreateModal} 
+        onClose={handleCloseCreateModal}
+        PaperProps={{
+          sx: {
+            backgroundColor: 'rgba(33, 42, 74, 1)',
+            color: '#fff'
+          }
+        }}
+      >
         <DialogTitle>Criar Novo Módulo</DialogTitle>
         <DialogContent>
           <TextField
@@ -288,11 +297,13 @@ const RoutesEdit = () => {
             fullWidth
             value={formData.path}
             onChange={(e) => setFormData({ ...formData, path: e.target.value })}
-            sx={{ mb: 2, mt: 2 }}
+            variant="filled"
+            sx={{ mb: 2, mt: 2, background: "#fff" }}
           />
           <Select
             fullWidth
             value={formData.component}
+            variant="outlined"
             onChange={(e) => {
               const selectedComponent = e.target.value;
               setFormData({ 
@@ -301,7 +312,7 @@ const RoutesEdit = () => {
                 pageId: selectedComponent === "Dashboard Power BI" ? (formData.pageId || "") : ""
               });
             }}
-            sx={{ mb: 2 }}
+            sx={{ mb: 2, background: "#fff" }}
           >
             {componentes.map((option) => (
               <MenuItem key={option} value={option}>
@@ -313,14 +324,16 @@ const RoutesEdit = () => {
             <TextField
               label="Page ID"
               fullWidth
+              variant="filled"
               value={formData.pageId}
               onChange={(e) => setFormData({ ...formData, pageId: e.target.value })}
-              sx={{ mb: 2 }}
+              sx={{ mb: 2, background: "#fff" }}
             />
           )}
           <Select
             multiple
             fullWidth
+            variant="outlined"
             value={formData.requiredRole || []}
             onChange={(e) => {
               const value = e.target.value;
@@ -336,7 +349,7 @@ const RoutesEdit = () => {
                 ))}
               </Box>
             )}
-            sx={{ mb: 2 }}
+            sx={{ mb: 2, background: "#fff" }}
           >
             {categorias.map((categoria) => (
               <MenuItem key={categoria} value={categoria}>
@@ -346,15 +359,24 @@ const RoutesEdit = () => {
           </Select>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseCreateModal}>Cancelar</Button>
-          <Button onClick={handleCreateRoute} disabled={loading}>
+          <Button onClick={handleCloseCreateModal} color="secondary">Cancelar</Button>
+          <Button onClick={handleCreateRoute} disabled={loading} sx={{ color: "#fff" }}>
             {loading ? <CircularProgress size={24} /> : "Criar"}
           </Button>
         </DialogActions>
       </Dialog>
 
       {/* Modal de Edição */}
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog 
+        open={open} 
+        onClose={handleClose}
+        PaperProps={{
+          sx: {
+            backgroundColor: 'rgba(33, 42, 74, 1)',
+            color: '#fff'
+          }
+        }}
+      >
         <DialogTitle>Editar Módulo</DialogTitle>
         <DialogContent>
           {selectedRoute && (
@@ -362,12 +384,14 @@ const RoutesEdit = () => {
               <TextField
                 label="Caminho"
                 fullWidth
+                variant="filled"
                 value={selectedRoute.path}
                 onChange={(e) => setSelectedRoute({ ...selectedRoute, path: e.target.value })}
-                sx={{ mb: 2, mt: 2 }}
+                sx={{ mb: 2, mt: 2, background: "#fff" }}
               />
               <Select
                 fullWidth
+                variant="outlined"
                 value={selectedRoute.component}
                 onChange={(e) => {
                   const selectedComponent = e.target.value;
@@ -377,7 +401,7 @@ const RoutesEdit = () => {
                     pageId: selectedComponent === "Dashboard Power BI" ? selectedRoute.pageId : ""
                   });
                 }}
-                sx={{ mb: 2 }}
+                sx={{ mb: 2, background: "#fff" }}
               >
                 {componentes.map((option) => (
                   <MenuItem key={option} value={option}>
@@ -389,14 +413,16 @@ const RoutesEdit = () => {
                 <TextField
                   label="Page ID"
                   fullWidth
+                  variant="filled"
                   value={selectedRoute.pageId}
                   onChange={(e) => setSelectedRoute({ ...selectedRoute, pageId: e.target.value })}
-                  sx={{ mb: 2 }}
+                  sx={{ mb: 2, background: "#fff" }}
                 />
               )}
               <Select
                 multiple
                 fullWidth
+                variant="outlined"
                 value={selectedRoute.requiredRole || []}
                 onChange={(e) => {
                   const value = e.target.value;
@@ -412,7 +438,7 @@ const RoutesEdit = () => {
                     ))}
                   </Box>
                 )}
-                sx={{ mb: 2 }}
+                sx={{ mb: 2, background: "#fff" }}
               >
                 {categorias.map((categoria) => (
                   <MenuItem key={categoria} value={categoria}>
@@ -424,21 +450,30 @@ const RoutesEdit = () => {
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancelar</Button>
-          <Button onClick={handleSave} disabled={loading}>
+          <Button onClick={handleClose}  color="secondary">Cancelar</Button>
+          <Button onClick={handleSave} disabled={loading} sx={{ color: "#fff" }}>
             {loading ? <CircularProgress size={24} /> : "Salvar"}
           </Button>
         </DialogActions>
       </Dialog>
 
       {/* Modal de Confirmação de Deleção */}
-      <Dialog open={deleteDialogOpen} onClose={handleCloseDeleteDialog}>
+      <Dialog 
+        open={deleteDialogOpen} 
+        onClose={handleCloseDeleteDialog}
+        PaperProps={{
+          sx: {
+            backgroundColor: 'rgba(33, 42, 74, 1)',
+            color: '#fff'
+          }
+        }}
+      >
         <DialogTitle>Confirmar Exclusão</DialogTitle>
         <DialogContent>
           <Typography>Tem certeza de que deseja excluir este módulo?</Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDeleteDialog}>Cancelar</Button>
+          <Button onClick={handleCloseDeleteDialog} color="secondary">Cancelar</Button>
           <Button onClick={handleDeleteRoute} color="error" disabled={loading}>
             {loading ? <CircularProgress size={24} /> : "Excluir"}
           </Button>

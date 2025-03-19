@@ -1,5 +1,5 @@
 import { useCallback, useContext, useEffect, useState } from "react";
-import { Typography, Button, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Dialog, DialogActions, DialogContent, DialogTitle, TextField, CircularProgress, Alert, IconButton, Checkbox, FormControlLabel, InputAdornment, Avatar } from "@mui/material";
+import { Typography, Button, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Dialog, DialogActions, DialogContent, DialogTitle, TextField, CircularProgress, Alert, IconButton, FormControlLabel, InputAdornment, Avatar, Switch, Select, MenuItem } from "@mui/material";
 import { Add, CheckCircle, Close, Delete, Edit, Search  } from "@mui/icons-material";
 import { motion } from "framer-motion";
 import SwapVertIcon from '@mui/icons-material/SwapVert';
@@ -41,7 +41,11 @@ const Users = () => {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc"); // Estado para controle da ordem de ordenação
   const { user  } = useContext(AuthContext);
   const isOwner = user?.className === "OWNER";
-  const [formData, setFormData] = useState<Partial<User>>({ name: "", email: "", password: "", category: "" , className: "CLIENT" });
+  const [formData, setFormData] = useState<Partial<User>>({ name: "", email: "", password: "", category: user?.category , className: "CLIENT" });
+  const defaultClasses = ["CLIENT", "ADMIN", "OWNER"];
+  const [newClass, setNewClass] = useState("");
+  const [isAddingNewClass, setIsAddingNewClass] = useState(false);
+
   const fetchUsers = useCallback(async () => {
     try {
       
@@ -69,13 +73,13 @@ const Users = () => {
   const handleOpenCreateModal = () => setOpenCreateModal(true);
   const handleCloseCreateModal = () => {
     setOpenCreateModal(false);
-    setFormData({ name: "", email: "", password: "", category: "" });
+    setFormData({ name: "", email: "", password: "", category: "",isActive: user?.className === "OWNER" ? false : true , className: "CLIENT" });
   };
 
   const handleCreateUser = async () => {
     setLoading(true);
     try {
-      await axios.post("http://localhost:5000/users", { ...formData });
+      await axios.post("http://localhost:5000/users", formData);
       fetchUsers();
       handleCloseCreateModal();
     } catch (err) {
@@ -344,7 +348,7 @@ const Users = () => {
       {/* Modal de Confirmação de Deleção */}
       <Dialog open={deleteDialogOpen} onClose={handleCloseDeleteDialog} PaperProps={{
           sx: {
-            backgroundColor: '#1F2A4C',
+            backgroundColor: 'rgba(33, 42, 74, 1)',
             color: '#fff'
           }
         }}>
@@ -361,7 +365,7 @@ const Users = () => {
       {/* Modal de Edição */}
       <Dialog open={open} onClose={handleClose} PaperProps={{
           sx: {
-            backgroundColor: '#1F2A4C',
+            backgroundColor: 'rgba(33, 42, 74, 1)',
             color: '#fff'
           }
         }}>
@@ -369,37 +373,88 @@ const Users = () => {
         <DialogContent>
           {selectedUser && (
             <>
-              <TextField label="Nome" fullWidth value={editData.name} onChange={(e) => setEditData({ ...editData, name: e.target.value })} sx={{ mb: 2 ,mt:2}} />
-              <TextField label="Email" fullWidth value={editData.email} onChange={(e) => setEditData({ ...editData, email: e.target.value })} sx={{ mb: 2 }} />
-              <TextField label="Status" fullWidth value={editData.status} onChange={(e) => setEditData({ ...editData, status: e.target.value })} sx={{ mb: 2 }} />
-              {isOwner && <TextField label="Categoria" fullWidth value={editData.category} onChange={(e) => setEditData({ ...editData, category: e.target.value })} sx={{ mb: 2 }} />}
-              <TextField label="Classe" fullWidth value={editData.className} onChange={(e) => setEditData({ ...editData, className: e.target.value })} sx={{ mb: 2 }} />
-              <FormControlLabel control={<Checkbox checked={editData?.isActive || false} onChange={(e) => setEditData({ ...editData, isActive: e.target.checked })} />} label="Ativo" sx={{ mb: 2 }} />
+              <TextField label="Nome" fullWidth variant="filled" value={editData.name} onChange={(e) => setEditData({ ...editData, name: e.target.value })} sx={{ mb: 2 ,mt:2,background:"#fff"}} />
+              <TextField label="Email" fullWidth variant="filled" value={editData.email} onChange={(e) => setEditData({ ...editData, email: e.target.value })} sx={{ mb: 2 ,background:"#fff"}} />
+              <TextField label="Status" fullWidth variant="filled" value={editData.status} onChange={(e) => setEditData({ ...editData, status: e.target.value })} sx={{ mb: 2 ,background:"#fff"}} />
+              {isOwner && <TextField label="Categoria" variant="filled"fullWidth value={editData.category} onChange={(e) => setEditData({ ...editData, category: e.target.value })} sx={{ mb: 2,background:"#fff" }} />}
+              {isOwner ? (
+                <>
+                  <Select
+                    label="Classe"
+                    fullWidth
+                    variant="filled"
+                    value={isAddingNewClass ? "custom" : editData.className}
+                    onChange={(e) => {
+                      if (e.target.value === "custom") {
+                        setIsAddingNewClass(true);
+                      } else {
+                        setIsAddingNewClass(false);
+                        setEditData({ ...editData, className: e.target.value });
+                      }
+                    }}
+                    sx={{ mb: isAddingNewClass ? 1 : 2, background: "#fff" }}
+                  >
+                    {defaultClasses.map((className) => (
+                      <MenuItem key={className} value={className}>
+                        {className}
+                      </MenuItem>
+                    ))}
+                    <MenuItem value="custom">Criar Nova Classe</MenuItem>
+                  </Select>
+                  
+                  {isAddingNewClass && (
+                    <TextField
+                      label="Nova Classe"
+                      variant="filled"
+                      fullWidth
+                      value={newClass}
+                      onChange={(e) => {
+                        setNewClass(e.target.value);
+                        setEditData({ ...editData, className: e.target.value });
+                      }}
+                      sx={{ mb: 2, background: "#fff" }}
+                    />
+                  )}
+                </>
+              ) : (
+                <Select
+                  
+                  fullWidth
+                  variant="outlined"
+                  value={editData.className}
+                  onChange={(e) => setEditData({ ...editData, className: e.target.value })}
+                  sx={{ mb: 2, background: "#fff" }}
+                >
+                  <MenuItem value="CLIENT">CLIENT</MenuItem>
+                  <MenuItem value="ADMIN">ADMIN</MenuItem>
+                </Select>
+              )}
+              <FormControlLabel  control={<Switch checked={editData?.isActive} defaultChecked color="info" onChange={(e) => setEditData({ ...editData, isActive: e.target.checked })} /> } label={editData?.isActive ? "Ativo" : "Desativado"} sx={{ mb: 2 ,color:"#fff" }} />
             </>
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancelar</Button>
-          <Button onClick={handleSave} color="primary">Salvar</Button>
+          <Button onClick={handleClose}  color="secondary">Cancelar</Button>
+          <Button onClick={handleSave} sx={{color:"#fff"}}>Salvar</Button>
         </DialogActions>
       </Dialog>
 
       {/* Modal de Criação */}
       <Dialog open={openCreateModal} onClose={handleCloseCreateModal} PaperProps={{
           sx: {
-            backgroundColor: '#1F2A4C',
+            backgroundColor: 'rgba(33, 42, 74, 1)',
             color: '#fff'
           }
         }}>
         <DialogTitle>Criar Novo Usuário</DialogTitle>
         <DialogContent>
-          <TextField label="Nome" fullWidth value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} sx={{ mb: 2 ,mt:2}} />
-          <TextField label="Email" fullWidth value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} sx={{ mb: 2 }} />
-          <TextField label="Senha" fullWidth type="password" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} sx={{ mb: 2 }} />
+          <TextField label="Nome" fullWidth variant="filled"  value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} sx={{ mb: 2 ,mt:2,background:"#fff"}} />
+          <TextField label="Email" fullWidth variant="filled"  value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} sx={{ mb: 2,background:"#fff" }} />
+          <TextField label="Senha" fullWidth variant="filled"  type="password" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} sx={{ mb: 2,background:"#fff" }} />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseCreateModal} color="secondary">Cancelar</Button>
-          <Button onClick={handleCreateUser} color="primary" disabled={loading}>{loading ? <CircularProgress size={24} /> : 'Criar'}</Button>
+          <Button onClick={handleCreateUser} sx={{color:"#fff"}} disabled={loading}>{loading ? <CircularProgress size={24} /> : 'Criar'}</Button>
         </DialogActions>
       </Dialog>
 

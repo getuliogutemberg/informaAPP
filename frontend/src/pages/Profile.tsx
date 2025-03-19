@@ -11,7 +11,7 @@ import { Edit, Save, UploadFile } from "@mui/icons-material";
 
 import { motion } from "framer-motion";
 import { AuthContext } from "../context/AuthContext"; // Importe o AuthContext
-import { Stack } from "@mui/system";
+
 import axios from "axios";
 
 export default function Profile() {
@@ -201,10 +201,12 @@ const handleChangePassword = async () => {
             label="Nome"
             fullWidth
             value={name}
+            variant="filled"
             onChange={(e) => setName(e.target.value)}
             disabled={!editing}
             sx={{ 
               mb: 2,
+              background:"#fff",
               '& .MuiOutlinedInput-root': {
                 color: '#fff',
                 '& fieldset': {
@@ -220,11 +222,13 @@ const handleChangePassword = async () => {
           <TextField
             label="E-mail"
             fullWidth
+            variant="filled"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={!editing || (user?.className !== "ADMIN" && user?.className !== "OWNER")}
             sx={{ 
               mb: 2,
+              background:"#fff",
               '& .MuiOutlinedInput-root': {
                 color: '#fff',
                 '& fieldset': {
@@ -238,7 +242,7 @@ const handleChangePassword = async () => {
           />
 
           <TextField
-            label="Biografia"
+            placeholder="Biografia"
             fullWidth
             multiline
             rows={3}
@@ -247,14 +251,16 @@ const handleChangePassword = async () => {
             disabled={!editing}
             sx={{ 
               mb: 2,
+              background:"#fff",
+              color:"#000",
               '& .MuiOutlinedInput-root': {
-                color: '#fff',
+                
                 '& fieldset': {
-                  borderColor: 'rgba(255, 255, 255, 0.23)',
+                  borderColor: 'rgba(0, 0, 0, 1)',
                 },
               },
               '& .MuiInputLabel-root': {
-                color: 'rgba(255, 255, 255, 0.7)',
+                color: '#000',
               },
             }}
           />

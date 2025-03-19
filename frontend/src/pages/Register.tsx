@@ -59,12 +59,14 @@ export default function Register() {
   const navigate = useNavigate();
 
   const [categories, setCategories] = useState([
-    "Operador de Máquina",
-    "Técnico de Manutenção",
-    "Supervisor de Produção",
-    "Engenheiro de Processos",
-    "Gerente Industrial",
-    "Diretor de Operações"
+    // "Operador de Máquina",
+    // "Técnico de Manutenção",
+    // "Supervisor de Produção",
+    // "Engenheiro de Processos",
+    // "Gerente Industrial",
+    // "Diretor de Operações"
+    //...adicionar mais categorias
+    "Paraty"
   ]);
 
   const [secretKeys, setSecretKeys] = useState(["OWNER", "ADMIN", "CLIENT"]);
@@ -154,9 +156,9 @@ export default function Register() {
         {success && <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>}
 
         <Box component="form" onSubmit={handleRegister}>
-          <TextField label="Nome" fullWidth sx={{ mb: 2, bgcolor: "white", borderRadius: "5px" }} value={name} onChange={(e) => setName(e.target.value)} required />
-          <TextField label="Usuário (E-mail)" fullWidth sx={{ mb: 2, bgcolor: "white", borderRadius: "5px" }} value={username} onChange={(e) => setUsername(e.target.value)} required />
-          <TextField label="Senha" type="password" fullWidth sx={{ mb: 2, bgcolor: "white", borderRadius: "5px" }} value={password} onChange={(e) => setPassword(e.target.value)} required />
+          <TextField label="Nome" variant="filled" fullWidth sx={{ mb: 2, bgcolor: "white", borderRadius: "5px" }} value={name} onChange={(e) => setName(e.target.value)} required />
+          <TextField label="Usuário (E-mail)" variant="filled" fullWidth sx={{ mb: 2, bgcolor: "white", borderRadius: "5px" }} value={username} onChange={(e) => setUsername(e.target.value)} required />
+          <TextField label="Senha" type="password" variant="filled" fullWidth sx={{ mb: 2, bgcolor: "white", borderRadius: "5px" }} value={password} onChange={(e) => setPassword(e.target.value)} required />
 
          
         {!addCategory ? settings?.addCategory && <Select fullWidth displayEmpty value={category} onChange={(e) => setCategory(e.target.value)} sx={{ mb: 2, bgcolor: "white", borderRadius: "5px" }}>

@@ -58,11 +58,19 @@ function App() {
   
   const [settings, setSettings] = useState<Configuration | null>(null);
   useEffect(() => {
-    // Buscar configurações do backend
+    // Fetch settings from backend
     const fetchSettings = async () => {
       try {
         const response = await axios.get('http://localhost:5000/configuration');
-        setSettings(response.data); // Atualiza o estado com os dados do backend
+        setSettings(response.data);
+        
+        // Update PowerBI configuration in backend
+        await axios.post('http://localhost:5000/updatePBIConfig', {
+          clientId: response.data.pbiKeys.clientId,
+          clientSecret: response.data.pbiKeys.clientSecret,
+          authority: response.data.pbiKeys.authority
+        });
+        
       } catch (error) {
         console.error('Erro ao buscar configurações:', error);
       }
@@ -122,11 +130,7 @@ function App() {
         <Route path="/" element={<Navigate to={"/login"} />} />
         
         <Route path="/login" element={<Login />} />
-        <Route path="/registro" element={
-            settings?.allowRegister ? <Register /> :<ProtectedRoute  >
-              <Register />
-           </ProtectedRoute>  
-          } />
+        {settings?.allowRegister && <Route path="/registro" element={<Register />} />}
            <Route path="/solicitar-registro" element={
             settings?.allowRequireRegister ? <RequireRegister /> :<ProtectedRoute  >
               <RequireRegister />
