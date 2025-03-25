@@ -3,7 +3,7 @@ export interface GrupoMaterial {
   nome: string;      // desc_grupo
 }
 
-export const gruposMateriaisEolicos: GrupoMaterial[] = [
+export const grupos: GrupoMaterial[] = [
   { id: 1, nome: "ABRACADEIRA" },
   { id: 2, nome: "ACELEROMETRO" },
   { id: 3, nome: "ACIONADOR" },

@@ -10,7 +10,7 @@ export interface Material {
   grupo: string;                // desc_grupo
 }
 
-export const materiaisEolicos: Material[] = [
+export const materiais: Material[] = [
   {
     id: 364,
     codigoExterno: 462,

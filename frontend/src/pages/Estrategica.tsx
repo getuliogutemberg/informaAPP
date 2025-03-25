@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { materiaisEolicos } from "../assets/materiaisEolicos";
-import { gruposMateriaisEolicos } from "../assets/gruposMateriaisEolicos";
+import { materiais } from "../assets/materiaisEolicos";
+import { grupos } from "../assets/gruposMateriaisEolicos";
 import { 
   Card, 
   Typography, 
@@ -22,28 +22,31 @@ export default function TelaEstrategica() {
   const [grupoSelecionado, setGrupoSelecionado] = useState("");
 
   const materiaisFiltrados = grupoSelecionado
-    ? materiaisEolicos.filter((m) => m.grupo === grupoSelecionado)
-    : materiaisEolicos;
+    ? materiais.filter((m) => m.grupo === grupoSelecionado)
+    : materiais;
 
   return (
     <Box sx={{
-      display: 'flex',
-      flexDirection: 'column',
-      px: 2,
-      ml: "80px",
+      position: 'fixed',
+      top: "60px",
+      left: "80px",
+      paddingY: "20px",
+      paddingX: "20px",
+      
+      
       background: "#0A1C44",
-      width: "calc(100vw - 110px)",
-      height: "calc(100vh - 60px)",
-      mt: "60px",
-      overflow: 'hidden',
+      width: "calc(100vw - 115px)",
+      height: "calc(100vh - 80px)",
+      
+      overflow: 'auto',
     }}>
       {/* <Box sx={{ pt: 3, pb: 2 }}>
         <Typography variant="h4" sx={{ color: '#fff' }}>Estratégica</Typography>
       </Box> */}
 
       <Box sx={{ 
-        flex: 1,
-        overflow: 'auto',
+        height: 'calc(100% - 30px)',
+        // overflow: 'auto',
         '&::-webkit-scrollbar': {
           width: '8px',
           height: '8px',
@@ -60,7 +63,9 @@ export default function TelaEstrategica() {
           },
         },
       }}>
-        <Grid container spacing={2} sx={{ minHeight: '100%' }}>
+        <Grid container spacing={2} sx={{
+          height: '100%',
+        }}>
           {/* Coluna da Esquerda - Filtro e Info Geral */}
           <Grid item xs={12} md={4}>
             <Stack spacing={2}>
@@ -69,22 +74,23 @@ export default function TelaEstrategica() {
                 p: 2,
                 backgroundColor: '#1F2A4C',
               }}>
-                <Typography variant="h6" sx={{ color: '#fff', mb: 2 }}>Filtro Grupo</Typography>
+                {/* <Typography variant="h6" sx={{ color: '#fff', mb: 2 }}>Filtro Grupo</Typography> */}
                 <Select 
+                  
                   fullWidth 
                   value={grupoSelecionado} 
                   onChange={(e) => setGrupoSelecionado(e.target.value)}
                   sx={{ backgroundColor: '#fff', borderRadius: '8px' }}
                 >
-                  <MenuItem value="">Todos os Grupos</MenuItem>
-                  {gruposMateriaisEolicos.map((grupo) => (
+                  <MenuItem value="" >Todos os Grupos</MenuItem>
+                  {grupos.map((grupo) => (
                     <MenuItem key={grupo.id} value={grupo.nome}>{grupo.nome}</MenuItem>
                   ))}
                 </Select>
               </Card>
 
               {/* Info Geral Grupo */}
-              <Card sx={{
+              {grupoSelecionado && <Card sx={{
                 p: 2,
                 backgroundColor: '#1F2A4C',
                 flex: 1,
@@ -97,20 +103,17 @@ export default function TelaEstrategica() {
                       Grupo: {grupoSelecionado}
                     </Typography>
                     <Typography variant="subtitle2" sx={{ color: '#fff', opacity: 0.7, mb: 2 }}>
-                      ID: {gruposMateriaisEolicos.find(g => g.nome === grupoSelecionado)?.id}
+                      ID: {grupos.find(g => g.nome === grupoSelecionado)?.id}
                     </Typography>
                     <Typography variant="body2" sx={{ color: '#fff', mb: 2 }}>
                       Quantidade de Itens: {materiaisFiltrados.length}
                     </Typography>
                   </Box>
                 )}
-              </Card>
-            </Stack>
-          </Grid>
+             
+              </Card>}
 
-          {/* Coluna Central - Parâmetros do Grupo */}
-          <Grid item xs={12} md={4}>
-            <Card sx={{
+              {grupoSelecionado ? <Card sx={{
               p: 2,
               backgroundColor: '#1F2A4C',
               height: '100%',
@@ -130,6 +133,7 @@ export default function TelaEstrategica() {
                 },
               },
             }}>
+
               <Typography variant="h6" sx={{ color: '#fff', mb: 2 }}>Preenchimento Parâmetros Grupo</Typography>
               {grupoSelecionado && (
                 <Table size="small">
@@ -151,11 +155,47 @@ export default function TelaEstrategica() {
                   </TableBody>
                 </Table>
               )}
-            </Card>
+            </Card> : 
+            <Card sx={{
+              p: 2,
+              backgroundColor: '#1F2A4C',
+              height: '100%',
+              overflow: 'auto',
+              display: 'flex',
+              flexDirection: 'column',
+            
+            }}>
+
+              {/* <Typography variant="h6" sx={{ color: '#fff', mb: 2 }}>Selecione um Grupo</Typography> */}
+
+              {grupos.map((grupos) => {
+                return (
+                  <Chip
+                    key={grupos.id}
+                    label={grupos.nome}
+                    onClick={() => setGrupoSelecionado(grupos.nome)}
+                    sx={{ 
+                      color: '#FFFFFF',
+                      backgroundColor: grupoSelecionado === grupos.nome? '#000' : '#1F2A4C', 
+                      margin: '4px', 
+                      borderRadius: '8px', 
+                      '&:hover': {
+                        backgroundColor: grupoSelecionado === grupos.nome? '#000' : '#1F2A4C', 
+                      },
+                    }}
+                  />
+                )
+              })}
+              
+            </Card>}
+            </Stack>
           </Grid>
 
+          
+  
+
           {/* Coluna da Direita - Edição Item a Item */}
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={8}>
             <Card sx={{
               p: 2,
               backgroundColor: '#1F2A4C',
