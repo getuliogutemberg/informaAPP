@@ -1,3 +1,5 @@
+import GroupDictionaryController from './controllers/groupDictionaryController'
+
 require("dotenv").config({ path: '../.env' });
 const express = require("express");
 const mongoose = require("mongoose");
@@ -26,7 +28,7 @@ const config = {
 mongoose.connect(process.env.MONGO_URI).then(() => console.log("Banco de dados conectado"))
 .catch((err) => console.log("Erro ao conectar ao banco de dados:", err));
 
-
+ 
 
 const User = mongoose.model("User", new mongoose.Schema({
   name: String,
@@ -754,7 +756,6 @@ app.put('/alerts/:id', async (req, res) => {
   }
 });
 
-
 // Rota para excluir um alerta
 app.delete('/alerts/:id', async (req, res) => {
   try {
@@ -765,7 +766,8 @@ app.delete('/alerts/:id', async (req, res) => {
   }
 });
 
-
+// Rota para listar todos os grupos de materiais
+app.get('/groupDictionary', GroupDictionaryController.getGroupDictionaries);
 
 
 const server = http.createServer(app);
