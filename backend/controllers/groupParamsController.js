@@ -1,6 +1,6 @@
 const { GroupParams } = require("../models/ParametrosEstrategiaGrupo");
 
-const getGroupParams = async (req, res) => {
+const getGroupParamsById = async (req, res) => {
     try {
         const codGrupo = req.params.cod_grupo;
 
@@ -114,7 +114,7 @@ const deleteGroupParams = async (req, res) => {
 };
 
 module.exports = {
-    getGroupParams,
+    getGroupParamsById,
     createGroupParams,
     updateGroupParams,
     deleteGroupParams,
