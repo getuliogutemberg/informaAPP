@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const ParametrosEstrategiaGrupoSchema = new mongoose.Schema({
-  cod_grupo: { type: mongoose.Schema.Types.ObjectId, ref: 'DicionarioGrupo' },
+  cod_grupo: Number,
   param_indisponibilidade_ug: Number,
   param_indisponibilidade_seg: Number,
   param_afeta_ativo: String,

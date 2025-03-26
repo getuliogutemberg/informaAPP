@@ -5,8 +5,8 @@ const CadastroMaterialSchema = new mongoose.Schema({
   cod_itemmaterial_ext: Number,
   desc_material: String,
   desc_numero_itemmaterial: String,
-  cod_unidade_medida: { type: mongoose.Schema.Types.ObjectId, ref: 'UnidadeMedida' },
-  cod_classematerial: { type: mongoose.Schema.Types.ObjectId, ref: 'ClasseMaterial' },
+  cod_unidade_medida: Number,
+  cod_classematerial: Number,
   deletedAt: { type: Date, default: null },
 }, { timestamps: true });
 

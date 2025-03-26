@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const ParametrosEstrategiaIndividualSchema = new mongoose.Schema({
-  cod_int_material: { type: mongoose.Schema.Types.ObjectId, ref: 'CadastroMaterial' },
+  cod_int_material: Number,
   param_indisponibilidade_ug: Number,
   param_indisponibilidade_seg: Number,
   param_afeta_ativo: String,
