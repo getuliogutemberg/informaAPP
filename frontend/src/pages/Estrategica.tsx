@@ -1,270 +1,132 @@
-import { useState } from "react";
-import { materiais } from "../assets/materiaisEolicos";
-import { grupos } from "../assets/gruposMateriaisEolicos";
-import { 
-  Card, 
-  Typography, 
-  Select, 
-  MenuItem, 
-  Table, 
-  TableHead, 
-  TableBody, 
-  TableRow, 
-  TableCell, 
-  Box, 
-  Grid,
-  Stack,
-  Button,
-  Chip
-} from "@mui/material";
+import { Box, Typography, TextField, Button, Chip, Card, IconButton, Switch, FormControlLabel, styled, SwitchProps } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+import EditIcon from "@mui/icons-material/Edit";
+import RefreshIcon from "@mui/icons-material/Refresh";
 
+const IOSSwitch = styled((props: SwitchProps) => (
+  <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
+))(({ theme }) => ({
+  width: 25,
+  height: 15,
+  padding: 0,
+  '& .MuiSwitch-switchBase': {
+    padding: 0,
+    margin: 0,
+    transitionDuration: '300ms',
+    '&.Mui-checked': {
+      transform: 'translateX(10px)',
+      color: '#fff',
+      '& + .MuiSwitch-track': {
+        backgroundColor: 'rgba(46, 112, 171, 1)',
+        opacity: 1,
+        border: 1,
+        ...theme.applyStyles('dark', {
+          backgroundColor: '#2ECA45',
+        }),
+      },
+      '&.Mui-disabled + .MuiSwitch-track': {
+        opacity: 0.5,
+      },
+    },
+    '&.Mui-focusVisible .MuiSwitch-thumb': {
+      color: '#33cf4d',
+      border: '6px solid #fff',
+    },
+    '&.Mui-disabled .MuiSwitch-thumb': {
+      color: theme.palette.grey[100],
+      ...theme.applyStyles('dark', {
+        color: theme.palette.grey[600],
+      }),
+    },
+    '&.Mui-disabled + .MuiSwitch-track': {
+      opacity: 0.7,
+      ...theme.applyStyles('dark', {
+        opacity: 0.3,
+      }),
+    },
+  },
+  '& .MuiSwitch-thumb': {
+    boxSizing: 'border-box',
+    width: 15,
+    height: 15,
+  },
+  '& .MuiSwitch-track': {
+    borderRadius: 26 / 2,
+    backgroundColor: '#E9E9EA',
+    opacity: 1,
+    transition: theme.transitions.create(['background-color'], {
+      duration: 500,
+    }),
+    ...theme.applyStyles('dark', {
+      backgroundColor: '#39393D',
+    }),
+  },
+}));
 export default function TelaEstrategica() {
-  const [grupoSelecionado, setGrupoSelecionado] = useState("");
-
-  const materiaisFiltrados = grupoSelecionado
-    ? materiais.filter((m) => m.grupo === grupoSelecionado)
-    : materiais;
-
   return (
-    <Box sx={{
-      position: 'fixed',
-      top: "60px",
-      left: "80px",
-      paddingY: "20px",
-      paddingX: "20px",
+    <Box sx={{position:'fixed',top:'62px',left:"80px", display: "flex", gap: 2, background: "#0A1C44", height: "calc(100vh - 93px)", padding: 2 ,width:'calc(100vw - 110px)'}}>
       
-      
-      background: "#0A1C44",
-      width: "calc(100vw - 115px)",
-      height: "calc(100vh - 80px)",
-      
-      overflow: 'auto',
-    }}>
-      {/* <Box sx={{ pt: 3, pb: 2 }}>
-        <Typography variant="h4" sx={{ color: '#fff' }}>Estratégica</Typography>
-      </Box> */}
+      {/* Grupos */}
+      <Card sx={{ flex: 1, background: "#1F2A4C", padding: 2 }}>
+        <Typography variant="h6" sx={{ color: "#F7F7F7"}}>Grupos</Typography>
+        <TextField fullWidth placeholder="Busque um código ou nome" variant="outlined" size="small" sx={{ background: "#fff" ,borderRadius:"0.4rem",marginTop: 2 }} InputProps={{ endAdornment: <SearchIcon /> }} />
+        <Box sx={{ display: "flex", gap: 1, marginY: 2 }}>
+          <Chip label="Todos" sx={{background: "rgba(49, 131, 207, 1)",paddingX:'20px',height:'100%',cursor:"pointer"}} />
+          <Chip label="Não preenchidos" sx={{background: "rgba(213, 226, 238, 1)",paddingX:'20px',height:'100%',cursor:"pointer"}} />
+          <Chip label="Preenchidos" sx={{background: "rgba(213, 226, 238, 1)",paddingX:'20px',height:'100%',cursor:"pointer"}}/>
+        </Box>
+        {["001 - ABRACADEIRA", "002 - ABRACADEIRA", "002 - ABRACADEIRA", "002 - ABRACADEIRA", "002 - ABRACADEIRA"].map((item, index) => (
+          <Card key={index} sx={{ background: "rgba(36, 75, 127, 1)", marginBottom: 1, padding: 1, color: "#fff",cursor:"pointer" }}>
+            <Typography>{item}</Typography>
+            <Typography variant="caption">Última atualização: 26/07/2024</Typography>
+          </Card>
+        ))}
+      </Card>
 
-      <Box sx={{ 
-        height: 'calc(100% - 30px)',
-        // overflow: 'auto',
-        '&::-webkit-scrollbar': {
-          width: '8px',
-          height: '8px',
-        },
-        '&::-webkit-scrollbar-track': {
-          background: 'rgba(0, 0, 0, 0.1)',
-          borderRadius: '4px',
-        },
-        '&::-webkit-scrollbar-thumb': {
-          background: 'rgba(255, 255, 255, 0.2)',
-          borderRadius: '4px',
-          '&:hover': {
-            background: 'rgba(255, 255, 255, 0.3)',
-          },
-        },
-      }}>
-        <Grid container spacing={2} sx={{
-          height: '100%',
-        }}>
-          {/* Coluna da Esquerda - Filtro e Info Geral */}
-          <Grid item xs={12} md={4}>
-            <Stack spacing={2}>
-              {/* Filtro Grupo */}
-              <Card sx={{
-                p: 2,
-                backgroundColor: '#1F2A4C',
-              }}>
-                {/* <Typography variant="h6" sx={{ color: '#fff', mb: 2 }}>Filtro Grupo</Typography> */}
-                <Select 
-                  
-                  fullWidth 
-                  value={grupoSelecionado} 
-                  onChange={(e) => setGrupoSelecionado(e.target.value)}
-                  sx={{ backgroundColor: '#fff', borderRadius: '8px' }}
-                >
-                  <MenuItem value="" >Todos os Grupos</MenuItem>
-                  {grupos.map((grupo) => (
-                    <MenuItem key={grupo.id} value={grupo.nome}>{grupo.nome}</MenuItem>
-                  ))}
-                </Select>
-              </Card>
-
-              {/* Info Geral Grupo */}
-              {grupoSelecionado && <Card sx={{
-                p: 2,
-                backgroundColor: '#1F2A4C',
-                flex: 1,
-                overflow: 'auto'
-              }}>
-                <Typography variant="h6" sx={{ color: '#fff', mb: 2 }}>Info Geral Grupo</Typography>
-                {grupoSelecionado && (
-                  <Box>
-                    <Typography variant="subtitle1" sx={{ color: '#fff', mb: 1 }}>
-                      Grupo: {grupoSelecionado}
-                    </Typography>
-                    <Typography variant="subtitle2" sx={{ color: '#fff', opacity: 0.7, mb: 2 }}>
-                      ID: {grupos.find(g => g.nome === grupoSelecionado)?.id}
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: '#fff', mb: 2 }}>
-                      Quantidade de Itens: {materiaisFiltrados.length}
-                    </Typography>
-                  </Box>
-                )}
-             
-              </Card>}
-
-              {grupoSelecionado ? <Card sx={{
-              p: 2,
-              backgroundColor: '#1F2A4C',
-              height: '100%',
-              overflow: 'auto',
-              '&::-webkit-scrollbar': {
-                width: '8px',
-              },
-              '&::-webkit-scrollbar-track': {
-                background: 'rgba(0, 0, 0, 0.1)',
-                borderRadius: '4px',
-              },
-              '&::-webkit-scrollbar-thumb': {
-                background: 'rgba(255, 255, 255, 0.2)',
-                borderRadius: '4px',
-                '&:hover': {
-                  background: 'rgba(255, 255, 255, 0.3)',
-                },
-              },
-            }}>
-
-              <Typography variant="h6" sx={{ color: '#fff', mb: 2 }}>Preenchimento Parâmetros Grupo</Typography>
-              {grupoSelecionado && (
-                <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell sx={{ color: '#fff' }}>Código</TableCell>
-                      <TableCell sx={{ color: '#fff' }}>Unidade</TableCell>
-                      <TableCell sx={{ color: '#fff' }}>Classe</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {materiaisFiltrados.map((material) => (
-                      <TableRow key={material.id}>
-                        <TableCell sx={{ color: '#fff' }}>{material.codigoExterno}</TableCell>
-                        <TableCell sx={{ color: '#fff' }}>{material.unidadeMedida}</TableCell>
-                        <TableCell sx={{ color: '#fff' }}>{material.classeId}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </Card> : 
-            <Card sx={{
-              p: 2,
-              backgroundColor: '#1F2A4C',
-              height: '100%',
-              overflow: 'auto',
-              display: 'flex',
-              flexDirection: 'column',
-            
-            }}>
-
-              {/* <Typography variant="h6" sx={{ color: '#fff', mb: 2 }}>Selecione um Grupo</Typography> */}
-
-              {grupos.map((grupos) => {
-                return (
-                  <Chip
-                    key={grupos.id}
-                    label={grupos.nome}
-                    onClick={() => setGrupoSelecionado(grupos.nome)}
-                    sx={{ 
-                      color: '#FFFFFF',
-                      backgroundColor: grupoSelecionado === grupos.nome? '#000' : '#1F2A4C', 
-                      margin: '4px', 
-                      borderRadius: '8px', 
-                      '&:hover': {
-                        backgroundColor: grupoSelecionado === grupos.nome? '#000' : '#1F2A4C', 
-                      },
-                    }}
-                  />
-                )
-              })}
-              
-            </Card>}
-            </Stack>
-          </Grid>
-
+      {/* Itens */}
+      <Card sx={{ flex: 1, background: "#1F2A4C", padding: 2 }}>
+        <Typography variant="h6" sx={{ color: "#F7F7F7"}}>Itens</Typography>
+        <TextField fullWidth placeholder="Busque um código ou nome" variant="outlined" size="small" sx={{ background: "#fff",borderRadius:"0.4rem",marginTop: 2  }} InputProps={{ endAdornment: <SearchIcon /> }} />
+        <Box sx={{ display: "flex", gap: 1, marginY: 2 }}>
+        <Chip label="Todos" sx={{background: "rgba(49, 131, 207, 1)",paddingX:'20px',height:'100%',cursor:"pointer"}} />
+        <Chip label="Cadastro Padrão" sx={{background: "rgba(213, 226, 238, 1)",paddingX:'20px',height:'100%',cursor:"pointer"}} />
+        <Chip label="Editados" sx={{background: "rgba(213, 226, 238, 1)",paddingX:'20px',height:'100%',cursor:"pointer"}}/>
+        <Chip label="Estratégicos" sx={{background: "rgba(213, 226, 238, 1)",paddingX:'20px',height:'100%',cursor:"pointer"}}/>
           
-  
+        </Box>
+        <Box sx={{display:'flex',gap:2}}>
 
-          {/* Coluna da Direita - Edição Item a Item */}
-          <Grid item xs={12} md={8}>
-            <Card sx={{
-              p: 2,
-              backgroundColor: '#1F2A4C',
-              height: '100%',
-              overflow: 'auto',
-              '&::-webkit-scrollbar': {
-                width: '8px',
-              },
-              '&::-webkit-scrollbar-track': {
-                background: 'rgba(0, 0, 0, 0.1)',
-                borderRadius: '4px',
-              },
-              '&::-webkit-scrollbar-thumb': {
-                background: 'rgba(255, 255, 255, 0.2)',
-                borderRadius: '4px',
-                '&:hover': {
-                  background: 'rgba(255, 255, 255, 0.3)',
-                },
-              },
-            }}>
-              <Typography variant="h6" sx={{ color: '#fff', mb: 2 }}>Edição Parâmetro Item a Item</Typography>
-              <Table size="small">
-                <TableHead>
-                  <TableRow>
-                    <TableCell sx={{ color: '#fff' }}>Item</TableCell>
-                    <TableCell sx={{ color: '#fff' }}>Número</TableCell>
-                    <TableCell sx={{ color: '#fff' }}>Ações</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {materiaisFiltrados.map((material) => (
-                    <TableRow key={material.id}>
-                      <TableCell sx={{ color: '#fff' }}>
-                        {material.nome}
-                        <Chip 
-                          label={material.grupo}
-                          size="small"
-                          sx={{ 
-                            ml: 1,
-                            backgroundColor: 'rgba(12, 114, 249, 0.2)',
-                            color: '#fff',
-                            borderColor: 'rgba(12, 114, 249, 1)'
-                          }}
-                          variant="outlined"
-                        />
-                      </TableCell>
-                      <TableCell sx={{ color: '#fff' }}>{material.numeroItem}</TableCell>
-                      <TableCell>
-                        <Button 
-                          variant="contained" 
-                          size="small"
-                          sx={{
-                            backgroundColor: 'rgba(12, 114, 249, 0.8)',
-                            '&:hover': {
-                              backgroundColor: 'rgba(12, 114, 249, 1)'
-                            }
-                          }}
-                        >
-                          Editar
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </Card>
-          </Grid>
-        </Grid>
-      </Box>
+        <Button variant="contained" sx={{background:"rgba(46, 112, 171, 1)",whiteSpace: "nowrap",width:"100%"}} startIcon={<RefreshIcon />}>Restaurar padrão</Button>
+        <span style={{color:"white"}}>Restaura o padrão de todas os itens sinalizados com exceções</span>
+        </Box>
+        {[{ name: "ABRACADEIRA ELETROD ACO GALV D1", tag: "Estratégico" }, { name: "ABRACADEIRA ELETROD SAE1020 GALV D1.12", tag: "Estratégico" }, { name: "ABRACADEIRA ELETROD SAE1020 GALV D12" }, { name: "ABRACADEIRA ELETROD ACO GALV D2" }, { name: "ABRACADEIRA ELETROD SAE1020 GALV D34" }].map((item, index) => (
+          <Card key={index} sx={{  background: "rgba(36, 75, 127, 1)", marginY: 1, padding: 1, color: "#fff", display: "flex", justifyContent: "space-between", alignItems: "center",cursor:"pointer" }}>
+            <Box>
+              <Typography>{item.name}</Typography>
+              <Typography variant="caption">Última atualização: 26/07/2024</Typography>
+            </Box>
+            {item.tag && <Chip label={item.tag} sx={{background:'rgba(249, 245, 147, 1)'}}/>}
+            <Box>
+            <IconButton color="inherit"><RefreshIcon /></IconButton><IconButton color="inherit"><EditIcon /></IconButton>
+            </Box>
+          </Card>
+        ))}
+      </Card>
+
+      {/* Critérios Padrão */}
+      <Card sx={{ flex: 1, background: "#1F2A4C", padding: 2 }}>
+        <Typography variant="h6" sx={{ color: "#F7F7F7",marginBottom:3}}>Critérios Padrão</Typography>
+        {["Risco de gerar indisponibilidade da UG", "Risco de gerar indisponibilidade de Sistema de Segurança", "Indisponibilidade do item gera risco de afetar o ativo", "Processo de compras superior a 6 meses", "Custo superior a R$ 10.000,00", "Mais de 1 fornecedor disponível", "Risco de ser descontinuado pelo fabricante em até 2 anos", "Item utilizado por pelo menos 10 ativos", "Alta probabilidade de uso", "Item considerado estratégico"].map((criterio, index) => (
+          <Box key={index} sx={{  marginY: 1 }}>
+            <FormControlLabel sx={{color:'white'}} control={<IOSSwitch sx={{ m: 1 }} defaultChecked />} label={criterio} />
+            
+          </Box>
+        ))}
+          <Box sx={{ display: "flex",flexDirection:"column", alignItems: "start" }}>
+        <Button variant="contained"  sx={{ marginTop: 2 ,background:"rgba(46, 112, 171, 1)"}}>Aplicar a todos os itens</Button>
+        <FormControlLabel sx={{color:'white',marginTop: 2}} control={<IOSSwitch sx={{ m: 1 }} defaultChecked />} label="Exceto itens editados manualmente" />
+         </Box>
+      </Card>
     </Box>
   );
 }
