@@ -1,5 +1,3 @@
-import GroupDictionaryController from './controllers/groupDictionaryController'
-
 require("dotenv").config({ path: '../.env' });
 const express = require("express");
 const mongoose = require("mongoose");
@@ -10,6 +8,8 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { ConfidentialClientApplication } = require('@azure/msal-node');
 const { stringify } = require("querystring");
+const GroupDictionaryController = require("./controllers/groupDictionaryController");
+const MaterialController = require("./controllers/materialsController");
 
 const msalClient = new ConfidentialClientApplication({
   auth: {
@@ -27,9 +27,7 @@ const config = {
 
 mongoose.connect(process.env.MONGO_URI).then(() => console.log("Banco de dados conectado"))
 .catch((err) => console.log("Erro ao conectar ao banco de dados:", err));
-
  
-
 const User = mongoose.model("User", new mongoose.Schema({
   name: String,
   email: String,
@@ -84,10 +82,6 @@ const Alert = mongoose.model("Alerts", new mongoose.Schema({
   icon: String,
   deletedAt: { type: Date, default: null },
 }, { timestamps: true }));
-
-
-
-
 
 async function getReportDetails(token) {
   const url = `https://api.powerbi.com/v1.0/myorg/groups/${config.workspaceId}/reports/${config.reportId}`;
@@ -635,7 +629,6 @@ app.delete("/routes/:id", async (req, res) => {
   }
 });
 
-
 app.get("/getPBIToken/:pageId", async (req, res) => {
     const pageId = req.params.pageId;
 
@@ -768,6 +761,10 @@ app.delete('/alerts/:id', async (req, res) => {
 
 // Rota para listar todos os grupos de materiais
 app.get('/groupDictionary', GroupDictionaryController.getGroupDictionaries);
+
+// Rota para listar todos os materiais de um grupo
+app.get('/materials/:groupId', MaterialController.getMaterialByGroup);
+
 
 
 const server = http.createServer(app);
