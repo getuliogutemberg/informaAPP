@@ -4,7 +4,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { useState } from "react";
 
-const gruposData = ["001 - ABRACADEIRA", "002 - ABRACADEIRA", "002 - ABRACADEIRA", "002 - ABRACADEIRA", "002 - ABRACADEIRA"];
+const gruposData = ["001 - ABRACADEIRA", "002 - ABRACADEIRA", "003 - ABRACADEIRA", "004 - ABRACADEIRA", "005 - ABRACADEIRA"];
 const itensData = [
   { name: "ABRACADEIRA ELETROD ACO GALV D1", tag: "Estratégico" }, { name: "ABRACADEIRA ELETROD SAE1020 GALV D1.12", tag: "Estratégico" }, { name: "ABRACADEIRA ELETROD SAE1020 GALV D12" }, { name: "ABRACADEIRA ELETROD ACO GALV D2" }, { name: "ABRACADEIRA ELETROD SAE1020 GALV D34" }
 ];
@@ -73,6 +73,8 @@ export default function TelaEstrategica() {
 
   const [grupoBusca, setGrupoBusca] = useState("");
   const [itemBusca, setItemBusca] = useState("");
+  const [grupoSelecionado, setGrupoSelecionado] = useState<string|null>(null);
+  const [itemSelecionado, setItemSelecionado] = useState<string|null>(null);
 
   const gruposFiltrados = gruposData.filter((grupo) =>
     grupo.toLowerCase().includes(grupoBusca.toLowerCase())
@@ -96,9 +98,26 @@ export default function TelaEstrategica() {
         </Box>
        
 {gruposFiltrados.map((item, index) => (
-            <Card key={index} sx={{ background: "rgba(36, 75, 127, 1)", marginBottom: 1, padding: 1, color: "#fff", cursor: "pointer" }}>
-              <Typography>{item}</Typography>
-            </Card>
+            <Card 
+            onClick={() => setGrupoSelecionado(item)}
+            key={index} 
+            sx={{ 
+              background: grupoSelecionado === item ? "rgba(49, 131, 207, 1)" : "rgba(36, 75, 127, 1)", 
+              marginBottom: 1, 
+              padding: 1, 
+              color: "#fff", 
+              gap:2,
+              cursor: "pointer", 
+              display: "flex", 
+              flexDirection: "column",
+              justifyContent: "space-between", 
+              alignItems: "start", 
+            }}
+          >
+            <Typography>{item}</Typography>
+            <Typography variant="caption">Última atualização: 26/07/2024</Typography>
+          </Card>
+          
           ))}
       </Card>
 
@@ -120,16 +139,38 @@ export default function TelaEstrategica() {
         </Box>
        
  {itensFiltrados.map((item, index) => (
-            <Card key={index} sx={{ background: "rgba(36, 75, 127, 1)", marginY: 1, padding: 1, color: "#fff", display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }}>
-              <Box>
+            <Card 
+            onClick={() => setItemSelecionado(item.name)}
+            key={index} 
+            sx={{ 
+              background: itemSelecionado === item.name ? "rgba(49, 131, 207, 1)" : "rgba(36, 75, 127, 1)", 
+              marginY: 1, 
+              padding: 1, 
+              color: "#fff", 
+              display: "flex", 
+              justifyContent: "space-between", 
+              alignItems: "center", 
+              cursor: "pointer" 
+            }}
+          >
+            <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
+              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
                 <Typography>{item.name}</Typography>
+                {item.tag && <Chip label={item.tag} sx={{ background: "rgba(249, 245, 147, 1)" }} />}
               </Box>
-              {item.tag && <Chip label={item.tag} sx={{ background: "rgba(249, 245, 147, 1)" }} />}
-              <Box>
-                <IconButton color="inherit"><RefreshIcon /></IconButton>
-                <IconButton color="inherit"><EditIcon /></IconButton>
+          
+              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
+                <Typography variant="caption" sx={{ whiteSpace: "nowrap" }}>
+                  Última atualização: 26/07/2024
+                </Typography>
+                <Box sx={{ display: "flex", marginLeft: "auto" }}>
+                  <IconButton color="inherit"><RefreshIcon /></IconButton>
+                  <IconButton color="inherit"><EditIcon /></IconButton>
+                </Box>
               </Box>
-            </Card>
+            </Box>
+          </Card>
+          
           ))}
       </Card>
 
