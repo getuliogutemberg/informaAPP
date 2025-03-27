@@ -2,6 +2,13 @@ import { Box, Typography, TextField, Button, Chip, Card, IconButton, Switch, For
 import SearchIcon from "@mui/icons-material/Search";
 import EditIcon from "@mui/icons-material/Edit";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import { useState } from "react";
+
+const gruposData = ["001 - ABRACADEIRA", "002 - ABRACADEIRA", "002 - ABRACADEIRA", "002 - ABRACADEIRA", "002 - ABRACADEIRA"];
+const itensData = [
+  { name: "ABRACADEIRA ELETROD ACO GALV D1", tag: "Estratégico" }, { name: "ABRACADEIRA ELETROD SAE1020 GALV D1.12", tag: "Estratégico" }, { name: "ABRACADEIRA ELETROD SAE1020 GALV D12" }, { name: "ABRACADEIRA ELETROD ACO GALV D2" }, { name: "ABRACADEIRA ELETROD SAE1020 GALV D34" }
+];
+const criterios = ["Risco de gerar indisponibilidade da UG", "Risco de gerar indisponibilidade de Sistema de Segurança", "Indisponibilidade do item gera risco de afetar o ativo", "Processo de compras superior a 6 meses", "Custo superior a R$ 10.000,00", "Mais de 1 fornecedor disponível", "Risco de ser descontinuado pelo fabricante em até 2 anos", "Item utilizado por pelo menos 10 ativos", "Alta probabilidade de uso", "Item considerado estratégico"]
 
 const CustomSwitch = styled((props: SwitchProps) => (
   <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
@@ -63,30 +70,42 @@ const CustomSwitch = styled((props: SwitchProps) => (
   },
 }));
 export default function TelaEstrategica() {
+
+  const [grupoBusca, setGrupoBusca] = useState("");
+  const [itemBusca, setItemBusca] = useState("");
+
+  const gruposFiltrados = gruposData.filter((grupo) =>
+    grupo.toLowerCase().includes(grupoBusca.toLowerCase())
+  );
+
+  const itensFiltrados = itensData.filter((item) =>
+    item.name.toLowerCase().includes(itemBusca.toLowerCase())
+  );
+
   return (
     <Box sx={{position:'fixed',top:'62px',left:"80px", display: "flex", gap: 2, background: "#0A1C44", height: "calc(100vh - 93px)", padding: 2 ,width:'calc(100vw - 110px)'}}>
       
       {/* Grupos */}
       <Card sx={{ flex: 1, background: "#1F2A4C", padding: 2 }}>
         <Typography variant="h6" sx={{ color: "#F7F7F7"}}>Grupos</Typography>
-        <TextField fullWidth placeholder="Busque um código ou nome" variant="outlined" size="small" sx={{ background: "#fff" ,borderRadius:"0.4rem",marginTop: 2 }} InputProps={{ endAdornment: <SearchIcon /> }} />
+        <TextField fullWidth placeholder="Busque um código ou nome" variant="outlined" size="small" sx={{ background: "#fff" ,borderRadius:"0.4rem",marginTop: 2 }} InputProps={{ endAdornment: <SearchIcon /> }} onChange={(e) => setGrupoBusca(e.target.value)} />
         <Box sx={{ display: "flex", gap: 1, marginY: 2 }}>
           <Chip label="Todos" sx={{background: "rgba(49, 131, 207, 1)",paddingX:'20px',height:'100%',cursor:"pointer"}} />
           <Chip label="Não preenchidos" sx={{background: "rgba(213, 226, 238, 1)",paddingX:'20px',height:'100%',cursor:"pointer"}} />
           <Chip label="Preenchidos" sx={{background: "rgba(213, 226, 238, 1)",paddingX:'20px',height:'100%',cursor:"pointer"}}/>
         </Box>
-        {["001 - ABRACADEIRA", "002 - ABRACADEIRA", "002 - ABRACADEIRA", "002 - ABRACADEIRA", "002 - ABRACADEIRA"].map((item, index) => (
-          <Card key={index} sx={{ background: "rgba(36, 75, 127, 1)", marginBottom: 1, padding: 1, color: "#fff",cursor:"pointer" }}>
-            <Typography>{item}</Typography>
-            <Typography variant="caption">Última atualização: 26/07/2024</Typography>
-          </Card>
-        ))}
+       
+{gruposFiltrados.map((item, index) => (
+            <Card key={index} sx={{ background: "rgba(36, 75, 127, 1)", marginBottom: 1, padding: 1, color: "#fff", cursor: "pointer" }}>
+              <Typography>{item}</Typography>
+            </Card>
+          ))}
       </Card>
 
       {/* Itens */}
       <Card sx={{ flex: 1, background: "#1F2A4C", padding: 2 }}>
         <Typography variant="h6" sx={{ color: "#F7F7F7"}}>Itens</Typography>
-        <TextField fullWidth placeholder="Busque um código ou nome" variant="outlined" size="small" sx={{ background: "#fff",borderRadius:"0.4rem",marginTop: 2  }} InputProps={{ endAdornment: <SearchIcon /> }} />
+        <TextField onChange={(e) => setItemBusca(e.target.value)} fullWidth placeholder="Busque um código ou nome" variant="outlined" size="small" sx={{ background: "#fff",borderRadius:"0.4rem",marginTop: 2  }} InputProps={{ endAdornment: <SearchIcon /> }} />
         <Box sx={{ display: "flex", gap: 1, marginY: 2 }}>
         <Chip label="Todos" sx={{background: "rgba(49, 131, 207, 1)",paddingX:'20px',height:'100%',cursor:"pointer"}} />
         <Chip label="Cadastro Padrão" sx={{background: "rgba(213, 226, 238, 1)",paddingX:'20px',height:'100%',cursor:"pointer"}} />
@@ -99,24 +118,25 @@ export default function TelaEstrategica() {
         <Button variant="contained" sx={{background:"rgba(46, 112, 171, 1)",whiteSpace: "nowrap",paddingX:"50px"}} startIcon={<RefreshIcon />}>Restaurar padrão</Button>
         <span style={{color:"white"}}>Restaura o padrão de todas os itens sinalizados com exceções</span>
         </Box>
-        {[{ name: "ABRACADEIRA ELETROD ACO GALV D1", tag: "Estratégico" }, { name: "ABRACADEIRA ELETROD SAE1020 GALV D1.12", tag: "Estratégico" }, { name: "ABRACADEIRA ELETROD SAE1020 GALV D12" }, { name: "ABRACADEIRA ELETROD ACO GALV D2" }, { name: "ABRACADEIRA ELETROD SAE1020 GALV D34" }].map((item, index) => (
-          <Card key={index} sx={{  background: "rgba(36, 75, 127, 1)", marginY: 1, padding: 1, color: "#fff", display: "flex", justifyContent: "space-between", alignItems: "center",cursor:"pointer" }}>
-            <Box>
-              <Typography>{item.name}</Typography>
-              <Typography variant="caption">Última atualização: 26/07/2024</Typography>
-            </Box>
-            {item.tag && <Chip label={item.tag} sx={{background:'rgba(249, 245, 147, 1)'}}/>}
-            <Box>
-            <IconButton color="inherit"><RefreshIcon /></IconButton><IconButton color="inherit"><EditIcon /></IconButton>
-            </Box>
-          </Card>
-        ))}
+       
+ {itensFiltrados.map((item, index) => (
+            <Card key={index} sx={{ background: "rgba(36, 75, 127, 1)", marginY: 1, padding: 1, color: "#fff", display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }}>
+              <Box>
+                <Typography>{item.name}</Typography>
+              </Box>
+              {item.tag && <Chip label={item.tag} sx={{ background: "rgba(249, 245, 147, 1)" }} />}
+              <Box>
+                <IconButton color="inherit"><RefreshIcon /></IconButton>
+                <IconButton color="inherit"><EditIcon /></IconButton>
+              </Box>
+            </Card>
+          ))}
       </Card>
 
       {/* Critérios Padrão */}
       <Card sx={{ flex: 1, background: "#1F2A4C", padding: 2 }}>
         <Typography variant="h6" sx={{ color: "#F7F7F7",marginBottom:3}}>Critérios Padrão</Typography>
-        {["Risco de gerar indisponibilidade da UG", "Risco de gerar indisponibilidade de Sistema de Segurança", "Indisponibilidade do item gera risco de afetar o ativo", "Processo de compras superior a 6 meses", "Custo superior a R$ 10.000,00", "Mais de 1 fornecedor disponível", "Risco de ser descontinuado pelo fabricante em até 2 anos", "Item utilizado por pelo menos 10 ativos", "Alta probabilidade de uso", "Item considerado estratégico"].map((criterio, index) => (
+        {criterios.map((criterio, index) => (
           <Box key={index} sx={{  marginY: 1 }}>
             <FormControlLabel sx={{color:'white'}} control={<CustomSwitch sx={{ m: 1 }} defaultChecked />} label={criterio} />
             
