@@ -21,7 +21,11 @@ const Navbar = () => {
     const location = useLocation();
     const pathSegments = location.pathname.split('/').filter(Boolean); 
     const capitalize = (str: string) => {
-        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+        return str
+            .replace(/-/g, ' ') // Substitui hifens por espaços
+            .split(' ') // Divide a string em palavras
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()) // Capitaliza cada palavra
+            .join(' '); // Junta as palavras de volta com espaço
     };
 
     const formattedPath = pathSegments.map((segment) => {
