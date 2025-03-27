@@ -156,7 +156,7 @@ export default function TelaEstrategica() {
             <Box sx={{ display: "flex", flexDirection: "column", width: "100%" }}>
               <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
                 <Typography>{item.name}</Typography>
-                {item.tag && <Chip label={item.tag} sx={{ background: "rgba(249, 245, 147, 1)" }} />}
+                {item.tag && <Chip label={item.tag} sx={{ background: "rgba(249, 245, 147, 1)",paddingX:'20px',height:'100%' }} />}
               </Box>
           
               <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
