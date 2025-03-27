@@ -3,7 +3,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import EditIcon from "@mui/icons-material/Edit";
 import RefreshIcon from "@mui/icons-material/Refresh";
 
-const IOSSwitch = styled((props: SwitchProps) => (
+const CustomSwitch = styled((props: SwitchProps) => (
   <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
 ))(({ theme }) => ({
   width: 25,
@@ -94,9 +94,9 @@ export default function TelaEstrategica() {
         <Chip label="Estratégicos" sx={{background: "rgba(213, 226, 238, 1)",paddingX:'20px',height:'100%',cursor:"pointer"}}/>
           
         </Box>
-        <Box sx={{display:'flex',gap:2}}>
+        <Box sx={{display:'flex',gap:2,marginBottom:2}}>
 
-        <Button variant="contained" sx={{background:"rgba(46, 112, 171, 1)",whiteSpace: "nowrap",width:"100%"}} startIcon={<RefreshIcon />}>Restaurar padrão</Button>
+        <Button variant="contained" sx={{background:"rgba(46, 112, 171, 1)",whiteSpace: "nowrap",paddingX:"50px"}} startIcon={<RefreshIcon />}>Restaurar padrão</Button>
         <span style={{color:"white"}}>Restaura o padrão de todas os itens sinalizados com exceções</span>
         </Box>
         {[{ name: "ABRACADEIRA ELETROD ACO GALV D1", tag: "Estratégico" }, { name: "ABRACADEIRA ELETROD SAE1020 GALV D1.12", tag: "Estratégico" }, { name: "ABRACADEIRA ELETROD SAE1020 GALV D12" }, { name: "ABRACADEIRA ELETROD ACO GALV D2" }, { name: "ABRACADEIRA ELETROD SAE1020 GALV D34" }].map((item, index) => (
@@ -118,13 +118,13 @@ export default function TelaEstrategica() {
         <Typography variant="h6" sx={{ color: "#F7F7F7",marginBottom:3}}>Critérios Padrão</Typography>
         {["Risco de gerar indisponibilidade da UG", "Risco de gerar indisponibilidade de Sistema de Segurança", "Indisponibilidade do item gera risco de afetar o ativo", "Processo de compras superior a 6 meses", "Custo superior a R$ 10.000,00", "Mais de 1 fornecedor disponível", "Risco de ser descontinuado pelo fabricante em até 2 anos", "Item utilizado por pelo menos 10 ativos", "Alta probabilidade de uso", "Item considerado estratégico"].map((criterio, index) => (
           <Box key={index} sx={{  marginY: 1 }}>
-            <FormControlLabel sx={{color:'white'}} control={<IOSSwitch sx={{ m: 1 }} defaultChecked />} label={criterio} />
+            <FormControlLabel sx={{color:'white'}} control={<CustomSwitch sx={{ m: 1 }} defaultChecked />} label={criterio} />
             
           </Box>
         ))}
           <Box sx={{ display: "flex",flexDirection:"column", alignItems: "start" }}>
         <Button variant="contained"  sx={{ marginTop: 2 ,background:"rgba(46, 112, 171, 1)"}}>Aplicar a todos os itens</Button>
-        <FormControlLabel sx={{color:'white',marginTop: 2}} control={<IOSSwitch sx={{ m: 1 }} defaultChecked />} label="Exceto itens editados manualmente" />
+        <FormControlLabel sx={{color:'white',marginTop: 2}} control={<CustomSwitch sx={{ m: 1 }} defaultChecked />} label="Exceto itens editados manualmente" />
          </Box>
       </Card>
     </Box>
