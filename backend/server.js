@@ -9,7 +9,7 @@ const jwt = require("jsonwebtoken");
 const { ConfidentialClientApplication } = require('@azure/msal-node');
 const { stringify } = require("querystring");
 const GroupDictionaryController = require("./controllers/groupDictionaryController");
-const MaterialController = require("./controllers/materialsController");
+const MaterialController = require("./controllers/materialsController"); 
 
 const msalClient = new ConfidentialClientApplication({
   auth: {
