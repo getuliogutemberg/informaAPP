@@ -1,7 +1,7 @@
-import { Box, Typography, TextField, Button, Chip, Card, IconButton, Switch, FormControlLabel, styled, SwitchProps } from "@mui/material";
+import { Box, Typography, TextField, Button, Chip, Card, IconButton, Switch, FormControlLabel, styled, SwitchProps, Modal } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import EditIcon from "@mui/icons-material/Edit";
-import RefreshIcon from "@mui/icons-material/Refresh";
+import ReplayIcon from "@mui/icons-material/Replay";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
@@ -92,10 +92,10 @@ export default function TelaEstrategica() {
   const [itemSelecionado, setItemSelecionado] = useState<Item|null>(null);
   const [grupos, setGrupos] = useState<Grupo[]>([]);
   const [itens, setItens] = useState<Item[]>([]); // Para armazenar todos os itens
-  // const [modalOpen, setModalOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false); // Estado para controlar o modal
   const [filtroSelecionado, setFiltroSelecionado] = useState<"Todos" | "Não preenchidos" | "Preenchidos">("Todos");
   const [filtroItemSelecionado, setFiltroItemSelecionado] = useState<string>("Todos");
- 
+  const [criteriosState, setCriteriosState] = useState<boolean[]>(new Array(criterios.length).fill(true)); // Assume true (todos ativos) por padrão
 // Carregar grupos ao montar a página
 useEffect(() => {
   axios.get("http://localhost:5000/groupDictionary")
@@ -134,6 +134,46 @@ useEffect(() => {
       item.cod_item_material.toString().includes(query)
     );
   });
+
+  // Função para restaurar os padrões
+  const handleRestoreDefault = () => {
+    // Restaura os critérios para o estado original (todos ativos, ou outro padrão)
+    setCriteriosState(new Array(criterios.length).fill(true));
+    
+  };
+
+  // Função para aplicar as mudanças (salvar ou atualizar os dados conforme necessário)
+  const handleApplyChanges = () => {
+    if (itemSelecionado) {
+      const updatedCriterios = criterios.map((criterio, index) => ({
+        criterio,
+        isChecked: criteriosState[index]
+      }));
+
+      // Exemplo de ação: salvar as mudanças no item
+      axios
+        .put(`http://localhost:5000/materials/${itemSelecionado._id}`, { criterios: updatedCriterios })
+        .then((response) => {
+          console.log("Alterações aplicadas com sucesso:", response.data);
+          setModalOpen(false); // Fechar o modal após a aplicação
+        })
+        .catch((error) => {
+          console.error("Erro ao aplicar alterações:", error);
+        });
+    }
+    setModalOpen(false)
+  };
+  // Função para abrir o modal com os detalhes do item selecionado
+  const handleEditClick = (item: Item) => {
+    setItemSelecionado(item);
+    setModalOpen(true);
+  };
+
+  // Função para fechar o modal
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
+
 
   return (
     <Box sx={{position:'fixed',top:'62px',left:"80px", display: "flex", gap: 2, background: "#0A1C44", height: "calc(100vh - 93px)", padding: 2 ,width:'calc(100vw - 110px)'}}>
@@ -215,7 +255,7 @@ useEffect(() => {
 </Box>
         <Box sx={{display:'flex',gap:2,marginBottom:2}}>
 
-        <Button variant="contained" sx={{background:"rgba(46, 112, 171, 1)",whiteSpace: "nowrap",paddingX:"50px"}} startIcon={<RefreshIcon />}>Restaurar padrão</Button>
+        <Button variant="contained" sx={{background:"rgba(46, 112, 171, 1)",whiteSpace: "nowrap",paddingX:"50px"}} startIcon={<ReplayIcon />}>Restaurar padrão</Button>
         <span style={{color:"white"}}>Restaura o padrão de todas os itens sinalizados com exceções</span>
         </Box>
        
@@ -246,8 +286,8 @@ useEffect(() => {
             Última atualização: 26/07/2024
           </Typography>
           <Box sx={{ display: "flex", marginLeft: "auto" }}>
-            <IconButton color="inherit"><RefreshIcon /></IconButton>
-            <IconButton color="inherit"><EditIcon /></IconButton>
+            <IconButton color="inherit"><ReplayIcon /></IconButton>
+            <IconButton color="inherit" onClick={() => handleEditClick(item)}><EditIcon /></IconButton>
           </Box>
         </Box>
       </Box>
@@ -271,7 +311,71 @@ useEffect(() => {
          </Box>
       </Card>
 
+      {/* Modal de Edição */}
+      <Modal open={modalOpen} onClose={handleCloseModal}>
+  <Box
+    sx={{
+      padding: 2,
+      background: "#1F2A4C",
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      width: "400px",
+      borderRadius: "8px",
+      boxShadow: 3,
+    }}
+  >{itemSelecionado && (<Box sx={{marginBottom:5}}>
+    <Typography variant="h6" sx={{ color: "#F7F7F7", marginBottom: 3 }}>
+      Critérios Item {itemSelecionado.cod_item_material}
+    </Typography>
+    
+    
       
+        <Typography >{itemSelecionado.desc_material}</Typography>
+        <Typography variant="caption">Última atualização: 26/07/2024</Typography>
+        
+      </Box>
+    )}
+    
+
+    {criterios.map((criterio, index) => (
+      <Box key={index} sx={{ marginTop: 1 }}>
+        <FormControlLabel
+          sx={{ color: "white" }}
+          control={<CustomSwitch sx={{ m: 1 }} defaultChecked />}
+          label={criterio}
+        />
+      </Box>
+    ))}
+    
+    <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+    <Button
+        variant="contained"
+        sx={{ marginTop: 2, background: "rgba(46, 112, 171, 1)" }}
+        startIcon={<ReplayIcon />}
+        onClick={handleRestoreDefault} // Restaurar padrão
+      >
+        Restaurar padrão
+      </Button> 
+      <Button
+        variant="contained"
+        sx={{ marginTop: 2, background: "rgba(46, 112, 171, 1)" }}
+        onClick={handleApplyChanges} // Aplicar mudanças
+      >
+        Aplicar
+      </Button> 
+      {/* <Button
+        variant="contained"
+        sx={{ marginTop: 2, background: "rgba(46, 112, 171, 1)" }}
+        onClick={handleCloseModal}
+      >
+        Fechar
+      </Button> */}
+    </Box>
+  </Box>
+</Modal>
+
     </Box>
   );
 }
