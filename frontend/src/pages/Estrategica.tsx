@@ -225,7 +225,7 @@ useEffect(() => {
       }}
       onClick={() => setGrupoSelecionado(grupo)}
     >
-      <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+      <Typography variant="body1" sx={{  }}>
         {grupo.cod_grupo.toString().padStart(3, "0")} - {grupo.desc_grupo}
       </Typography>
       <Typography variant="caption">Última atualização: 26/07/2024</Typography>
