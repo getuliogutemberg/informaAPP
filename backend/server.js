@@ -10,6 +10,7 @@ const { ConfidentialClientApplication } = require('@azure/msal-node');
 const { stringify } = require("querystring");
 const GroupDictionaryController = require("./controllers/groupDictionaryController");
 const MaterialController = require("./controllers/materialsController"); 
+const ParamsController = require("./controllers/paramsController"); 
 
 const msalClient = new ConfidentialClientApplication({
   auth: {
@@ -765,7 +766,11 @@ app.get('/groupDictionary', GroupDictionaryController.getGroupDictionaries);
 // Rota para listar todos os materiais de um grupo
 app.get('/materials/:groupId', MaterialController.getMaterialByGroup);
 
-
+// Rotas de parâmetros estratégicos
+app.get('/params/:groupId', ParamsController.getGroupParams); // Rota para listar todos os parâmetros de um grupo
+app.get('/params/:materialId', ParamsController.getMaterialParams); // Rota para listar todos os parâmetros de um grupo
+app.put('/params/:groupId', ParamsController.updateGroupParams); // Rota para listar todos os parâmetros de um grupo
+app.put('/params/:materialId', ParamsController.updateMaterialParams); // Rota para listar todos os parâmetros de um grupo
 
 const server = http.createServer(app);
 
@@ -796,5 +801,3 @@ try {
 } catch (err) {
   console.error("Erro ao inicializar o socket.io:", err);
 }
-
-
