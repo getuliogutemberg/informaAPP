@@ -1,4 +1,4 @@
-import { Box, Typography, TextField, Button, Chip, Card, IconButton, Switch, FormControlLabel, styled, SwitchProps, Modal } from "@mui/material";
+import { Box, Typography, TextField, Button, Chip, Card, IconButton, Switch, FormControlLabel, styled, SwitchProps, Modal, FormControl, RadioGroup, Radio } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import EditIcon from "@mui/icons-material/Edit";
 import ReplayIcon from "@mui/icons-material/Replay";
@@ -9,7 +9,7 @@ import axios from "axios";
 // const itensData = [
 //   { name: "ABRACADEIRA ELETROD ACO GALV D1", tag: "Estratégico" }, { name: "ABRACADEIRA ELETROD SAE1020 GALV D1.12", tag: "Estratégico" }, { name: "ABRACADEIRA ELETROD SAE1020 GALV D12" }, { name: "ABRACADEIRA ELETROD ACO GALV D2" }, { name: "ABRACADEIRA ELETROD SAE1020 GALV D34" }
 // ];
-const criterios = ["Risco de gerar indisponibilidade da UG", "Risco de gerar indisponibilidade de Sistema de Segurança", "Indisponibilidade do item gera risco de afetar o ativo", "Processo de compras superior a 6 meses", "Custo superior a R$ 10.000,00", "Mais de 1 fornecedor disponível", "Risco de ser descontinuado pelo fabricante em até 2 anos", "Item utilizado por pelo menos 10 ativos", "Alta probabilidade de uso", "Item considerado estratégico"]
+// const criterios = ["Risco de gerar indisponibilidade da UG", "Risco de gerar indisponibilidade de Sistema de Segurança", "Indisponibilidade do item gera risco de afetar o ativo", "Processo de compras superior a 6 meses", "Custo superior a R$ 10.000,00", "Mais de 1 fornecedor disponível", "Risco de ser descontinuado pelo fabricante em até 2 anos", "Item utilizado por pelo menos 10 ativos", "Alta probabilidade de uso", "Item considerado estratégico"]
 interface Grupo {
   id: string;         // _id da API
   cod_grupo: number;        // cod_grupo da API
@@ -26,11 +26,21 @@ interface Item {
   cod_classematerial: number;   // Código da classe material
   tag: string; //
 }
+
+interface Criterio {
+  cod_parametro: number;
+  desc_parametro: string;
+  opcoes: {
+    cod_opcao: number;
+    desc_opcao: string;
+  }[];
+  tipo: 'boolean' | 'radio';
+}
 const CustomSwitch = styled((props: SwitchProps) => (
   <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
 ))(({ theme }) => ({
   width: 25,
-  height: 15,
+  height: 16,
   padding: 0,
   '& .MuiSwitch-switchBase': {
     padding: 0,
@@ -58,13 +68,13 @@ const CustomSwitch = styled((props: SwitchProps) => (
     '&.Mui-disabled .MuiSwitch-thumb': {
       color: theme.palette.grey[100],
       ...theme.applyStyles('dark', {
-        color: theme.palette.grey[600],
+        color: theme.palette.grey[100],
       }),
     },
     '&.Mui-disabled + .MuiSwitch-track': {
       opacity: 0.7,
       ...theme.applyStyles('dark', {
-        opacity: 0.3,
+        opacity: 0.7,
       }),
     },
   },
@@ -72,6 +82,24 @@ const CustomSwitch = styled((props: SwitchProps) => (
     boxSizing: 'border-box',
     width: 15,
     height: 15,
+    position: 'relative',
+    backgroundColor: '#888', // Cor cinza para o estado desligado
+    '&::before': {
+      content: '"✕"',
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      fontSize: '10px',
+      color: '#fff', // X branco
+    },
+  },
+  '& .MuiSwitch-switchBase.Mui-checked .MuiSwitch-thumb': {
+    backgroundColor: '#fff', // Bolinha branca quando ligado
+    '&::before': {
+      content: '"✓"',
+      color: 'rgba(46, 112, 171, 1)', // V azul
+    },
   },
   '& .MuiSwitch-track': {
     borderRadius: 26 / 2,
@@ -95,32 +123,175 @@ export default function TelaEstrategica() {
   const [modalOpen, setModalOpen] = useState(false); // Estado para controlar o modal
   const [filtroSelecionado, setFiltroSelecionado] = useState<"Todos" | "Não preenchidos" | "Preenchidos">("Todos");
   const [filtroItemSelecionado, setFiltroItemSelecionado] = useState<string>("Todos");
-  const [criteriosState, setCriteriosState] = useState<boolean[]>(new Array(criterios.length).fill(true)); // Assume true (todos ativos) por padrão
-// Carregar grupos ao montar a página
-useEffect(() => {
-  axios.get("http://localhost:5000/groupDictionary")
-    .then((response) => {
-      setGrupos(response.data); // Carrega os grupos
-      // Para cada grupo, fazer a requisição dos itens
-      response.data.slice(0, 0).forEach((grupo: Grupo) => {
-        axios.get(`http://localhost:5000/materials/${grupo.cod_grupo}`)
-          .then((res) => {
-            setItens((prevItens) => [...prevItens, ...res.data]); // Adiciona os itens ao estado
-          })
-          .catch((error) => console.error(`Erro ao buscar itens do grupo ${grupo.cod_grupo}:`, error));
-      });
-    })
-    .catch((error) => console.error("Erro ao buscar grupos:", error));
-}, []);
+  
+  const [criterios, setCriterios] = useState<Criterio[]>([
+    {
+      cod_parametro: 0,
+      desc_parametro: "Risco de gerar indisponibilidade da UG",
+      tipo: 'boolean',
+      opcoes: [
+        { cod_opcao: 0, desc_opcao: "FALSE" },
+        { cod_opcao: 1, desc_opcao: "TRUE" }
+      ]
+    },
+    {
+      cod_parametro: 1,
+      desc_parametro: "Risco de gerar indisponibilidade de Sistema de Segurança",
+      tipo: 'boolean',
+      opcoes: [
+        { cod_opcao: 0, desc_opcao: "FALSE" },
+        { cod_opcao: 1, desc_opcao: "TRUE" }
+      ]
+    },
+    {
+      cod_parametro: 2,
+      desc_parametro: "Indisponibilidade do item gera risco de afetar o ativo",
+      tipo: 'boolean',
+      opcoes: [
+        { cod_opcao: 0, desc_opcao: "FALSE" },
+        { cod_opcao: 1, desc_opcao: "TRUE" }
+      ]
+    },
+    {
+      cod_parametro: 3,
+      desc_parametro: "Processo de compras superior a 6 meses",
+      tipo: 'radio',
+      opcoes: [
+        { cod_opcao: 0, desc_opcao: "1 mês" },
+        { cod_opcao: 1, desc_opcao: "3 meses" },
+        { cod_opcao: 2, desc_opcao: "6 meses" },
+        { cod_opcao: 3, desc_opcao: "9 meses" },
+        { cod_opcao: 4, desc_opcao: "12 meses" },
+        { cod_opcao: 5, desc_opcao: "Acima de 12 meses" }
+      ]
+    },
+    {
+      cod_parametro: 4,
+      desc_parametro: "Mais de 1 fornecedor disponível",
+      tipo: 'radio',
+      opcoes: [
+        { cod_opcao: 0, desc_opcao: "1" },
+        { cod_opcao: 1, desc_opcao: "3" },
+        { cod_opcao: 2, desc_opcao: "5" },
+        { cod_opcao: 3, desc_opcao: "7" },
+        { cod_opcao: 4, desc_opcao: "10 ou mais" }
+      ]
+    },
+    {
+      cod_parametro: 5,
+      desc_parametro: "Risco de ser descontinuado pelo fabricante em até 2 anos",
+      tipo: 'radio',
+      opcoes: [
+        { cod_opcao: 0, desc_opcao: "N/A" },
+        { cod_opcao: 1, desc_opcao: "1 ano" },
+        { cod_opcao: 2, desc_opcao: "2 anos" },
+        { cod_opcao: 3, desc_opcao: "3 anos ou mais" }
+      ]
+    },
+    {
+      cod_parametro: 6,
+      desc_parametro: "Item utilizado por pelo menos 10 ativos",
+      tipo: 'radio',
+      opcoes: [
+        { cod_opcao: 0, desc_opcao: "1 ativo" },
+        { cod_opcao: 1, desc_opcao: "3 ativos" },
+        { cod_opcao: 2, desc_opcao: "5 ativos" },
+        { cod_opcao: 3, desc_opcao: "10 ou mais ativos" }
+      ]
+    },
+    {
+      cod_parametro: 7,
+      desc_parametro: "Alta probabilidade de uso",
+      tipo: 'radio',
+      opcoes: [
+        { cod_opcao: 0, desc_opcao: "Irrisória" },
+        { cod_opcao: 1, desc_opcao: "Baixa" },
+        { cod_opcao: 2, desc_opcao: "Média" },
+        { cod_opcao: 3, desc_opcao: "Alta" },
+        { cod_opcao: 4, desc_opcao: "Muito Alta" }
+      ]
+    },
+    {
+      cod_parametro: 8,
+      desc_parametro: "Item considerado estratégico",
+      tipo: 'boolean',
+      opcoes: [
+        { cod_opcao: 0, desc_opcao: "FALSE" },
+        { cod_opcao: 1, desc_opcao: "TRUE" }
+      ]
+    }
+  ]);
+  const [criteriosSelecionados, setCriteriosSelecionados] = useState<Record<number, number>>(() => {
+    const initialSelections: Record<number, number> = {};
+    criterios.forEach(criterio => {
+      initialSelections[criterio.cod_parametro] = criterio.opcoes[0].cod_opcao;
+    });
+    return initialSelections;
+  });
 
-// Carregar os itens apenas quando o grupo for selecionado
-useEffect(() => {
-  if (grupoSelecionado) {
-    axios.get(`http://localhost:5000/materials/${grupoSelecionado.cod_grupo}`)
-      .then(response => setItens(response.data))
-      .catch(error => console.error("Erro ao buscar itens:", error));
-  }
-}, [grupoSelecionado]); // Vai rodar apenas quando o grupoSelecionado mudar
+  // Adicione este estado para controlar a visibilidade dos parâmetros
+  const [showParametros, setShowParametros] = useState(false);
+
+  // Carregar grupos ao montar a página
+  useEffect(() => {
+    axios.get("http://localhost:5000/groupDictionary")
+      .then((response) => {
+        setGrupos(response.data); // Carrega os grupos
+        // Para cada grupo, fazer a requisição dos itens
+        response.data.slice(0, 0).forEach((grupo: Grupo) => {
+          axios.get(`http://localhost:5000/materials/${grupo.cod_grupo}`)
+            .then((res) => {
+              setItens((prevItens) => [...prevItens, ...res.data]); // Adiciona os itens ao estado
+            })
+            .catch((error) => console.error(`Erro ao buscar itens do grupo ${grupo.cod_grupo}:`, error));
+        });
+      })
+      .catch((error) => console.error("Erro ao buscar grupos:", error));
+  }, []);
+
+  useEffect(() => {
+    axios.get("http://localhost:5000/criterios")
+      .then((response) => {
+        const criteriosData = response.data;
+        setCriterios(criteriosData);
+        // Initialize selected values
+        const initialSelections: Record<number, number> = {};
+        criteriosData.forEach((criterio: Criterio) => {
+          initialSelections[criterio.cod_parametro] = criterio.opcoes[0].cod_opcao;
+        });
+        setCriteriosSelecionados(initialSelections);
+      })
+      .catch((error) => console.error("Erro ao buscar critérios:", error));
+  }, []);
+  // Carregar os itens apenas quando o grupo for selecionado
+  useEffect(() => {
+    if (grupoSelecionado) {
+      axios.get(`http://localhost:5000/materials/${grupoSelecionado.cod_grupo}`)
+        .then(response => setItens(response.data))
+        .catch(error => console.error("Erro ao buscar itens:", error));
+    }
+  }, [grupoSelecionado]); // Vai rodar apenas quando o grupoSelecionado mudar
+
+  const handleApplyChanges = () => {
+    if (itemSelecionado) {
+      const criteriosToSave = criterios.map(criterio => ({
+        cod_parametro: criterio.cod_parametro,
+        cod_opcao: criteriosSelecionados[criterio.cod_parametro],
+        desc_opcao: criterio.opcoes.find(op => op.cod_opcao === criteriosSelecionados[criterio.cod_parametro])?.desc_opcao
+      }));
+
+      axios
+        .put(`http://localhost:5000/materials/${itemSelecionado._id}`, { criterios: criteriosToSave })
+        .then((response) => {
+          console.log("Alterações aplicadas com sucesso:", response.data);
+          setModalOpen(false);
+        })
+        .catch((error) => {
+          console.error("Erro ao aplicar alterações:", error);
+        });
+    }
+    setModalOpen(false);
+  };
 
   const gruposFiltrados = grupos.filter((grupo) => 
     grupo.cod_grupo.toString().includes(buscaGrupo) || 
@@ -137,32 +308,12 @@ useEffect(() => {
 
   // Função para restaurar os padrões
   const handleRestoreDefault = () => {
-    // Restaura os critérios para o estado original (todos ativos, ou outro padrão)
-    setCriteriosState(new Array(criterios.length).fill(true));
+    
     
   };
 
-  // Função para aplicar as mudanças (salvar ou atualizar os dados conforme necessário)
-  const handleApplyChanges = () => {
-    if (itemSelecionado) {
-      const updatedCriterios = criterios.map((criterio, index) => ({
-        criterio,
-        isChecked: criteriosState[index]
-      }));
+  
 
-      // Exemplo de ação: salvar as mudanças no item
-      axios
-        .put(`http://localhost:5000/materials/${itemSelecionado._id}`, { criterios: updatedCriterios })
-        .then((response) => {
-          console.log("Alterações aplicadas com sucesso:", response.data);
-          setModalOpen(false); // Fechar o modal após a aplicação
-        })
-        .catch((error) => {
-          console.error("Erro ao aplicar alterações:", error);
-        });
-    }
-    setModalOpen(false)
-  };
   // Função para abrir o modal com os detalhes do item selecionado
   const handleEditClick = (item: Item) => {
     setItemSelecionado(item);
@@ -223,7 +374,12 @@ useEffect(() => {
         justifyContent: "space-between", 
         alignItems: "start", 
       }}
-      onClick={() => setGrupoSelecionado(grupo)}
+      onClick={() => {
+        setGrupoSelecionado(grupo);
+        setShowParametros(true);
+        // Limpa o item selecionado quando muda de grupo
+        setItemSelecionado(null);
+      }}
     >
       <Typography variant="body1" sx={{  }}>
         {grupo.cod_grupo.toString().padStart(3, "0")} - {grupo.desc_grupo}
@@ -263,7 +419,11 @@ useEffect(() => {
   {itensFiltradosComBusca.map((item, index) => (
     <Card
       key={index}
-      onClick={() =>setItemSelecionado(item)}
+      onDoubleClick={() => handleEditClick(item)}
+      onClick={() => {
+        setItemSelecionado(item);
+        setShowParametros(true);
+      }}
       sx={{
         background: itemSelecionado?.cod_item_material === item.cod_item_material ? "rgba(49, 131, 207, 1)" : "rgba(36, 75, 127, 1)",
         marginY: 1,
@@ -297,18 +457,83 @@ useEffect(() => {
       </Card>
 
       {/* Critérios Padrão */}
-      <Card sx={{ flex: 1, background: "#1F2A4C", padding: 2 }}>
-        <Typography variant="h6" sx={{ color: "#F7F7F7",marginBottom:3}}>Critérios Padrão</Typography>
-        {criterios.map((criterio, index) => (
-          <Box key={index} sx={{  marginY: 1 }}>
-            <FormControlLabel sx={{color:'white'}} control={<CustomSwitch sx={{ m: 1 }} defaultChecked />} label={criterio} />
-            
-          </Box>
-        ))}
-          <Box sx={{ display: "flex",flexDirection:"column", alignItems: "start" }}>
-        <Button variant="contained"  sx={{ marginTop: 2 ,background:"rgba(46, 112, 171, 1)"}}>Aplicar a todos os itens</Button>
-        <FormControlLabel sx={{color:'white',marginTop: 2}} control={<CustomSwitch sx={{ m: 1 }} defaultChecked />} label="Exceto itens editados manualmente" />
-         </Box>
+      <Card sx={{ flex: 1, background: "#1F2A4C", padding: 2, display: showParametros ? 'block' : 'block' }}>
+        <Typography variant="h6" sx={{ color: "#F7F7F7",marginBottom:3}}>
+          {/* {itemSelecionado ? `Critérios do Item ${itemSelecionado.desc_material}` : "Critérios Padrão do Grupo"} */}
+          {"Critérios Padrão do Grupo"}
+        </Typography>
+        <Box sx={{ height: "calc(100vh - 280px)", overflowY: "auto", paddingRight: "5px" }}>
+        {showParametros && criterios.map((criterio) => (
+      <Box key={criterio.cod_parametro} sx={{ marginTop: 1 }}>
+       
+        {criterio.tipo === 'boolean' ? (
+          <FormControlLabel
+            sx={{ color: "white" ,m:1,gap: 2} }
+            control={
+              <CustomSwitch
+                checked={criteriosSelecionados[criterio.cod_parametro] === 1}
+                onChange={(e) => {
+                  setCriteriosSelecionados(prev => ({
+                    ...prev,
+                    [criterio.cod_parametro]: e.target.checked ? 1 : 0
+                  }));
+                }}
+              />
+            }
+            label={ <Typography sx={{ color: "white", marginBottom: 1 }}>
+            {criterio.desc_parametro}
+          </Typography>}
+          />
+        ) : (<>
+          <Typography sx={{ color: "white", marginBottom: 1 }}>
+          {criterio.desc_parametro}
+        </Typography>
+          <FormControl >
+            <RadioGroup 
+              row
+              value={criteriosSelecionados[criterio.cod_parametro]}
+              onChange={(e) => {
+                setCriteriosSelecionados(prev => ({
+                  ...prev,
+                  [criterio.cod_parametro]: parseInt(e.target.value)
+                }));
+              }}
+            >
+              {criterio.opcoes.map((opcao) => (
+                <FormControlLabel
+                  key={opcao.cod_opcao}
+                  value={opcao.cod_opcao}
+                  control={<Radio 
+                    sx={{
+                    color: "rgba(36, 75, 127, 1)",
+                    '&.Mui-checked': {
+                      color: "rgba(49, 131, 207, 1)",
+                    },
+                  }} 
+                  />}
+                  label={opcao.desc_opcao}
+                  sx={{ color: "white" }}
+                />
+              ))}
+            </RadioGroup>
+          </FormControl>
+          </>
+        )}
+      </Box>
+    ))}</Box>
+          <Box sx={{ display: showParametros ? 'flex' : 'flex' ,flexDirection:"column", alignItems: "end",gap:2 }}>
+        { (
+          <>
+            <Button variant="contained" sx={{ marginTop: 2 ,background:"rgba(46, 112, 171, 1)"}}>
+              Aplicar a todos os itens
+            </Button>
+            <Box sx={{ display: "flex",flexDirection:"row", alignItems: 'baseline',gap:2}}>
+              <Typography sx={{color:'white'}}>Exceto itens editados manualmente</Typography>
+              <FormControlLabel sx={{color:'white'}} control={<CustomSwitch sx={{ m: 1 }} defaultChecked />} label="" />
+            </Box>
+          </>
+        )}
+      </Box>
       </Card>
 
       {/* Modal de Edição */}
@@ -321,13 +546,13 @@ useEffect(() => {
       top: "50%",
       left: "50%",
       transform: "translate(-50%, -50%)",
-      width: "400px",
+     
       borderRadius: "8px",
       boxShadow: 3,
     }}
   >{itemSelecionado && (<Box sx={{marginBottom:5}}>
     <Typography variant="h6" sx={{ color: "#F7F7F7", marginBottom: 3 }}>
-      Critérios Item {itemSelecionado.cod_item_material}
+      Critérios Item 
     </Typography>
     
     
@@ -339,13 +564,62 @@ useEffect(() => {
     )}
     
 
-    {criterios.map((criterio, index) => (
-      <Box key={index} sx={{ marginTop: 1 }}>
-        <FormControlLabel
-          sx={{ color: "white" }}
-          control={<CustomSwitch sx={{ m: 1 }} defaultChecked />}
-          label={criterio}
-        />
+    {criterios.map((criterio) => (
+      <Box key={criterio.cod_parametro} sx={{ marginTop: 1 }}>
+       
+        {criterio.tipo === 'boolean' ? (
+          <FormControlLabel
+            sx={{ color: "white" ,m:1,gap: 2} }
+            control={
+              <CustomSwitch
+                checked={criteriosSelecionados[criterio.cod_parametro] === 1}
+                onChange={(e) => {
+                  setCriteriosSelecionados(prev => ({
+                    ...prev,
+                    [criterio.cod_parametro]: e.target.checked ? 1 : 0
+                  }));
+                }}
+              />
+            }
+            label={ <Typography sx={{ color: "white", marginBottom: 1 }}>
+            {criterio.desc_parametro}
+          </Typography>}
+          />
+        ) : (<>
+          <Typography sx={{ color: "white", marginBottom: 1 }}>
+          {criterio.desc_parametro}
+        </Typography>
+          <FormControl >
+            <RadioGroup 
+              row
+              value={criteriosSelecionados[criterio.cod_parametro]}
+              onChange={(e) => {
+                setCriteriosSelecionados(prev => ({
+                  ...prev,
+                  [criterio.cod_parametro]: parseInt(e.target.value)
+                }));
+              }}
+            >
+              {criterio.opcoes.map((opcao) => (
+                <FormControlLabel
+                  key={opcao.cod_opcao}
+                  value={opcao.cod_opcao}
+                  control={<Radio 
+                    sx={{
+                    color: "rgba(36, 75, 127, 1)",
+                    '&.Mui-checked': {
+                      color: "rgba(49, 131, 207, 1)",
+                    },
+                  }} 
+                  />}
+                  label={opcao.desc_opcao}
+                  sx={{ color: "white" }}
+                />
+              ))}
+            </RadioGroup>
+          </FormControl>
+          </>
+        )}
       </Box>
     ))}
     
