@@ -4,7 +4,7 @@ import "./Navbar.css";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { 
-    
+   
     
    
      FaSignInAlt,  
@@ -15,11 +15,15 @@ import {
 } from "react-icons/fa"; // Ícones aprimorados
 import { Avatar } from "@mui/material";
 
+
+
 const Navbar = () => {
     const { user , logout } = useContext(AuthContext);
+    
     const navigate = useNavigate();
     const location = useLocation();
     const pathSegments = location.pathname.split('/').filter(Boolean); 
+   
     const capitalize = (str: string) => {
         return str
             .replace(/-/g, ' ') // Substitui hifens por espaços
@@ -33,11 +37,16 @@ const Navbar = () => {
     }).join(' > ');
   
     
+    
+   
 
       
     if (["/login","/registro","/solicitar-registro"].includes(location.pathname)) {
         return null;
     }
+
+    
+
 
     return (
         <nav className="navbar" style={{zIndex:1000}}>
