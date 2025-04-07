@@ -4,13 +4,13 @@ const grupo_material = require("../models/GrupoMaterial")
 class MaterialController {
     async getMaterialByGroup(req, res) {
         try {
-            const { groupId } = req.params;
+            const { cod_grupo } = req.params;
 
-            if (!groupId) {
+            if (!cod_grupo) {
                 return res.status(400).json({ message: "O código do grupo é obrigatório." });
             }
 
-            const materiaisDoGrupo = await grupo_material.find({ cod_grupo: groupId });
+            const materiaisDoGrupo = await grupo_material.find({ cod_grupo: cod_grupo });
 
             if (materiaisDoGrupo.length === 0) {
                 return res.status(404).json({ message: "Nenhum material encontrado para este grupo." });

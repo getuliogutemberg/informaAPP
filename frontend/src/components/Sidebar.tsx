@@ -52,34 +52,41 @@ const Sidebar = () => {
   const [routes, setRoutes] = useState<Route[]>([]); // Estado para lista de rotas
   const [expanded, setExpanded] = useState(false);
   const [menuGroups, setMenuGroups] = useState<MenuGroup[]>([
-    {
-      _id: "1",
-      name: "Teste",
-      icon: "parking",
-      path: "/test",
-      subRoutes: [],
-      requiredRole: ["OWNER"],
-    },
+    // {
+    //   _id: "1",
+    //   name: "Teste",
+    //   icon: "parking",
+    //   path: "/test",
+    //   subRoutes: [],
+    //   requiredRole: ["OWNER"],
+    // },
     {
       _id: "2",
-      "name": "Gestão",
-      "icon": "finance",
-      "path": "/gestão",
+      "name": "",
+      "icon": "",
+      "path": "",
       "subRoutes": [
         {
-          "path": "/usuarios",
-          "icon": 'employees',
-          "component": "Gestão de Usuários",
-          "requiredRole": ["OWNER"],
+          "path": "/indicadores",
+          "icon": 'dashboard',
+          "component": "Indicadores",
+          "requiredRole": ["OWNER","ADMIN"],
           "pageId": "users-management"
         },
         {
-          "path": "/configuracoes",
-          "icon": 'settings',
-          "component": "Configurações",
-          "requiredRole": ["OWNER"],
+          "path": "/gestão",
+          "icon": 'dashboard',
+          "component": "Gestão",
+          "requiredRole": ["OWNER","ADMIN"],
           "pageId": "settings"
-        }
+        },
+        {
+          "path": "/Configuração-de-Itens-Estratégicos-do-Estoque",
+          "icon": 'settings',
+          "component": "Configuração de Itens Estratégicos do Estoque",
+          "requiredRole": ["OWNER","ADMIN"],
+          "pageId": "configuration-of-strategic-items-of-the-warehouse"
+          },
       ],
       "requiredRole": ["OWNER"]
     }
@@ -130,13 +137,14 @@ const Sidebar = () => {
   const getIcon = (iconName: string) => {
     switch (iconName) {
       case 'dashboard': return <FaTachometerAlt />;
+      case 'menu': return <FaBars />;
       case 'file': return <FaFileAlt />;
       case 'settings': return <FaCog />;
       case 'users': return <FaUsers />;
       case 'employees': return <FaUserTie />;
       case 'finance': return <FaDollarSign />;
       case 'parking': return <FaCar />;
-      default: return <FaFileAlt />;
+      default: return null;
     }
   };
   
@@ -148,40 +156,9 @@ const Sidebar = () => {
       // onMouseLeave={() => setExpanded(false)}
     >
       
-      <ul className="sidebar-list" >
+      <ul className="sidebar-list" onMouseLeave={()=>setExpanded(false)}>
       <li title="Menu" ><button onClick={()=>setExpanded(true)} className="menu-button" ><FaBars  onMouseEnter={()=>setExpanded(true)} /><span>{expanded && ""}</span></button></li>
         {/* <li title="Home"><Link to="/"><FaHome /><span>Home</span></Link></li> */}
-        {user ? routes.filter(route => user.className !== 'OWNER' ? route.requiredRole?.includes(user.category): route).map((route) =>
-          <li title={route.path.slice(1, 2).toUpperCase() + route.path.slice(2)}><Link onClick={() => setExpanded(false)} to={route.path}>
-            {route.component === "Dashboard Power BI" ? <FaTachometerAlt />:
-             route.component === "Gestão de Grupos e Materiais" ? <FaFileAlt />:
-             route.component === "Teste" ? <GoPackage/> :
-             <></>
-            }
-            <span>{route.path.slice(1, 2).toUpperCase() + route.path.slice(2)}</span></Link></li>
-      
-          // <>
-          //   <li title="Indicadores"><Link to="/indicadores"><FaTachometerAlt /><span>Indicadores</span></Link></li>
-          //   <li title="Gestão"><Link to="/gestão"><FaFileAlt /><span>Gestão</span></Link></li>
-          //   
-            
-          //   {/* <li title="Funcionários"><Link to="/employees"><FaUserTie /><span>Funcionários</span></Link></li>
-          //   <li title="Moradores"><Link to="/residents"><FaUsers /><span>Moradores</span></Link></li>
-          //   <li title="Financeiro"><Link to="/finance"><FaDollarSign /><span>Financeiro</span></Link></li>
-          //   <li title="Documentos"><Link to="/documents"><FaFileAlt /><span>Documentos</span></Link></li>
-          //   <li title="Estacionamento"><Link to="/parking"><LocalParkingIcon /><span>Estacionamento</span></Link></li> */}
-           
-          // </>
-        ) : (
-          <>
-            {/* <li><Link to="/"><FaHome /><span>Home</span></Link></li>
-            <li><Link to="/news"><FaNewspaper /><span>Notícias</span></Link></li>
-            <li><Link to="/faq"><FaQuestionCircle /><span>FAQ</span></Link></li>
-            <li><Link to="/contact"><FaEnvelope /><span>Contato</span></Link></li> */}
-          </>
-        )}
-<ul className="sidebar-list">
-
         {user && menuGroups
           // .filter(group => user.className !== 'OWNER' ? group.requiredRole?.includes(user.category) : group)
           .map((group) => (
@@ -229,6 +206,38 @@ const Sidebar = () => {
               )}
             </li>
           ))}
+        { user ? routes.filter(route => user.className !== 'OWNER' ? route.requiredRole?.includes(user.category): route).map((route) =>
+          <li title={route.path.slice(1, 2).toUpperCase() + route.path.slice(2)}><Link onClick={() => setExpanded(false)} to={route.path}>
+            {route.component === "Dashboard Power BI" ? <FaTachometerAlt />:
+             route.component === "Gestão de Grupos e Materiais" ? <FaFileAlt />:
+             route.component === "Teste" ? <GoPackage/> :
+             <></>
+            }
+            <span>{route.path.slice(1, 2).toUpperCase() + route.path.slice(2)}</span></Link></li>
+      
+          // <>
+          //   <li title="Indicadores"><Link to="/indicadores"><FaTachometerAlt /><span>Indicadores</span></Link></li>
+          //   <li title="Gestão"><Link to="/gestão"><FaFileAlt /><span>Gestão</span></Link></li>
+          //   
+            
+          //   {/* <li title="Funcionários"><Link to="/employees"><FaUserTie /><span>Funcionários</span></Link></li>
+          //   <li title="Moradores"><Link to="/residents"><FaUsers /><span>Moradores</span></Link></li>
+          //   <li title="Financeiro"><Link to="/finance"><FaDollarSign /><span>Financeiro</span></Link></li>
+          //   <li title="Documentos"><Link to="/documents"><FaFileAlt /><span>Documentos</span></Link></li>
+          //   <li title="Estacionamento"><Link to="/parking"><LocalParkingIcon /><span>Estacionamento</span></Link></li> */}
+           
+          // </>
+        ) : (
+          <>
+            {/* <li><Link to="/"><FaHome /><span>Home</span></Link></li>
+            <li><Link to="/news"><FaNewspaper /><span>Notícias</span></Link></li>
+            <li><Link to="/faq"><FaQuestionCircle /><span>FAQ</span></Link></li>
+            <li><Link to="/contact"><FaEnvelope /><span>Contato</span></Link></li> */}
+          </>
+        )}
+<ul className="sidebar-list">
+
+       
       </ul>
       </ul>
 

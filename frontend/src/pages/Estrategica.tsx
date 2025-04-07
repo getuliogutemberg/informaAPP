@@ -1,9 +1,11 @@
-import { Box, Typography, TextField, Button, Chip, Card, IconButton, Switch, FormControlLabel, styled, SwitchProps, Modal, FormControl, RadioGroup, Radio } from "@mui/material";
+import { Box, Typography, TextField, Button, Chip, Card, IconButton, FormControlLabel, Modal, FormControl, RadioGroup, Radio } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import EditIcon from "@mui/icons-material/Edit";
 import ReplayIcon from "@mui/icons-material/Replay";
+import CustomSwitch from "../components/CustomSwitch";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import CRITERIOS_PADRAO from "../components/CriteriosPadrao";
 
 // const gruposData = ["001 - ABRACADEIRA", "002 - ABRACADEIRA", "003 - ABRACADEIRA", "004 - ABRACADEIRA", "005 - ABRACADEIRA"];
 // const itensData = [
@@ -27,92 +29,24 @@ interface Item {
   tag: string; //
 }
 
-interface Criterio {
+type Opcao = { cod_opcao: string | number; desc_opcao: string };
+type Parametro = {
   cod_parametro: number;
+  var_name: string;
   desc_parametro: string;
-  opcoes: {
-    cod_opcao: number;
-    desc_opcao: string;
-  }[];
-  tipo: 'boolean' | 'radio';
-}
-const CustomSwitch = styled((props: SwitchProps) => (
-  <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
-))(({ theme }) => ({
-  width: 25,
-  height: 16,
-  padding: 0,
-  '& .MuiSwitch-switchBase': {
-    padding: 0,
-    margin: 0,
-    transitionDuration: '300ms',
-    '&.Mui-checked': {
-      transform: 'translateX(10px)',
-      color: '#fff',
-      '& + .MuiSwitch-track': {
-        backgroundColor: 'rgba(46, 112, 171, 1)',
-        opacity: 1,
-        border: 1,
-        ...theme.applyStyles('dark', {
-          backgroundColor: '#2ECA45',
-        }),
-      },
-      '&.Mui-disabled + .MuiSwitch-track': {
-        opacity: 0.5,
-      },
-    },
-    '&.Mui-focusVisible .MuiSwitch-thumb': {
-      color: '#33cf4d',
-      border: '6px solid #fff',
-    },
-    '&.Mui-disabled .MuiSwitch-thumb': {
-      color: theme.palette.grey[100],
-      ...theme.applyStyles('dark', {
-        color: theme.palette.grey[100],
-      }),
-    },
-    '&.Mui-disabled + .MuiSwitch-track': {
-      opacity: 0.7,
-      ...theme.applyStyles('dark', {
-        opacity: 0.7,
-      }),
-    },
-  },
-  '& .MuiSwitch-thumb': {
-    boxSizing: 'border-box',
-    width: 15,
-    height: 15,
-    position: 'relative',
-    backgroundColor: '#888', // Cor cinza para o estado desligado
-    '&::before': {
-      content: '"✕"',
-      position: 'absolute',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      fontSize: '10px',
-      color: '#fff', // X branco
-    },
-  },
-  '& .MuiSwitch-switchBase.Mui-checked .MuiSwitch-thumb': {
-    backgroundColor: '#fff', // Bolinha branca quando ligado
-    '&::before': {
-      content: '"✓"',
-      color: 'rgba(46, 112, 171, 1)', // V azul
-    },
-  },
-  '& .MuiSwitch-track': {
-    borderRadius: 26 / 2,
-    backgroundColor: '#E9E9EA',
-    opacity: 1,
-    transition: theme.transitions.create(['background-color'], {
-      duration: 500,
-    }),
-    ...theme.applyStyles('dark', {
-      backgroundColor: '#39393D',
-    }),
-  },
-}));
+  opcoes: Opcao[];
+  tipo: string;
+};
+type CriterioComResposta = {
+  cod_parametro: number;
+  var_name: string;
+  desc_parametro: string;
+  tipo: string;
+  opcoes: Opcao[];
+  resposta?: string | boolean | number;
+};
+
+
 export default function TelaEstrategica() {
   const [buscaItem, setBuscaItem] = useState<string>("");
   const [buscaGrupo, setBuscaGrupo] = useState("");
@@ -124,110 +58,10 @@ export default function TelaEstrategica() {
   const [filtroSelecionado, setFiltroSelecionado] = useState<"Todos" | "Não preenchidos" | "Preenchidos">("Todos");
   const [filtroItemSelecionado, setFiltroItemSelecionado] = useState<string>("Todos");
   
-  const [criterios, setCriterios] = useState<Criterio[]>([
-    {
-      cod_parametro: 0,
-      desc_parametro: "Risco de gerar indisponibilidade da UG",
-      tipo: 'boolean',
-      opcoes: [
-        { cod_opcao: 0, desc_opcao: "FALSE" },
-        { cod_opcao: 1, desc_opcao: "TRUE" }
-      ]
-    },
-    {
-      cod_parametro: 1,
-      desc_parametro: "Risco de gerar indisponibilidade de Sistema de Segurança",
-      tipo: 'boolean',
-      opcoes: [
-        { cod_opcao: 0, desc_opcao: "FALSE" },
-        { cod_opcao: 1, desc_opcao: "TRUE" }
-      ]
-    },
-    {
-      cod_parametro: 2,
-      desc_parametro: "Indisponibilidade do item gera risco de afetar o ativo",
-      tipo: 'boolean',
-      opcoes: [
-        { cod_opcao: 0, desc_opcao: "FALSE" },
-        { cod_opcao: 1, desc_opcao: "TRUE" }
-      ]
-    },
-    {
-      cod_parametro: 3,
-      desc_parametro: "Processo de compras superior a 6 meses",
-      tipo: 'radio',
-      opcoes: [
-        { cod_opcao: 0, desc_opcao: "1 mês" },
-        { cod_opcao: 1, desc_opcao: "3 meses" },
-        { cod_opcao: 2, desc_opcao: "6 meses" },
-        { cod_opcao: 3, desc_opcao: "9 meses" },
-        { cod_opcao: 4, desc_opcao: "12 meses" },
-        { cod_opcao: 5, desc_opcao: "Acima de 12 meses" }
-      ]
-    },
-    {
-      cod_parametro: 4,
-      desc_parametro: "Mais de 1 fornecedor disponível",
-      tipo: 'radio',
-      opcoes: [
-        { cod_opcao: 0, desc_opcao: "1" },
-        { cod_opcao: 1, desc_opcao: "3" },
-        { cod_opcao: 2, desc_opcao: "5" },
-        { cod_opcao: 3, desc_opcao: "7" },
-        { cod_opcao: 4, desc_opcao: "10 ou mais" }
-      ]
-    },
-    {
-      cod_parametro: 5,
-      desc_parametro: "Risco de ser descontinuado pelo fabricante em até 2 anos",
-      tipo: 'radio',
-      opcoes: [
-        { cod_opcao: 0, desc_opcao: "N/A" },
-        { cod_opcao: 1, desc_opcao: "1 ano" },
-        { cod_opcao: 2, desc_opcao: "2 anos" },
-        { cod_opcao: 3, desc_opcao: "3 anos ou mais" }
-      ]
-    },
-    {
-      cod_parametro: 6,
-      desc_parametro: "Item utilizado por pelo menos 10 ativos",
-      tipo: 'radio',
-      opcoes: [
-        { cod_opcao: 0, desc_opcao: "1 ativo" },
-        { cod_opcao: 1, desc_opcao: "3 ativos" },
-        { cod_opcao: 2, desc_opcao: "5 ativos" },
-        { cod_opcao: 3, desc_opcao: "10 ou mais ativos" }
-      ]
-    },
-    {
-      cod_parametro: 7,
-      desc_parametro: "Alta probabilidade de uso",
-      tipo: 'radio',
-      opcoes: [
-        { cod_opcao: 0, desc_opcao: "Irrisória" },
-        { cod_opcao: 1, desc_opcao: "Baixa" },
-        { cod_opcao: 2, desc_opcao: "Média" },
-        { cod_opcao: 3, desc_opcao: "Alta" },
-        { cod_opcao: 4, desc_opcao: "Muito Alta" }
-      ]
-    },
-    {
-      cod_parametro: 8,
-      desc_parametro: "Item considerado estratégico",
-      tipo: 'boolean',
-      opcoes: [
-        { cod_opcao: 0, desc_opcao: "FALSE" },
-        { cod_opcao: 1, desc_opcao: "TRUE" }
-      ]
-    }
-  ]);
-  const [criteriosSelecionados, setCriteriosSelecionados] = useState<Record<number, number>>(() => {
-    const initialSelections: Record<number, number> = {};
-    criterios.forEach(criterio => {
-      initialSelections[criterio.cod_parametro] = criterio.opcoes[0].cod_opcao;
-    });
-    return initialSelections;
-  });
+  // Estado para os critérios
+  const [criterios, setCriterios] = useState<CriterioComResposta[]>(CRITERIOS_PADRAO);
+  const [criteriosItem, setCriteriosItem] = useState<CriterioComResposta[]>(CRITERIOS_PADRAO);
+  const [criteriosSelecionados, setCriteriosSelecionados] = useState<Record<number, number>>({});
 
   // Adicione este estado para controlar a visibilidade dos parâmetros
   const [showParametros, setShowParametros] = useState(false);
@@ -249,49 +83,58 @@ export default function TelaEstrategica() {
       .catch((error) => console.error("Erro ao buscar grupos:", error));
   }, []);
 
-  useEffect(() => {
-    axios.get("http://localhost:5000/criterios")
-      .then((response) => {
-        const criteriosData = response.data;
-        setCriterios(criteriosData);
-        // Initialize selected values
-        const initialSelections: Record<number, number> = {};
-        criteriosData.forEach((criterio: Criterio) => {
-          initialSelections[criterio.cod_parametro] = criterio.opcoes[0].cod_opcao;
-        });
-        setCriteriosSelecionados(initialSelections);
-      })
-      .catch((error) => console.error("Erro ao buscar critérios:", error));
-  }, []);
+
+
+  const mapRespostaComCriterios = (dadosApi: Parametro[]): CriterioComResposta[] => {
+    const CRITERIOS = CRITERIOS_PADRAO.map(criterioBase => {
+      const encontrado = dadosApi.find(p => p.cod_parametro === criterioBase.cod_parametro);
+      if (encontrado) {
+        return {
+          ...criterioBase,
+          opcoes: encontrado.opcoes,
+          tipo: encontrado.tipo,
+          desc_parametro: encontrado.desc_parametro,
+          var_name: encontrado.var_name,
+        };
+      }
+      return criterioBase; // Se não achar, mantém o padrão
+    });
+    return CRITERIOS;
+  };
   // Carregar os itens apenas quando o grupo for selecionado
   useEffect(() => {
     if (grupoSelecionado) {
       axios.get(`http://localhost:5000/materials/${grupoSelecionado.cod_grupo}`)
         .then(response => setItens(response.data))
         .catch(error => console.error("Erro ao buscar itens:", error));
+
+      axios.get(`http://localhost:5000/params/group/${grupoSelecionado.cod_grupo}`)
+      .then(response => {
+        const estrategia = response.data.estrategia;
+        const criteriosComRespostas = mapRespostaComCriterios(estrategia);
+        setCriterios(criteriosComRespostas);
+      })
+        .catch(error => console.error("Erro ao buscar itens:", error));
+
+        
     }
   }, [grupoSelecionado]); // Vai rodar apenas quando o grupoSelecionado mudar
 
-  const handleApplyChanges = () => {
+  useEffect(() => {
     if (itemSelecionado) {
-      const criteriosToSave = criterios.map(criterio => ({
-        cod_parametro: criterio.cod_parametro,
-        cod_opcao: criteriosSelecionados[criterio.cod_parametro],
-        desc_opcao: criterio.opcoes.find(op => op.cod_opcao === criteriosSelecionados[criterio.cod_parametro])?.desc_opcao
-      }));
 
-      axios
-        .put(`http://localhost:5000/materials/${itemSelecionado._id}`, { criterios: criteriosToSave })
-        .then((response) => {
-          console.log("Alterações aplicadas com sucesso:", response.data);
-          setModalOpen(false);
-        })
-        .catch((error) => {
-          console.error("Erro ao aplicar alterações:", error);
-        });
+      axios.get(`http://localhost:5000/params/material/${itemSelecionado.cod_item_material}`)
+      .then(response => {
+        // console.log(response.data.estrategia)
+        const estrategia = response.data.estrategia;
+        const criteriosComRespostas = mapRespostaComCriterios(estrategia);
+        setCriteriosItem(criteriosComRespostas);
+      })
+        .catch(error => console.error("Erro ao buscar itens:", error));
+
+        
     }
-    setModalOpen(false);
-  };
+  }, [itemSelecionado]);
 
   const gruposFiltrados = grupos.filter((grupo) => 
     grupo.cod_grupo.toString().includes(buscaGrupo) || 
@@ -324,6 +167,73 @@ export default function TelaEstrategica() {
   const handleCloseModal = () => {
     setModalOpen(false);
   };
+
+ 
+
+  // Função similar para salvar parâmetros de material
+  const handleSaveMaterialParams = async () => {
+    try {
+      if (!itemSelecionado) return;
+
+      const cods_parametro = Object.keys(criteriosSelecionados).map(Number);
+      const cods_opcao = Object.values(criteriosSelecionados);
+
+      const response = await axios.put(
+        `http://localhost:5000/params/material/${itemSelecionado._id}`,
+        {
+          cods_parametro,
+          cods_opcao,
+          client: "default", // Ajuste conforme necessário
+          data_estrategia: new Date()
+        }
+      );
+
+      if (response.status === 200) {
+        setModalOpen(false);
+        alert('Parâmetros do item salvos com sucesso!');
+      }
+    } catch (error) {
+      console.error('Erro ao salvar parâmetros do item:', error);
+      alert('Erro ao salvar parâmetros do item');
+    }
+  };
+
+  // Adicione esta função para resetar os parâmetros
+  const handleResetParams = async () => {
+    try {
+      if (!grupoSelecionado) {
+        alert('Selecione um grupo primeiro');
+        return;
+      }
+
+      const type = itemSelecionado ? 'material' : 'group';
+      const id = itemSelecionado ? itemSelecionado._id : grupoSelecionado.cod_grupo;
+
+      const response = await axios.post(
+        `http://localhost:5000/params/reset/${type}/${id}`
+      );
+
+      if (response.status === 200) {
+        // Atualiza os critérios selecionados com os valores padrão
+        const novosCriterios: Record<number, number> = {};
+        response.data.estrategia.cods_parametro.forEach((cod: number, index: number) => {
+          novosCriterios[cod] = response.data.estrategia.cods_opcao[index];
+        });
+        setCriteriosSelecionados(novosCriterios);
+
+        // Se estiver resetando um item específico, fecha o modal
+        if (type === 'material') {
+          setModalOpen(false);
+        }
+
+        alert(itemSelecionado ? 'Parâmetros do item restaurados com sucesso!' : 'Parâmetros do grupo restaurados com sucesso!' );
+      }
+    } catch (error) {
+      console.error('Erro ao restaurar parâmetros:', error);
+      alert('Erro ao restaurar parâmetros');
+    }
+  };
+
 
 
   return (
@@ -378,7 +288,7 @@ export default function TelaEstrategica() {
         setGrupoSelecionado(grupo);
         setShowParametros(true);
         // Limpa o item selecionado quando muda de grupo
-        setItemSelecionado(null);
+        // setItemSelecionado(null);
       }}
     >
       <Typography variant="body1" sx={{  }}>
@@ -411,7 +321,7 @@ export default function TelaEstrategica() {
 </Box>
         <Box sx={{display:'flex',gap:2,marginBottom:2}}>
 
-        <Button variant="contained" sx={{background:"rgba(46, 112, 171, 1)",whiteSpace: "nowrap",paddingX:"50px"}} startIcon={<ReplayIcon />}>Restaurar padrão</Button>
+        <Button variant="contained" sx={{background:"rgba(46, 112, 171, 1)",whiteSpace: "nowrap",paddingX:"50px"}} startIcon={<ReplayIcon />} onClick={handleResetParams}>Restaurar padrão</Button>
         <span style={{color:"white"}}>Restaura o padrão de todas os itens sinalizados com exceções</span>
         </Box>
        
@@ -459,7 +369,6 @@ export default function TelaEstrategica() {
       {/* Critérios Padrão */}
       <Card sx={{ flex: 1, background: "#1F2A4C", padding: 2, display: showParametros ? 'block' : 'block' }}>
         <Typography variant="h6" sx={{ color: "#F7F7F7",marginBottom:3}}>
-          {/* {itemSelecionado ? `Critérios do Item ${itemSelecionado.desc_material}` : "Critérios Padrão do Grupo"} */}
           {"Critérios Padrão do Grupo"}
         </Typography>
         <Box sx={{ height: "calc(100vh - 280px)", overflowY: "auto", paddingRight: "5px" }}>
@@ -564,7 +473,7 @@ export default function TelaEstrategica() {
     )}
     
 
-    {criterios.map((criterio) => (
+    {criteriosItem.map((criterio) => (
       <Box key={criterio.cod_parametro} sx={{ marginTop: 1 }}>
        
         {criterio.tipo === 'boolean' ? (
@@ -635,17 +544,10 @@ export default function TelaEstrategica() {
       <Button
         variant="contained"
         sx={{ marginTop: 2, background: "rgba(46, 112, 171, 1)" }}
-        onClick={handleApplyChanges} // Aplicar mudanças
+        onClick={handleSaveMaterialParams} // Aplicar mudanças
       >
         Aplicar
       </Button> 
-      {/* <Button
-        variant="contained"
-        sx={{ marginTop: 2, background: "rgba(46, 112, 171, 1)" }}
-        onClick={handleCloseModal}
-      >
-        Fechar
-      </Button> */}
     </Box>
   </Box>
 </Modal>

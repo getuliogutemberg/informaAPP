@@ -764,14 +764,16 @@ app.delete('/alerts/:id', async (req, res) => {
 app.get('/groupDictionary', GroupDictionaryController.getGroupDictionaries);
 
 // Rota para listar todos os materiais de um grupo
-app.get('/materials/:groupId', MaterialController.getMaterialByGroup);
+app.get('/materials/:cod_grupo', MaterialController.getMaterialByGroup);
 
-// Rotas de parâmetros estratégicos
-app.get('/params/:groupId', ParamsController.getGroupParams); // Rota para listar todos os parâmetros de um grupo
-app.get('/params/:materialId', ParamsController.getMaterialParams); // Rota para listar todos os parâmetros de um grupo
-app.put('/params/:groupId', ParamsController.updateGroupParams); // Rota para listar todos os parâmetros de um grupo
-app.put('/params/:materialId', ParamsController.updateMaterialParams); // Rota para listar todos os parâmetros de um grupo
+// Rotas para parâmetros de grupo
+app.get('/params/group/:cod_grupo', ParamsController.getGroupParams);
+app.put('/params/group/:cod_grupo', ParamsController.updateGroupParams);
 
+// Rotas para parâmetros de material
+app.get('/params/material/:cod_item_material', ParamsController.getMaterialParams);
+app.put('/params/material/:cod_item_material', ParamsController.updateMaterialParams);
+app.post('/params/reset/:type/:id', ParamsController.resetToDefault);
 const server = http.createServer(app);
 
 server.listen(process.env.PORT || 5000, () => {
