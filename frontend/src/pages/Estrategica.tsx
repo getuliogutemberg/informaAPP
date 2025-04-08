@@ -154,7 +154,24 @@ export default function TelaEstrategica() {
     
     
   };
-
+  const saveGroupParams = async (cod_grupo : number, data: Record<number, number>) => {
+    try {
+      console.log(data)
+      const cods_parametro = Object.keys(data);
+      const cods_opcao = Object.values(data);
+      
+      const response = await axios.put(`http://localhost:5000/params/group/${cod_grupo}`, {
+        cods_parametro,
+        cods_opcao,
+        client: "default",
+        data_estrategia: new Date()
+      });
+  
+      console.log('Parâmetros salvos com sucesso:', response.data);
+    } catch (error) {
+      console.error('Erro ao salvar parâmetros:', error);
+    }
+  };
   
 
   // Função para abrir o modal com os detalhes do item selecionado
@@ -285,6 +302,7 @@ export default function TelaEstrategica() {
         alignItems: "start", 
       }}
       onClick={() => {
+        console.log(grupo);
         setGrupoSelecionado(grupo);
         setShowParametros(true);
         // Limpa o item selecionado quando muda de grupo
@@ -331,8 +349,9 @@ export default function TelaEstrategica() {
       key={index}
       onDoubleClick={() => handleEditClick(item)}
       onClick={() => {
+        console.log(item);
         setItemSelecionado(item);
-        setShowParametros(true);
+        
       }}
       sx={{
         background: itemSelecionado?.cod_item_material === item.cod_item_material ? "rgba(49, 131, 207, 1)" : "rgba(36, 75, 127, 1)",
@@ -433,7 +452,11 @@ export default function TelaEstrategica() {
           <Box sx={{ display: showParametros ? 'flex' : 'flex' ,flexDirection:"column", alignItems: "end",gap:2 }}>
         { (
           <>
-            <Button variant="contained" sx={{ marginTop: 2 ,background:"rgba(46, 112, 171, 1)"}}>
+            <Button 
+              variant="contained" 
+              sx={{ marginTop: 2 ,background:"rgba(46, 112, 171, 1)"}}
+              onClick={ ()=>grupoSelecionado && saveGroupParams( grupoSelecionado.cod_grupo , criteriosSelecionados) }
+              >
               Aplicar a todos os itens
             </Button>
             <Box sx={{ display: "flex",flexDirection:"row", alignItems: 'baseline',gap:2}}>

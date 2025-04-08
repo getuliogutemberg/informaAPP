@@ -185,26 +185,39 @@ async getMaterialParams(req, res) {
     }
 }
     async updateGroupParams(req, res) {
+      console.log('req.params',req.params);
+      console.log('req.body',req.body)
         try {
           const { cod_grupo } = req.params;
           const { cods_parametro, cods_opcao, client, data_estrategia } = req.body;
-      
+          if (!cods_parametro || !cods_opcao) {
+            return res.status(400).json({ message: "Parâmetros obrigatórios não foram enviados" });
+          }
+          if (cods_parametro.length !== cods_opcao.length) {
+            return res.status(400).json({ message: "Parâmetros e opções devem ter o mesmo tamanho" });
+          }
           const existingStrategies = await estrategia_parametros.find({ cod_grupo });
-      
+         
           if (existingStrategies.length > 0) {
+            const updateData = {};
+            if (cods_parametro) updateData.cods_parametro = cods_parametro;
+            if (cods_opcao) updateData.cods_opcao = cods_opcao;
+            if (client) updateData.client = client;
+            if (data_estrategia) updateData.data_estrategia = data_estrategia;
+  
             await estrategia_parametros.updateMany(
               { cod_grupo },
-              { $set: { cods_parametro, cods_opcao, client, data_estrategia } }
+              { $set: updateData }
             );
             return res.json({ message: "Parâmetros atualizados com sucesso" });
           } else {
-            const materiaisDoGrupo = await grupo_material.find({ cod_grupo }).distinct("cod_item_material");
+            const materiaisDoGrupo = await grupo_material.find({ cod_grupo }).distinct("cod_grupo");
       
             if (materiaisDoGrupo.length === 0) {
               return res.status(404).json({ message: "Nenhum item encontrado para esse grupo" });
             }
       
-            const novasEstrategias = materiaisDoGrupo.map(cod_item_material => ({
+            const novasEstrategias = materiaisDoGrupo.map(cod_grupo => ({
               cod_grupo,
               cod_item_material,
               cods_parametro,
