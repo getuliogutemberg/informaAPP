@@ -6,21 +6,36 @@ import {
   IconButton, Alert, CircularProgress, InputAdornment,
   MenuItem,
   Select,
-  Chip
+  Chip,
+  InputLabel
 } from "@mui/material";
 import { Add, Delete, Edit, Search } from "@mui/icons-material";
 import { motion } from "framer-motion";
 import axios from "axios";
 
+import { FaTachometerAlt, FaBars, FaFileAlt, FaCog, FaUsers, FaUserTie, FaDollarSign, FaCar } from "react-icons/fa";
+
+const iconOptions = [
+  { value: "dashboard", label: "Dashboard", icon: <FaTachometerAlt /> },
+  { value: "menu", label: "Menu", icon: <FaBars /> },
+  { value: "file", label: "File", icon: <FaFileAlt /> },
+  { value: "settings", label: "Settings", icon: <FaCog /> },
+  { value: "users", label: "Users", icon: <FaUsers /> },
+  { value: "employees", label: "Employees", icon: <FaUserTie /> },
+  { value: "finance", label: "Finance", icon: <FaDollarSign /> },
+  { value: "parking", label: "Parking", icon: <FaCar /> },
+];
+
 interface Route {
   _id: string;
   path: string;
   component: string;
+  name: string;
   requiredRole?: string[];
   pageId: string;
   reportId: string;
   workspaceId: string;
-  __v: number;
+  icon: string;
 }
 
 // Definindo as opções disponíveis
@@ -41,9 +56,12 @@ const RoutesEdit = () => {
   const [formData, setFormData] = useState<Partial<Route>>({
     path: "/teste",
     component: "Teste",
+    name: "Teste",
     requiredRole: [],
     pageId: "",
+    workspaceId: "",
     reportId: "", 
+    icon:""
   });
 
   const fetchRoutes = async () => {
@@ -295,11 +313,33 @@ const RoutesEdit = () => {
       >
         <DialogTitle>Criar Novo Módulo</DialogTitle>
         <DialogContent>
+        <InputLabel id="icon-select-label">Ícone</InputLabel>
+  <Select
+    labelId="icon-select-label"
+    value={formData.icon}
+    onChange={(e) => setFormData({ ...formData, icon: e.target.value })}
+  >
+    {iconOptions.map((option) => (
+      <MenuItem key={option.value} value={option.value}>
+        <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          {option.icon} {option.label}
+        </span>
+      </MenuItem>
+    ))}
+  </Select>
           <TextField
             label="Caminho"
             fullWidth
             value={formData.path}
             onChange={(e) => setFormData({ ...formData, path: e.target.value })}
+            variant="filled"
+            sx={{ mb: 2, mt: 2, background: "#fff" }}
+          />
+          <TextField
+            label="Título"
+            fullWidth
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             variant="filled"
             sx={{ mb: 2, mt: 2, background: "#fff" }}
           />
@@ -337,7 +377,7 @@ const RoutesEdit = () => {
              fullWidth
              variant="filled"
              value={formData.reportId}
-             onChange={(e) => setFormData({ ...formData, pageId: e.target.value })}
+             onChange={(e) => setFormData({ ...formData, reportId: e.target.value })}
              sx={{ mb: 2, background: "#fff" }}
            />
             <TextField
@@ -402,14 +442,36 @@ const RoutesEdit = () => {
         <DialogContent>
           {selectedRoute && (
             <>
+               <InputLabel id="icon-select-label">Ícone</InputLabel>
+  <Select
+    labelId="icon-select-label"
+    value={selectedRoute.icon}
+    onChange={(e) => setSelectedRoute({ ...selectedRoute, icon: e.target.value })}
+  >
+    {iconOptions.map((option) => (
+      <MenuItem key={option.value} value={option.value}>
+        <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          {option.icon} {option.label}
+        </span>
+      </MenuItem>
+    ))}
+  </Select>
               <TextField
-                label="Caminho"
-                fullWidth
-                variant="filled"
-                value={selectedRoute.path}
-                onChange={(e) => setSelectedRoute({ ...selectedRoute, path: e.target.value })}
-                sx={{ mb: 2, mt: 2, background: "#fff" }}
-              />
+              label="Caminho"
+              fullWidth
+              variant="filled"
+              value={selectedRoute.path}
+              onChange={(e) => setSelectedRoute({ ...selectedRoute, path: e.target.value })}
+              sx={{ mb: 2, mt: 2, background: "#fff" }}
+            />
+            <TextField
+            label="Título"
+            fullWidth
+            value={selectedRoute.name}
+            onChange={(e) => setSelectedRoute({ ...selectedRoute, name: e.target.value })}
+            variant="filled"
+            sx={{ mb: 2, mt: 2, background: "#fff" }}
+          />
               <Select
                 fullWidth
                 variant="outlined"

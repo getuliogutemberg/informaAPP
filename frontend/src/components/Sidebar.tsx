@@ -16,31 +16,27 @@ import {
   FaCar,
   
 } from "react-icons/fa"; // Ícones aprimorados
-import { GoPackage } from "react-icons/go";
+
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 import { Box } from "@mui/system";
 
-interface Route {
-  _id: string;
-  path: string;
-  component: string;
-  requiredRole?: string[]; // Agora o campo é opcional
-  pageId: string;
-  __v: number;
-}
 
 interface SubRoute {
   path: string;
   icon: string;
   component: string;
-  requiredRole?: string[];
-  pageId: string;
+  name: string;
+  requiredRole: string[];
+  pageId?: string;
+  reportId?: string,
+  workspaceId?: string,
 }
 
 interface MenuGroup {
   _id: string;
   name: string;
+  component: string;
   icon: string;
   path: string;
   subRoutes: SubRoute[];
@@ -49,75 +45,66 @@ interface MenuGroup {
 const Sidebar = () => {
   const { user  } = useContext(AuthContext);
  
-  const [routes, setRoutes] = useState<Route[]>([]); // Estado para lista de rotas
+  
   const [expanded, setExpanded] = useState(false);
-  const [menuGroups, setMenuGroups] = useState<MenuGroup[]>([
-    // {
-    //   _id: "1",
-    //   name: "Teste",
-    //   icon: "parking",
-    //   path: "/test",
-    //   subRoutes: [],
-    //   requiredRole: ["OWNER"],
-    // },
-    {
-      _id: "2",
-      "name": "Gestao",
-      "icon": "",
-      "path": "",
-      "subRoutes": [
-        {
-          "path": "/indicadores",
-          "icon": 'dashboard',
-          "component": "Indicadores",
-          "requiredRole": ["OWNER","ADMIN"],
-          "pageId": "users-management"
-        },
-        {
-          "path": "/gestão",
-          "icon": 'dashboard',
-          "component": "Gestão",
-          "requiredRole": ["OWNER","ADMIN"],
-          "pageId": "settings"
-        },
-        {
-          "path": "/Configuração-de-Itens-Estratégicos-do-Estoque",
-          "icon": 'settings',
-          "component": "Configuração de Itens Estratégicos do Estoque",
-          "requiredRole": ["OWNER","ADMIN"],
-          "pageId": "configuration-of-strategic-items-of-the-warehouse"
-          },
-      ],
-      "requiredRole": ["OWNER"]
-    }
-  ]);
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
-  // Carregar as rotas do backend
+  
+  const [menuGroups, setMenuGroups] = useState<MenuGroup[]>([]);
+
   useEffect(() => {
     const fetchRoutes = async () => {
       try {
         const response = await axios.get("http://localhost:5000/routes");
-        setRoutes(response.data); // Atualiza o estado com os dados recebidos
-        
+       
+        return response.data
       } catch (error) {
         console.error("Erro ao buscar as rotas:", error);
       }
     };
 
-    fetchRoutes();
-  }, []);
-  useEffect(() => {
+    
     // Carregar os grupos de menu do backend
     const fetchMenuGroups = async () => {
+      const routes = await fetchRoutes() as SubRoute[];
       try {
-        const response = await fetch('http://localhost:5000/api/menu-groups');
-        const data = await response.json();
-        setMenuGroups(data);
+        const response = routes && [
+          // {
+          //   _id: "1",
+          //   name: "Teste",
+          //   icon: "parking",
+          //   path: "/test",
+          //   subRoutes: [],
+          //   requiredRole: ["OWNER"],
+          // },
+          {
+            _id: "2",
+            "name": "Relatórios",
+            "icon": "file",
+            "component": 'MenuGroup',
+            "path": "/relatorios",
+            "subRoutes": [
+              ...routes.map((route) => ({
+                path: route.path,
+                icon: route.icon,
+                name: route.name,
+                component: route.component,
+                requiredRole: route.requiredRole, // <- antes tava errado aqui
+                pageId: route.pageId,
+                reportId: route.reportId,
+                workspaceId: route.workspaceId,
+              })),
+             
+            ],
+            "requiredRole": ["OWNER","ADMIN","CLIENT"]
+          }
+        ];
+        console.log(response)
+        setMenuGroups(response);
       } catch (error) {
         console.error('Erro ao carregar grupos de menu:', error);
       }
     };
-
+    
     fetchMenuGroups();
   }, []);
 
@@ -144,7 +131,7 @@ const Sidebar = () => {
       case 'employees': return <FaUserTie />;
       case 'finance': return <FaDollarSign />;
       case 'parking': return <FaCar />;
-      default: return null;
+      default: return <FaCog />;
     }
   };
   
@@ -192,13 +179,15 @@ const Sidebar = () => {
               
                 }}>
                   {group.subRoutes.map((route) => (
-                    route.requiredRole?.includes(user.className) && <li key={route.path} title={route.component}>
-                      <Link onClick={() =>{ 
-                        setExpanded(false);
-                        toggleGroup(group._id)
+                    <li key={route.path} title={route.name}>
+                      <Link 
+                      // onMouseLeave={()=>toggleGroup(group._id)}
+                      onClick={() =>{ 
+                        // setExpanded(false);
+                        
                         }} to={`${group.path}${route.path}`}>
                         {getIcon(route.icon)}
-                        <span>{route.component}</span>
+                        <span>{route.name}</span>
                       </Link>
                     </li>
                   ))}
@@ -206,35 +195,7 @@ const Sidebar = () => {
               )}
             </li>
           ))}
-        { user ? routes.filter(route => user.className !== 'OWNER' ? route.requiredRole?.includes(user.category): route).map((route) =>
-          <li title={route.path.slice(1, 2).toUpperCase() + route.path.slice(2)}><Link onClick={() => setExpanded(false)} to={route.path}>
-            {route.component === "Dashboard Power BI" ? <FaTachometerAlt />:
-             route.component === "Gestão de Grupos e Materiais" ? <FaFileAlt />:
-             route.component === "Teste" ? <GoPackage/> :
-             <></>
-            }
-            <span>{route.path.slice(1, 2).toUpperCase() + route.path.slice(2)}</span></Link></li>
-      
-          // <>
-          //   <li title="Indicadores"><Link to="/indicadores"><FaTachometerAlt /><span>Indicadores</span></Link></li>
-          //   <li title="Gestão"><Link to="/gestão"><FaFileAlt /><span>Gestão</span></Link></li>
-          //   
-            
-          //   {/* <li title="Funcionários"><Link to="/employees"><FaUserTie /><span>Funcionários</span></Link></li>
-          //   <li title="Moradores"><Link to="/residents"><FaUsers /><span>Moradores</span></Link></li>
-          //   <li title="Financeiro"><Link to="/finance"><FaDollarSign /><span>Financeiro</span></Link></li>
-          //   <li title="Documentos"><Link to="/documents"><FaFileAlt /><span>Documentos</span></Link></li>
-          //   <li title="Estacionamento"><Link to="/parking"><LocalParkingIcon /><span>Estacionamento</span></Link></li> */}
-           
-          // </>
-        ) : (
-          <>
-            {/* <li><Link to="/"><FaHome /><span>Home</span></Link></li>
-            <li><Link to="/news"><FaNewspaper /><span>Notícias</span></Link></li>
-            <li><Link to="/faq"><FaQuestionCircle /><span>FAQ</span></Link></li>
-            <li><Link to="/contact"><FaEnvelope /><span>Contato</span></Link></li> */}
-          </>
-        )}
+     
 <ul className="sidebar-list">
 
        

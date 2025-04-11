@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect, Key } from "react";
+import { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { TextField, Button, Typography, Box, CircularProgress, Alert, Dialog, DialogActions, DialogContent, DialogTitle, Stack, PaletteMode } from "@mui/material";  // Importe o Dialog
 import axios from "axios";
@@ -28,6 +28,27 @@ interface Configuration {
   };
 }
 
+interface SubRoute {
+  path: string;
+  icon: string;
+  component: string;
+  name: string;
+  requiredRole: string[];
+  pageId?: string;
+  reportId?: string,
+  workspaceId?: string,
+}
+
+interface MenuGroup {
+  _id: string;
+  name: string;
+  component: string;
+  icon: string;
+  path: string;
+  subRoutes: SubRoute[];
+  requiredRole?: string[];
+}
+
 export default function Login() {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -37,8 +58,9 @@ export default function Login() {
   const navigate = useNavigate();
   const [animating, setAnimating] = useState(false);
   const [openRegisterDialog, setOpenRegisterDialog] = useState(false);  // Estado para controlar o modal de registro
-  const [routes, setRoutes] = useState<{ _id: Key | null | undefined; path: string | undefined; requiredRole: string[] | undefined; component: string;pageId: string }[]>([]); // Estado para armazenar as rotas dinâmicas
+ 
   const [settings, setSettings] = useState<Configuration | null>(null);
+  const [menuGroups, setMenuGroups] = useState<MenuGroup[]>([]);
   useEffect(() => {
     // Buscar configurações do backend
     const fetchSettings = async () => {
@@ -53,27 +75,60 @@ export default function Login() {
     fetchSettings();
   }, []);
 
-
   useEffect(() => {
-    // Buscar rotas do backend
     const fetchRoutes = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/routes');
-        setRoutes(response.data); // Atualiza as rotas com os dados do backend
-   
+        const response = await axios.get("http://localhost:5000/routes");
+        return response.data;
       } catch (error) {
-        console.error('Erro ao buscar rotas:', error);
+        console.error("Erro ao buscar as rotas:", error);
+        return [];
       }
     };
-
-    fetchRoutes();
+  
+    const fetchMenuGroups = async () => {
+      const routes = await fetchRoutes() as SubRoute[];
+  
+      try {
+        const menu: MenuGroup[] = [
+          {
+            _id: "2",
+            name: "Relatórios",
+            icon: "file",
+            component: 'MenuGroup',
+            path: "/relatorios",
+            subRoutes: routes.map((route) => ({
+              path: route.path,
+              icon: route.icon,
+              name: route.name,
+              component: route.component,
+              requiredRole: route.requiredRole,
+              pageId: route.pageId,
+              reportId: route.reportId,
+              workspaceId: route.workspaceId,
+            })),
+            requiredRole: ["OWNER", "ADMIN", "CLIENT"]
+          }
+        ];
+  
+        setMenuGroups(menu);
+      } catch (error) {
+        console.error('Erro ao carregar grupos de menu:', error);
+      }
+    };
+  
+    fetchMenuGroups();
   }, []);
 
   useEffect(() => {
-    if (user && routes.length > 0) {
-      navigate(routes.filter(route => user.className !== 'OWNER' ? route.requiredRole?.includes(user.category): route)[0].path as string);
+    if (user && menuGroups.length > 0) {
+      const primeiraSubRoute = menuGroups[0]?.path + menuGroups[0]?.subRoutes[0]?.path as string;
+  
+      if (primeiraSubRoute) {
+        navigate(primeiraSubRoute);
+      }
     }
-  }, [user, navigate, routes]);
+  }, [user, menuGroups, navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -113,7 +168,7 @@ export default function Login() {
       // Aguardar o tempo da animação antes de redirecionar
       setTimeout(() => {
       }, 100);  // Atraso para a animação
-      navigate(routes[0].path as string);
+      navigate(menuGroups[0]?.path + menuGroups[0]?.subRoutes[0]?.path as string);
 
       }
      

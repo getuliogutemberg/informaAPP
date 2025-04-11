@@ -34,8 +34,8 @@ npm install
 MONGO_URI=mongodb://<usuário>:<senha>@localhost:27017/<nome_do_banco>
 JWT_SECRET=<seu_segredo_para_token>
 JWT_REFRESH_SECRET=<seu_segredo_para_refresh_token>
-POWER_BI_CLIENT_ID=<client_id>
-POWER_BI_CLIENT_SECRET=<client_secret>
+AZURE_APP_ID=<client_id>
+AZURE_APP_SECRET=<client_secret>
 POWER_BI_WORKSPACE_ID=<workspace_id>
 ```
 

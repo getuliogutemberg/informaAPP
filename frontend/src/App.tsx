@@ -57,16 +57,97 @@ interface Route {
   component: string; 
   pageId: string,
   reportId: string,
-  workspaceId: string
+  workspaceId: string,
 }
 
 // Criar uma conexão com o socket.io
 socket('http://localhost:5000');
 
+interface SubRoute {
+  _id: Key | null | undefined;
+  path: string;
+  icon: string;
+  component: string;
+  name: string;
+  requiredRole: string[];
+  pageId?: string;
+  reportId?: string,
+  workspaceId?: string,
+}
+
+interface MenuGroup {
+  _id: string;
+  name: string;
+  component: string;
+  icon: string;
+  path: string;
+  subRoutes: SubRoute[];
+  requiredRole?: string[];
+}
+
 function App() {
-  const [routes, setRoutes] = useState<Route[]>([]); // Estado para armazenar as rotas dinâmicas
-  
+  // const [routes, setRoutes] = useState<SubRoute[]>([]); // Estado para armazenar as rotas dinâmicas
+  const [menuGroups, setMenuGroups] = useState<MenuGroup[]>([]);
   const [settings, setSettings] = useState<Configuration | null>(null);
+
+  useEffect(() => {
+    const fetchRoutes = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/routes");
+        // setRoutes(response.data); // Atualiza o estado com os dados recebidos
+        return response.data
+      } catch (error) {
+        console.error("Erro ao buscar as rotas:", error);
+      }
+    };
+
+    
+    // Carregar os grupos de menu do backend
+    const fetchMenuGroups = async () => {
+      const routes = await fetchRoutes() as SubRoute[];
+      try {
+        const response = routes && [
+          // {
+          //   _id: "1",
+          //   name: "Teste",
+          //   icon: "parking",
+          //   path: "/test",
+          //   subRoutes: [],
+          //   requiredRole: ["OWNER"],
+          // },
+          {
+            _id: "2",
+            "name": "Relatórios",
+            "icon": "file",
+            "component": 'MenuGroup',
+            "path": "/relatorios",
+            "subRoutes": [
+              ...routes.map((route) => ({
+                _id: route._id,
+                path: route.path,
+                icon: route.icon,
+                name: route.name,
+                component: route.component,
+                requiredRole: route.requiredRole, // <- antes tava errado aqui
+                pageId: route.pageId,
+                reportId: route.reportId,
+                workspaceId: route.workspaceId,
+              })),
+             
+            ],
+            "requiredRole": ["OWNER","ADMIN","CLIENT"]
+          }
+        ];
+        console.log(response)
+        setMenuGroups(response);
+      } catch (error) {
+        console.error('Erro ao carregar grupos de menu:', error);
+      }
+    };
+    
+    fetchMenuGroups();
+  }, []);
+  
   useEffect(() => {
     // Fetch settings from backend
     const fetchSettings = async () => {
@@ -74,12 +155,12 @@ function App() {
         const response = await axios.get('http://localhost:5000/configuration');
         setSettings(response.data);
         
-        // Update PowerBI configuration in backend
-        await axios.post('http://localhost:5000/updatePBIConfig', {
-          clientId: response.data.pbiKeys.clientId,
-          clientSecret: response.data.pbiKeys.clientSecret,
-          authority: response.data.pbiKeys.authority
-        });
+        // // Update PowerBI configuration in backend
+        // await axios.post('http://localhost:5000/updatePBIConfig', {
+        //   clientId: response.data.pbiKeys.clientId,
+        //   clientSecret: response.data.pbiKeys.clientSecret,
+        //   authority: response.data.pbiKeys.authority
+        // });
         
       } catch (error) {
         console.error('Erro ao buscar configurações:', error);
@@ -90,21 +171,6 @@ function App() {
   }, []);
 
  
-  
-  useEffect(() => {
-    // Buscar rotas do backend
-    const fetchRoutes = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/routes');
-        setRoutes(response.data); // Atualiza as rotas com os dados do backend
-   
-      } catch (error) {
-        console.error('Erro ao buscar rotas:', error);
-      }
-    };
-
-    fetchRoutes();
-  }, []);
 
   
   
@@ -118,14 +184,41 @@ function App() {
       <Sidebar />
     
      <Routes>
+
+     {menuGroups.map((group) =>
+      group.subRoutes.map((sub) => (
+    <Route
+      key={group._id + sub.path}
+      path={group.path + sub.path}
+      element=
+        {sub.component === "Dashboard Power BI" ? 
+            <ProtectedRoute requiredCategory={sub.requiredRole}>
+            <DashPBI pageId={sub.pageId || null } reportId={sub.reportId || null } workspaceId={sub.workspaceId || null } />
+            </ProtectedRoute>
+           : sub.component === "Gestão de Grupos e Materiais" ? 
+            <ProtectedRoute requiredCategory={sub.requiredRole}>
+            <Estrategica />
+            </ProtectedRoute>
+           : sub.component === "Teste" ? 
+            <ProtectedRoute requiredCategory={sub.requiredRole}>
+            <Teste />
+            </ProtectedRoute>
+           : 
+            <div>Componente não encontrado</div>
+
+          }
       
-     {routes.map((route: Route) => (
+    />
+  ))
+)}
+      
+     {/* {routes.map((route: SubRoute) => (
           <Route
             key={route._id}
             path={route.path}
             element={
               <ProtectedRoute requiredCategory={route.requiredRole}   >
-                {route.component === "Dashboard Power BI" ? <DashPBI pageId={route.pageId} reportId={route.reportId} workspaceId={route.workspaceId} />:
+                {route.component === "Dashboard Power BI" ? <DashPBI pageId={route.pageId || null} reportId={route.reportId  || null } workspaceId={route.workspaceId  || null} />:
                 route.component === "Gestão de Grupos e Materiais" ? <Estrategica /> :
                 route.component === "Teste" ? <Teste /> :
                  <></>
@@ -133,7 +226,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-        ))}
+        ))} */}
 
 
         {/* <Route path="/" element={<Home />} /> */}

@@ -130,13 +130,13 @@ const DashboardPBI: React.FC<DashboardPBIPageProps> = ({ pageId,reportId,workspa
         // background:"red",
         justifyContent: 'center',
         alignItems: 'center',
-        height: 'calc(100vh - 70px)',
-        width: 'calc(100vw - 110px)',
+        height: 'calc(100vh - 50px)',
+        width: 'calc(100vw - 80px)',
         margin:"15px",
         overflow: 'hidden',
         position: 'fixed',
-        top: '60px', // altura do header
-        left: '80px', // largura do menu lateral
+        top: '40px', // altura do header
+        left: '65px', // largura do menu lateral
         // right: '0',
         // bottom: '0'
       }}
@@ -166,8 +166,8 @@ const DashboardPBI: React.FC<DashboardPBIPageProps> = ({ pageId,reportId,workspa
             <div 
               style={{
                 flexGrow :1,
-                height: 'calc(100vh - 70px)',
-                width:"calc(100vw - 100px)",
+                height: 'calc(100vh - 60px)',
+                width:"calc(100vw - 80px)",
                 
               }} 
               id={`powerbi-container-${pageId}`} 

@@ -42,10 +42,12 @@ const User = mongoose.model("User", new mongoose.Schema({
 const Route = mongoose.model("Route", new mongoose.Schema({
   path: { type: String, required: true },
   component: { type: String, required: true },
+  name: { type: String, required: true },
   requiredRole: { type: [String], default: [] }, // Role de usuários que podem acessar
   pageId: { type: String, required: false }, // Adiciona o pageId para Dashboards, se necessário
-  reportId: { type: String, required: true }, // Adiciona o pageId para Dashboards, se necessário
-  workspaceId: { type: String, required: true },
+  reportId: { type: String, required: false }, // Adiciona o pageId para Dashboards, se necessário
+  workspaceId: { type: String, required: false },
+  icon:{ type: String, required: false },
 
 }, { timestamps: true }));
 
@@ -507,7 +509,7 @@ app.get("/routes", async (req, res) => {
 // Rota POST para criar novas rotas
 app.post("/routes", async (req, res) => {
   try {
-    const { path, component, requiredRole, pageId,reportId } = req.body;
+    const { path, component, requiredRole, pageId,reportId ,icon,name,workspaceId} = req.body;
 
     // Validações básicas
     if (!path || !component) {
@@ -530,7 +532,10 @@ app.post("/routes", async (req, res) => {
       component,
       requiredRole: requiredRole || [], // Se não for fornecido, usa array vazio
       pageId: pageId || "",
+      name: name || "",
       reportId: reportId || "", // Se não for fornecido, usa string vazia
+      workspaceId: workspaceId || "",
+      icon: icon || "", // Se não for fornecido, usa string vazia
     });
 
     // Salva a nova rota no banco de dados
@@ -551,7 +556,7 @@ app.post("/routes", async (req, res) => {
 // Rota PUT para atualizar rotas existentes
 app.put("/routes/:id", async (req, res) => {
   try {
-    const { path, component, requiredRole, pageId,reportId,workspaceId } = req.body;
+    const { path, component, requiredRole, pageId,reportId,workspaceId,icon,name } = req.body;
     const routeId = req.params.id;
 
     // Validações básicas
@@ -579,10 +584,12 @@ app.put("/routes/:id", async (req, res) => {
       {
         path,
         component,
+        name,
         requiredRole: requiredRole || [],
         pageId: pageId || "",
         reportId: reportId || "",
         workspaceId : workspaceId || "",
+        icon : icon || ""
       },
       { new: true } // Retorna o documento atualizado
     );
