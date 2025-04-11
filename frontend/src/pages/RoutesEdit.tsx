@@ -18,6 +18,8 @@ interface Route {
   component: string;
   requiredRole?: string[];
   pageId: string;
+  reportId: string;
+  workspaceId: string;
   __v: number;
 }
 
@@ -40,7 +42,8 @@ const RoutesEdit = () => {
     path: "/teste",
     component: "Teste",
     requiredRole: [],
-    pageId: ""
+    pageId: "",
+    reportId: "", 
   });
 
   const fetchRoutes = async () => {
@@ -320,7 +323,23 @@ const RoutesEdit = () => {
               </MenuItem>
             ))}
           </Select>
-          {formData.component === "Dashboard Power BI" && (
+          {formData.component === "Dashboard Power BI" && (<>
+            <TextField
+             label="Workspace ID"
+             fullWidth
+             variant="filled"
+             value={formData.workspaceId}
+             onChange={(e) => setFormData({ ...formData, workspaceId: e.target.value })}
+             sx={{ mb: 2, background: "#fff" }}
+           />
+             <TextField
+             label="Report ID"
+             fullWidth
+             variant="filled"
+             value={formData.reportId}
+             onChange={(e) => setFormData({ ...formData, pageId: e.target.value })}
+             sx={{ mb: 2, background: "#fff" }}
+           />
             <TextField
               label="Page ID"
               fullWidth
@@ -329,7 +348,9 @@ const RoutesEdit = () => {
               onChange={(e) => setFormData({ ...formData, pageId: e.target.value })}
               sx={{ mb: 2, background: "#fff" }}
             />
+            </>
           )}
+          
           <Select
             multiple
             fullWidth
@@ -410,6 +431,23 @@ const RoutesEdit = () => {
                 ))}
               </Select>
               {selectedRoute.component === "Dashboard Power BI" && (
+                <>
+                      <TextField
+                  label="Workspace ID"
+                  fullWidth
+                  variant="filled"
+                  value={selectedRoute.workspaceId}
+                  onChange={(e) => setSelectedRoute({ ...selectedRoute, workspaceId: e.target.value })}
+                  sx={{ mb: 2, background: "#fff" }}
+                />
+                <TextField
+                 label="Report ID"
+                 fullWidth
+                 variant="filled"
+                 value={selectedRoute.reportId}
+                 onChange={(e) => setSelectedRoute({ ...selectedRoute, reportId: e.target.value })}
+                 sx={{ mb: 2, background: "#fff" }}
+               />
                 <TextField
                   label="Page ID"
                   fullWidth
@@ -418,6 +456,7 @@ const RoutesEdit = () => {
                   onChange={(e) => setSelectedRoute({ ...selectedRoute, pageId: e.target.value })}
                   sx={{ mb: 2, background: "#fff" }}
                 />
+                </>
               )}
               <Select
                 multiple

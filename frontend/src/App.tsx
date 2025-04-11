@@ -50,11 +50,21 @@ interface Configuration {
   };
 }
 
+interface Route { 
+  _id: Key | null | undefined; 
+  path: string | undefined; 
+  requiredRole: string[] | undefined; 
+  component: string; 
+  pageId: string,
+  reportId: string,
+  workspaceId: string
+}
+
 // Criar uma conexão com o socket.io
 socket('http://localhost:5000');
 
 function App() {
-  const [routes, setRoutes] = useState<{ _id: Key | null | undefined; path: string | undefined; requiredRole: string[] | undefined; component: string;pageId: string }[]>([]); // Estado para armazenar as rotas dinâmicas
+  const [routes, setRoutes] = useState<Route[]>([]); // Estado para armazenar as rotas dinâmicas
   
   const [settings, setSettings] = useState<Configuration | null>(null);
   useEffect(() => {
@@ -109,13 +119,13 @@ function App() {
     
      <Routes>
       
-     {routes.map((route: { _id: Key | null | undefined; path: string | undefined; requiredRole: string[] | undefined; component: string; pageId: string }) => (
+     {routes.map((route: Route) => (
           <Route
             key={route._id}
             path={route.path}
             element={
               <ProtectedRoute requiredCategory={route.requiredRole}   >
-                {route.component === "Dashboard Power BI" ? <DashPBI pageId={route.pageId} />:
+                {route.component === "Dashboard Power BI" ? <DashPBI pageId={route.pageId} reportId={route.reportId} workspaceId={route.workspaceId} />:
                 route.component === "Gestão de Grupos e Materiais" ? <Estrategica /> :
                 route.component === "Teste" ? <Teste /> :
                  <></>

@@ -62,7 +62,7 @@ const Sidebar = () => {
     // },
     {
       _id: "2",
-      "name": "",
+      "name": "Gestao",
       "icon": "",
       "path": "",
       "subRoutes": [

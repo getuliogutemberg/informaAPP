@@ -14,17 +14,11 @@ const ParamsController = require("./controllers/paramsController");
 
 const msalClient = new ConfidentialClientApplication({
   auth: {
-    clientId: process.env.POWER_BI_CLIENT_ID,
-    clientSecret: process.env.POWER_BI_CLIENT_SECRET,
+    clientId: process.env.AZURE_APP_ID,
+    clientSecret: process.env.AZURE_APP_SECRET,
     authority: "https://login.microsoftonline.com/80899d73-a5f2-4a53-b252-077af6003b36",
   },
 });
-
-const config = {
-  workspaceId: process.env.POWER_BI_WORKSPACE_ID,
-  reportId: "0a95eaa5-9435-47c8-b12d-10b4df2858c2",
-  pageId: "d7d35c6daec9e7e50737",
-};
 
 mongoose.connect(process.env.MONGO_URI).then(() => console.log("Banco de dados conectado"))
 .catch((err) => console.log("Erro ao conectar ao banco de dados:", err));
@@ -49,7 +43,10 @@ const Route = mongoose.model("Route", new mongoose.Schema({
   path: { type: String, required: true },
   component: { type: String, required: true },
   requiredRole: { type: [String], default: [] }, // Role de usuários que podem acessar
-  pageId: { type: String, required: false } // Adiciona o pageId para Dashboards, se necessário
+  pageId: { type: String, required: false }, // Adiciona o pageId para Dashboards, se necessário
+  reportId: { type: String, required: true }, // Adiciona o pageId para Dashboards, se necessário
+  workspaceId: { type: String, required: true },
+
 }, { timestamps: true }));
 
 const Configuration = mongoose.model("Configuration", new mongoose.Schema({
@@ -84,10 +81,10 @@ const Alert = mongoose.model("Alerts", new mongoose.Schema({
   deletedAt: { type: Date, default: null },
 }, { timestamps: true }));
 
-async function getReportDetails(token) {
-  const url = `https://api.powerbi.com/v1.0/myorg/groups/${config.workspaceId}/reports/${config.reportId}`;
-  const headers = { Authorization: `Bearer ${token}` };
+async function getReportDetails(token,reportId,workspaceId) {
   
+  const url = `https://api.powerbi.com/v1.0/myorg/groups/${workspaceId}/reports/${reportId}`;
+  const headers = { Authorization: `Bearer ${token}` };
   const response = await fetch(url, { headers });
   if (!response.ok) {
     throw new Error(`Erro ao buscar relatório: ${response.statusText}`);
@@ -95,10 +92,10 @@ async function getReportDetails(token) {
   return response.json();
 }
 
-async function generateEmbedToken(token, datasetId) {
+async function generateEmbedToken(token, datasetId,reportId) {
   const url = "https://api.powerbi.com/v1.0/myorg/GenerateToken";
   const body = JSON.stringify({
-    reports: [{ id: config.reportId }],
+    reports: [{ id: reportId }],
     datasets: [{ id: datasetId }],
   });
   const headers = {
@@ -510,7 +507,7 @@ app.get("/routes", async (req, res) => {
 // Rota POST para criar novas rotas
 app.post("/routes", async (req, res) => {
   try {
-    const { path, component, requiredRole, pageId } = req.body;
+    const { path, component, requiredRole, pageId,reportId } = req.body;
 
     // Validações básicas
     if (!path || !component) {
@@ -532,7 +529,8 @@ app.post("/routes", async (req, res) => {
       path,
       component,
       requiredRole: requiredRole || [], // Se não for fornecido, usa array vazio
-      pageId: pageId || "" // Se não for fornecido, usa string vazia
+      pageId: pageId || "",
+      reportId: reportId || "", // Se não for fornecido, usa string vazia
     });
 
     // Salva a nova rota no banco de dados
@@ -553,7 +551,7 @@ app.post("/routes", async (req, res) => {
 // Rota PUT para atualizar rotas existentes
 app.put("/routes/:id", async (req, res) => {
   try {
-    const { path, component, requiredRole, pageId } = req.body;
+    const { path, component, requiredRole, pageId,reportId,workspaceId } = req.body;
     const routeId = req.params.id;
 
     // Validações básicas
@@ -582,7 +580,9 @@ app.put("/routes/:id", async (req, res) => {
         path,
         component,
         requiredRole: requiredRole || [],
-        pageId: pageId || ""
+        pageId: pageId || "",
+        reportId: reportId || "",
+        workspaceId : workspaceId || "",
       },
       { new: true } // Retorna o documento atualizado
     );
@@ -630,8 +630,8 @@ app.delete("/routes/:id", async (req, res) => {
   }
 });
 
-app.get("/getPBIToken/:pageId", async (req, res) => {
-    const pageId = req.params.pageId;
+app.get("/getPBIToken/:pageId/:reportId/:workspaceId", async (req, res) => {
+    const { pageId, reportId,workspaceId } = req.params;
 
     try {
        
@@ -644,11 +644,11 @@ app.get("/getPBIToken/:pageId", async (req, res) => {
             throw new Error("Falha ao obter token de acesso");
         }
 
-        const reportDetails = await getReportDetails(response.accessToken, pageId);
+        const reportDetails = await getReportDetails(response.accessToken,reportId,workspaceId);
         const embedTokenResponse = await generateEmbedToken(
             response.accessToken, 
             reportDetails.datasetId,
-            pageId
+            reportId
         );
         
         res.status(200).json({

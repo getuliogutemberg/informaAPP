@@ -8,9 +8,9 @@ const {  getReportDetails,
 
 const msalClient = new ConfidentialClientApplication({
     auth: {
-      clientId: process.env.POWER_BI_CLIENT_ID,
-      clientSecret: process.env.POWER_BI_CLIENT_SECRET,
-      authority: "https://login.microsoftonline.com/80899d73-a5f2-4a53-b252-077af6003b36",
+      clientId: process.env.AZURE_APP_ID,
+      clientSecret: process.env.AZURE_APP_SECRET,
+      authority: `https://login.microsoftonline.com/${process.env.AZURE_APP_TENANTID}`,
     },
   });
   

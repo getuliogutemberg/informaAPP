@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { service, factories, models, Report } from 'powerbi-client';
 import axios from 'axios';
 
@@ -9,20 +9,68 @@ interface ReportDetails {
   pageId: string;
 }
 
-const PowerBIReport: React.FC<ReportDetails> = ({ embedUrl, accessToken, pageId }) => {
-  const [report, setReport] = useState<Report | null>(null);
 
+interface DashboardPBIPageProps {
+  pageId: string | null;
+  reportId: string | null;
+  workspaceId: string | null;
+}
+
+const DashboardPBI: React.FC<DashboardPBIPageProps> = ({ pageId,reportId,workspaceId}) => {
+  const [reportDetails, setReportDetails] = useState<ReportDetails>();
+  const [errorMessage, setErrorMessage] = useState<string | null>();
+  const reportRef = useRef<Report | null>(null);
+  const powerBiService = useRef<service.Service>(
+    new service.Service(
+      factories.hpmFactory,
+      factories.wpmpFactory,
+      factories.routerFactory
+    )
+  );
+
+
+  // Busca os detalhes do relatório (token + embedUrl)
   useEffect(() => {
+    if (!pageId || !reportId || !workspaceId) return;
+
+    const fetchReportDetails = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/getPBIToken/${pageId}/${reportId}/${workspaceId}`);
+        console.log({
+          accessToken: response.data.accessToken,
+          embedUrl: response.data.embedUrl,
+          pageId,
+        });
+        setReportDetails({
+          accessToken: response.data.accessToken,
+          embedUrl: response.data.embedUrl,
+          pageId,
+        });
+      } catch (error) {
+        setErrorMessage('Erro ao buscar detalhes do relatório');
+        console.error('Erro ao buscar detalhes do relatório:', error);
+      }
+    };
+
+    fetchReportDetails();
+  }, [pageId,reportId,workspaceId]);
+
+
+   // Embeda o relatório
+  useEffect(() => {
+    if (!pageId || !reportDetails) return;
+
     const containerId = `powerbi-container-${pageId}`;
     const reportContainer = document.getElementById(containerId);
+    if (!reportContainer) return;
 
-    if (!reportContainer || !accessToken) return;
+    // Reset se já tiver algo embedado
+    powerBiService.current.reset(reportContainer);
 
     const config: models.IEmbedConfiguration = {
       type: 'report',
-      embedUrl,
-      accessToken,
-      
+      embedUrl: reportDetails.embedUrl,
+      accessToken: reportDetails.accessToken,
       tokenType: models.TokenType.Embed,
       settings: {
         panes: {
@@ -30,31 +78,17 @@ const PowerBIReport: React.FC<ReportDetails> = ({ embedUrl, accessToken, pageId 
           pageNavigation: { visible: false },
         },
         navContentPaneEnabled: false,
-        background: models.BackgroundType.Default, // Adiciona background transparente
-        layoutType: models.LayoutType.Custom, // Permite layout customizado
-        customLayout: { // Ajusta o layout para remover margens
-          displayOption: models.DisplayOption.FitToWidth,
+        background: models.BackgroundType.Default,
+        layoutType: models.LayoutType.Custom,
+        customLayout: {
+          displayOption: models.DisplayOption.FitToPage,
         },
-         
       },
     };
 
-    const powerBiService = new service.Service(
-      factories.hpmFactory,
-      factories.wpmpFactory,
-      factories.routerFactory
-    );
-
-    
-    if (report) {
-      report.off('loaded');
-      report.off('error');
-      
-    }
-
     try {
-      const embeddedReport = powerBiService.embed(reportContainer, config) as Report;
-      setReport(embeddedReport);
+      const embeddedReport = powerBiService.current.embed(reportContainer, config) as Report;
+      reportRef.current = embeddedReport;
 
       embeddedReport.on('loaded', async () => {
         try {
@@ -70,99 +104,94 @@ const PowerBIReport: React.FC<ReportDetails> = ({ embedUrl, accessToken, pageId 
         }
       });
 
-      embeddedReport.on('error', (event: { detail: string }) => console.error(event.detail));
+      embeddedReport.on('error', (event: { detail: string }) =>
+        console.error(event.detail)
+      );
     } catch (error) {
       console.error('Erro ao embutir o relatório:', error);
     }
 
+    // Cleanup ao desmontar
     return () => {
-      if (report) {
-        report.off('loaded');
-        report.off('error');
-        // report.destroy();
+      if (reportRef.current && reportContainer) {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        powerBiService.current.reset(reportContainer);
+        reportRef.current = null;
       }
     };
-  }, [accessToken, embedUrl, pageId]); // **Agora depende corretamente do pageId**
+  }, [pageId, reportDetails]);
 
-  return <div 
-    style={{
-      // marginTop: "0px",
-      // padding:"0",
-     
-      // aspectRatio: '159/91', 
-      // background: 'red',
-      height: "calc(100vh - 40px)", 
-      width:'100%',
-      maxWidth: "calc(100vw - 40px)", 
-    scale: 1,
-    // zoom: 1.05,
-      // width: "100%", // Garante responsividade
-      position: 'relative', 
-    }} 
-    id={`powerbi-container-${pageId}`} 
-  />
-
-};
-
-interface DashboardPBIPageProps {
-  pageId: string | null;
-}
-
-const DashboardPBI: React.FC<DashboardPBIPageProps> = ({ pageId }) => {
-  const [reportDetails, setReportDetails] = useState<ReportDetails | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>()
-
-  useEffect(() => {
-    if (!pageId) return;
-
-    const fetchReportDetails = async () => {
-      try {
-        const response = await axios.get(`http://localhost:5000/getPBIToken/${pageId}`);
-        setReportDetails({
-          accessToken: response.data.accessToken,
-          embedUrl: response.data.embedUrl,
-          pageId,
-        });
-      } catch (error) {
-        setErrorMessage('Erro ao buscar detalhes do relatório');
-        console.error('Erro ao buscar detalhes do relatório:', error);
-      }
-    };
-
-    fetchReportDetails();
-  }, [pageId]); // **Agora observa mudanças em pageId**
 
   return (
     <div
-      className="powerbi-container"
       style={{
-        position: 'fixed',
-        top: '30px',
-        // right: '10px',
-        // bottom: '0px',
-        left: '60px',
-        // border:"none",
-        width: 'calc(100vw - 0px)',
-        height: 'calc(100% - 0px)',
-        backgroundColor: '#101C44',
         display: 'flex',
+        flexDirection: 'column',
+        // background:"red",
         justifyContent: 'center',
         alignItems: 'center',
-        margin: '0px',
-        padding:'0px'
+        height: 'calc(100vh - 70px)',
+        width: 'calc(100vw - 110px)',
+        margin:"15px",
+        overflow: 'hidden',
+        position: 'fixed',
+        top: '60px', // altura do header
+        left: '80px', // largura do menu lateral
+        // right: '0',
+        // bottom: '0'
       }}
     >
       {reportDetails ? 
-        
-        <PowerBIReport
-          
-          key={reportDetails.pageId} // **Força a recriação do componente ao mudar**
-          embedUrl={reportDetails.embedUrl}
-          accessToken={reportDetails.accessToken}
-          pageId={reportDetails.pageId}
-        />
-      : errorMessage ? <p style={{ display: "flex", background:"rgba(49, 131, 207, 0)",width:'100%',justifyContent:"center"}}>{errorMessage}</p> : 
-        <p style={{ display: "flex", background:"rgba(49, 131, 207, 0)",width:'100%',justifyContent:"center"}}>Carregando relatório...</p>
+        <div 
+          style={{
+            flexGrow :1,
+            
+            display:'flex',
+            
+            justifyContent: "center",
+            alignItems: "center",
+           
+          }}
+        >
+          <div 
+            style={{
+              display:'flex',
+              flexGrow :1,
+
+              justifyContent: 'center',
+              alignItems: 'center',
+              
+            }}
+          >
+            <div 
+              style={{
+                flexGrow :1,
+                height: 'calc(100vh - 70px)',
+                width:"calc(100vw - 100px)",
+                
+              }} 
+              id={`powerbi-container-${pageId}`} 
+            />
+          </div>
+        </div>
+      : errorMessage ? 
+        <p style={{ 
+          display: "flex", 
+          background: "rgba(49, 131, 207, 0)",
+          width: '100%',
+          justifyContent: "center"
+        }}>
+          {errorMessage}
+        </p> 
+      : 
+        <p style={{ 
+          display: "flex", 
+          background: "rgba(49, 131, 207, 0)",
+          width: '100%',
+          justifyContent: "center"
+        }}>
+          Carregando relatório...
+        </p>
       }
     </div>
   );

@@ -3,9 +3,11 @@ import DashboardPBI from "../components/DashboardPBI.tsx";
 
 interface DashPBIProps {
   pageId: string | null;
+  reportId : string | null;
+  workspaceId: string | null;
 }
 
-export default function DashPBI({ pageId }: DashPBIProps ) {
+export default function DashPBI({ pageId, reportId,workspaceId }: DashPBIProps ) {
   
   return <div style={{
      border:'none',
@@ -16,7 +18,7 @@ export default function DashPBI({ pageId }: DashPBIProps ) {
     //  justifyContent:'center',
      background:'#101C44',
   }}>
-  <DashboardPBI pageId={pageId} />
+  <DashboardPBI pageId={pageId} reportId={reportId} workspaceId={workspaceId} />
   </div>
   
 }
