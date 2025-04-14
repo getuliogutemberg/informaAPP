@@ -64,7 +64,7 @@ interface Route {
 socket('http://localhost:5000');
 
 interface SubRoute {
-  _id: Key | null | undefined;
+
   path: string;
   icon: string;
   component: string;
@@ -117,26 +117,23 @@ function App() {
           // },
           {
             _id: "2",
-            "name": "Relatórios",
-            "icon": "file",
-            "component": 'MenuGroup',
-            "path": "/relatorios",
-            "subRoutes": [
-              ...routes.map((route) => ({
-                _id: route._id,
-                path: route.path,
-                icon: route.icon,
-                name: route.name,
-                component: route.component,
-                requiredRole: route.requiredRole, // <- antes tava errado aqui
-                pageId: route.pageId,
-                reportId: route.reportId,
-                workspaceId: route.workspaceId,
-              })),
-             
-            ],
-            "requiredRole": ["OWNER","ADMIN","CLIENT"]
-          }
+            name: "Relatórios",
+            icon: "file",
+            component: 'MenuGroup',
+            path: "/relatórios",
+            subRoutes: routes.map((route) => ({
+              path: route.path,
+              icon: route.icon,
+              name: route.name,
+              component: route.component,
+              requiredRole: route.requiredRole,
+              pageId: route.pageId,
+              reportId: route.reportId,
+              workspaceId: route.workspaceId,
+            })),
+            requiredRole: ["OWNER", "ADMIN", "CLIENT"]
+          },
+         
         ];
         console.log(response)
         setMenuGroups(response);
@@ -192,15 +189,15 @@ function App() {
       path={group.path + sub.path}
       element=
         {sub.component === "Dashboard Power BI" ? 
-            <ProtectedRoute requiredCategory={sub.requiredRole}>
+            <ProtectedRoute requiredRole={sub.requiredRole}>
             <DashPBI pageId={sub.pageId || null } reportId={sub.reportId || null } workspaceId={sub.workspaceId || null } />
             </ProtectedRoute>
            : sub.component === "Gestão de Grupos e Materiais" ? 
-            <ProtectedRoute requiredCategory={sub.requiredRole}>
+            <ProtectedRoute requiredRole={sub.requiredRole}>
             <Estrategica />
             </ProtectedRoute>
            : sub.component === "Teste" ? 
-            <ProtectedRoute requiredCategory={sub.requiredRole}>
+            <ProtectedRoute requiredRole={sub.requiredRole}>
             <Teste />
             </ProtectedRoute>
            : 
@@ -227,6 +224,33 @@ function App() {
             }
           />
         ))} */}
+
+{[{
+            _id: "3",
+            name: "Configuração de Itens Estratégicos do Estoque",
+            icon: "settings",
+            component: 'Gestão de Grupos e Materiais',
+            path: "/Configuração-de-Itens-Estratégicos-do-Estoque",
+            subRoutes: [],
+            pageId: null,
+            reportId: null,
+            workspaceId: null,
+            requiredRole: ["OWNER", "ADMIN", "CLIENT"]
+          }].map( (route) => (
+            <Route
+            key={route._id}
+            path={route.path}
+            element={
+              <ProtectedRoute requiredRole={route.requiredRole}  >
+                {route.component === "Dashboard Power BI" ? <DashPBI pageId={route.pageId || null} reportId={route.reportId  || null } workspaceId={route.workspaceId  || null} />:
+                route.component === "Gestão de Grupos e Materiais" ? <Estrategica /> :
+                route.component === "Teste" ? <Teste /> :
+                 <></>
+                }
+              </ProtectedRoute>
+            }
+          />
+          ))}
 
 
         {/* <Route path="/" element={<Home />} /> */}

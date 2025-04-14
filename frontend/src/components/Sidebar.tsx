@@ -81,7 +81,7 @@ const Sidebar = () => {
             "name": "Relatórios",
             "icon": "file",
             "component": 'MenuGroup',
-            "path": "/relatorios",
+            "path": "/relatórios",
             "subRoutes": [
               ...routes.map((route) => ({
                 path: route.path,
@@ -94,9 +94,10 @@ const Sidebar = () => {
                 workspaceId: route.workspaceId,
               })),
              
-            ],
+            ].slice(0,2),
             "requiredRole": ["OWNER","ADMIN","CLIENT"]
-          }
+          },
+         
         ];
         console.log(response)
         setMenuGroups(response);
@@ -193,6 +194,28 @@ const Sidebar = () => {
                   ))}
                 </ul>
               )}
+            </li>
+          ))}
+
+          {[{
+            _id: "3",
+            name: "Configuração de Itens Estratégicos do Estoque",
+            icon: "settings",
+            component: 'Gestão de Grupos e Materiais',
+            path: "/Configuração-de-Itens-Estratégicos-do-Estoque",
+            subRoutes: [],
+            requiredRole: ["OWNER", "ADMIN", "CLIENT"]
+          }].map( (route) => (
+            <li key={route.path} title={route.name}>
+              <Link 
+              // onMouseLeave={()=>toggleGroup(group._id)}
+              onClick={() =>{ 
+                // setExpanded(false);
+                
+                }} to={`${route.path}`}>
+                {getIcon(route.icon)}
+                <span>{route.name}</span>
+              </Link>
             </li>
           ))}
      

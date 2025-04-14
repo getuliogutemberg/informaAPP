@@ -40,7 +40,7 @@ interface Route {
 
 // Definindo as opções disponíveis
 const componentes = ["Dashboard Power BI", "Gestão de Grupos e Materiais", "Teste"];
-const categorias = ["Paraty", "Copel"];
+const categorias = ["OWNER","ADMIN","CLIENT"];
 
 
 const RoutesEdit = () => {

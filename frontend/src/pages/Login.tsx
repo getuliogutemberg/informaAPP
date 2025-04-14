@@ -96,7 +96,7 @@ export default function Login() {
             name: "Relatórios",
             icon: "file",
             component: 'MenuGroup',
-            path: "/relatorios",
+            path: "/relatórios",
             subRoutes: routes.map((route) => ({
               path: route.path,
               icon: route.icon,
@@ -108,7 +108,8 @@ export default function Login() {
               workspaceId: route.workspaceId,
             })),
             requiredRole: ["OWNER", "ADMIN", "CLIENT"]
-          }
+          },
+         
         ];
   
         setMenuGroups(menu);

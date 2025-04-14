@@ -20,12 +20,15 @@ const ProtectedRoute = ({ children, requiredRole,requiredCategory }: ProtectedRo
 
   // Verifica se o usuário possui o papel necessário
   if (requiredRole && !requiredRole.includes(user.className)) {
+    alert( `Você não tem permissão para acessar essa página` );
+    console.log(!requiredRole.includes(user.className))
     console.log("Usuário não tem permissão para acessar essa página");
     return <Navigate to="/rota-restrita" />; // Redireciona para uma página de "não autorizado"
   }
 
   // Verifica se o usuário possui o papel necessário
-  if (user.className !== "OWNER" && requiredCategory && !requiredCategory.includes(user.category)) {
+  if (user.className !== "OWNER" && requiredCategory && !requiredCategory.includes(user.className)) {
+    console.log(!requiredCategory.includes(user.className))
     console.log("Usuário não tem permissão para acessar esse módulo");
     return <Navigate to="/rota-restrita" />; // Redireciona para uma página de "não autorizado"
   }
