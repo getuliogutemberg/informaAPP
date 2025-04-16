@@ -281,7 +281,7 @@ function App() {
               <Alerts />
             </ProtectedRoute>} /> 
 
-            <Route path="/controle" element={ <ProtectedRoute requiredRole={["ADMIN","OWNER"]}  >
+            <Route path="/opções" element={ <ProtectedRoute requiredRole={["ADMIN","OWNER"]}  >
               <Admin />
             </ProtectedRoute>} /> 
 
@@ -292,7 +292,7 @@ function App() {
             <Route path="/módulos" element={ <ProtectedRoute requiredRole={["OWNER"]}  >
               <RoutesEdit />
             </ProtectedRoute>} /> 
-        <Route path="/opções" element={ <ProtectedRoute requiredRole={["ADMIN","OWNER"]} >
+        <Route path="/administrador" element={ <ProtectedRoute requiredRole={["ADMIN","OWNER"]} >
               <Settings />
     
         </ProtectedRoute>} /> 

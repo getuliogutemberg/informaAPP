@@ -7,7 +7,7 @@ import { deepPurple} from "@mui/material/colors";
 
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
-import { motion } from "framer-motion";
+// import { motion } from "framer-motion";
 import { TbPackages } from "react-icons/tb";
 
 import { 
@@ -35,14 +35,14 @@ export default function Admin() {
       pt: 3,
       gap: 2
     }}>
-      <motion.div initial={{ opacity: 0, y: -50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }}>
+      {/* <motion.div initial={{ opacity: 0, y: -50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }}>
         <Typography variant="h3" sx={{ 
           fontWeight: "bold", 
           color: "white", 
           mb: 2,
           fontSize:{ xs: "1.5rem", sm: "2rem", md: "2.5rem" } 
         }}>
-          Controle e Gestão
+          Controle 
         </Typography>
         <Typography variant="h6" sx={{ 
           color: "#fff", 
@@ -52,14 +52,14 @@ export default function Admin() {
         }}>
           Aqui você tem o controle da plataforma
         </Typography>
-      </motion.div>
+      </motion.div> */}
 
       <Box sx={{
         display: "flex",
         justifyContent: "start",
         flexWrap: "wrap",
         overflow: "auto",
-        height: "calc(100vh - 235px)",
+        height: "calc(100vh - 80px)",
         gap: 2
       }}>
         {[

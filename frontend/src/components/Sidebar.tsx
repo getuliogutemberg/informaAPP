@@ -199,7 +199,7 @@ const Sidebar = () => {
 
           {[{
             _id: "3",
-            name: "Configuração de Itens Estratégicos do Estoque",
+            name: "Configurações",
             icon: "settings",
             component: 'Gestão de Grupos e Materiais',
             path: "/Configuração-de-Itens-Estratégicos-do-Estoque",
@@ -226,8 +226,8 @@ const Sidebar = () => {
       </ul>
 
       <ul className="sidebar-options">
-        {['ADMIN','OWNER'].includes(user.className) && <li title="Controle"><Link to="/controle"><FaGavel /> <span>Controle</span></Link></li> }
-        {['OWNER'].includes(user.className) && <li title="Opções"><Link to="/opções"><FaCog /><span>Opções</span></Link></li>}
+        {['ADMIN','OWNER'].includes(user.className) && <li title="Opcões"><Link to="/opções"><FaGavel /> <span>Opções</span></Link></li> }
+        {['OWNER'].includes(user.className) && <li title="Administrador"><Link to="/administrador"><FaCog /><span>Administrador</span></Link></li>}
         
 
         
