@@ -83,6 +83,8 @@ const Alert = mongoose.model("Alerts", new mongoose.Schema({
   deletedAt: { type: Date, default: null },
 }, { timestamps: true }));
 
+
+
 async function getReportDetails(token,reportId,workspaceId) {
   
   const url = `https://api.powerbi.com/v1.0/myorg/groups/${workspaceId}/reports/${reportId}`;
@@ -244,7 +246,6 @@ app.use(cors({
   methods: '*',
   origin: '*', // Insira o endereço do frontend aqui
 }));
-
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", req.headers.origin || "*");
   res.header("Access-Control-Allow-Credentials", "true");
@@ -781,6 +782,8 @@ app.put('/params/group/:cod_grupo', ParamsController.updateGroupParams);
 app.get('/params/material/:cod_item_material', ParamsController.getMaterialParams);
 app.put('/params/material/:cod_item_material', ParamsController.updateMaterialParams);
 app.post('/params/reset/:type/:id', ParamsController.resetToDefault);
+
+
 const server = http.createServer(app);
 
 server.listen(process.env.PORT || 5000, () => {
