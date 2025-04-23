@@ -774,15 +774,13 @@ app.get('/groupDictionary', GroupDictionaryController.getGroupDictionaries);
 // Rota para listar todos os materiais de um grupo
 app.get('/materials/:cod_grupo', MaterialController.getMaterialByGroup);
 
-// Rotas para parâmetros de grupo
-app.get('/params/group/:cod_grupo', ParamsController.getGroupParams);
-app.put('/params/group/:cod_grupo', ParamsController.updateGroupParams);
-
-// Rotas para parâmetros de material
-app.get('/params/material/:cod_item_material', ParamsController.getMaterialParams);
-app.put('/params/material/:cod_item_material', ParamsController.updateMaterialParams);
-app.post('/params/reset/:type/:id', ParamsController.resetToDefault);
-
+// Rotas de parâmetros estratégicos
+app.get('/params/group/:groupId', ParamsController.getGroupParams); // Rota para listar todos os parâmetros de um grupo
+app.get('/params/material/:materialId', ParamsController.getMaterialParams); // Rota para listar todos os parâmetros de um grupo
+app.put('/params/group/:groupId', ParamsController.updateGroupParams); // Rota para listar todos os parâmetros de um grupo
+app.put('/params/material/:materialId', ParamsController.updateMaterialParams); // Rota para listar todos os parâmetros de um grupo
+app.put('/params/reset/group/:groupId', ParamsController.resetGroupItems); // Rota restaurão padrão de estrategia de todos os itens de um grupo
+app.put('/params/reset/material/:materialId', ParamsController.resetItem); // Rota restaurar padrão de estrategia de um item de um grupo
 
 const server = http.createServer(app);
 

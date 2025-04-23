@@ -1,305 +1,196 @@
 const estrategia_parametros = require("../models/EstrategiaParametros");
-const config_parametros = require("../models/ConfigParametros");
 const grupo_material = require("../models/GrupoMaterial");
-
-// Define os parâmetros padrão
-const parametrosPadrao = [
- 
-    {
-      cod_parametro: 0,
-      desc_parametro: "Risco de gerar indisponibilidade da UG",
-      tipo: 'boolean',
-      opcoes: [
-        { cod_opcao: 0, desc_opcao: "FALSE" },
-        { cod_opcao: 1, desc_opcao: "TRUE" }
-      ]
-    },
-    {
-      cod_parametro: 1,
-      desc_parametro: "Risco de gerar indisponibilidade de Sistema de Segurança",
-      tipo: 'boolean',
-      opcoes: [
-        { cod_opcao: 0, desc_opcao: "FALSE" },
-        { cod_opcao: 1, desc_opcao: "TRUE" }
-      ]
-    },
-    {
-      cod_parametro: 2,
-      desc_parametro: "Indisponibilidade do item gera risco de afetar o ativo",
-      tipo: 'boolean',
-      opcoes: [
-        { cod_opcao: 0, desc_opcao: "FALSE" },
-        { cod_opcao: 1, desc_opcao: "TRUE" }
-      ]
-    },
-    {
-      cod_parametro: 3,
-      desc_parametro: "Processo de compras superior a 6 meses",
-      tipo: 'radio',
-      opcoes: [
-        { cod_opcao: 0, desc_opcao: "1 mês" },
-        { cod_opcao: 1, desc_opcao: "3 meses" },
-        { cod_opcao: 2, desc_opcao: "6 meses" },
-        { cod_opcao: 3, desc_opcao: "9 meses" },
-        { cod_opcao: 4, desc_opcao: "12 meses" },
-        { cod_opcao: 5, desc_opcao: "Acima de 12 meses" }
-      ]
-    },
-    {
-      cod_parametro: 4,
-      desc_parametro: "Mais de 1 fornecedor disponível",
-      tipo: 'radio',
-      opcoes: [
-        { cod_opcao: 0, desc_opcao: "1" },
-        { cod_opcao: 1, desc_opcao: "3" },
-        { cod_opcao: 2, desc_opcao: "5" },
-        { cod_opcao: 3, desc_opcao: "7" },
-        { cod_opcao: 4, desc_opcao: "10 ou mais" }
-      ]
-    },
-    {
-      cod_parametro: 5,
-      desc_parametro: "Risco de ser descontinuado pelo fabricante em até 2 anos",
-      tipo: 'radio',
-      opcoes: [
-        { cod_opcao: 0, desc_opcao: "N/A" },
-        { cod_opcao: 1, desc_opcao: "1 ano" },
-        { cod_opcao: 2, desc_opcao: "2 anos" },
-        { cod_opcao: 3, desc_opcao: "3 anos ou mais" }
-      ]
-    },
-    {
-      cod_parametro: 6,
-      desc_parametro: "Item utilizado por pelo menos 10 ativos",
-      tipo: 'radio',
-      opcoes: [
-        { cod_opcao: 0, desc_opcao: "1 ativo" },
-        { cod_opcao: 1, desc_opcao: "3 ativos" },
-        { cod_opcao: 2, desc_opcao: "5 ativos" },
-        { cod_opcao: 3, desc_opcao: "10 ou mais ativos" }
-      ]
-    },
-    {
-      cod_parametro: 7,
-      desc_parametro: "Alta probabilidade de uso",
-      tipo: 'radio',
-      opcoes: [
-        { cod_opcao: 0, desc_opcao: "Irrisória" },
-        { cod_opcao: 1, desc_opcao: "Baixa" },
-        { cod_opcao: 2, desc_opcao: "Média" },
-        { cod_opcao: 3, desc_opcao: "Alta" },
-        { cod_opcao: 4, desc_opcao: "Muito Alta" }
-      ]
-    },
-    {
-      cod_parametro: 8,
-      desc_parametro: "Item considerado estratégico",
-      tipo: 'boolean',
-      opcoes: [
-        { cod_opcao: 0, desc_opcao: "FALSE" },
-        { cod_opcao: 1, desc_opcao: "TRUE" }
-      ]
-    }
-  
-  ]
 
 class ParamsController {
   async getGroupParams(req, res) {
     try {
-        const { cod_grupo } = req.params;
-        
-        // Verifica se o grupo existe na tabela grupo_material
-        const grupoExiste = await grupo_material.findOne({ cod_grupo });
-        if (!grupoExiste) {
-            return res.status(404).json({ error: "Grupo não encontrado" });
+      const { groupId } = req.params;
+      const estrategia = await estrategia_parametros.findOne({ cod_grupo: groupId, cod_item_material: 0 });
+
+      if (!estrategia) {
+        const estrategiaPadrao = {
+          cod_grupo: groupId,
+          cod_item_material: 0,
+          client: 'default',
+          cods_parametro: [0,1,2,3,4,5,6,7,8],
+          cods_opcao: [0,0,0,0,0,0,0,0,0],
+          data_estrategia: new Date(),
         }
+        return res.json({ message: 'Grupo atualmente sem estratégia, retornando padrão', estrategiaPadrao }); 
+      }
 
-        let estrategia = await estrategia_parametros.findOne({ cod_grupo });
-
-        if (!estrategia) {
-            // Cria os parâmetros padrão no banco se não existirem
-            await config_parametros.insertMany(parametrosPadrao);
-            
-            // Cria a estratégia com os parâmetros padrão
-            estrategia = await estrategia_parametros.create({ 
-                cod_grupo, 
-                cods_parametro: parametrosPadrao.map(p => p.cod_parametro), 
-                cods_opcao: parametrosPadrao.map(p => 0),
-                client: "default" 
-            });
-        }
-
-        const parametros = await config_parametros.find({
-            cod_parametro: { $in: estrategia.cods_parametro }
-        });
-
-        return res.json({ estrategia, parametros });
+      return res.json(estrategia); 
     } catch (error) {
-        console.error('Erro em getGroupParams:', error);
-        return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: error.message });
     }
-}
+  }
 
-async getMaterialParams(req, res) {
+  async getMaterialParams(req, res) {
     try {
-        const { cod_item_material } = req.params;
-        
-        let estrategia = await estrategia_parametros.findOne({ cod_item_material });
+      const { materialId } = req.params;
 
-        if (!estrategia) {
-            // Cria os parâmetros padrão no banco se não existirem
-            await config_parametros.insertMany(parametrosPadrao);
-            
-            // Cria a estratégia com os parâmetros padrão
-            estrategia = await estrategia_parametros.create({ 
-                cod_item_material, 
-                cods_parametro: parametrosPadrao.map(p => p.cod_parametro), 
-                cods_opcao: parametrosPadrao.map(p => 0),
-                client: "default" 
-            });
+      const estrategia = await estrategia_parametros.findOne({ cod_item_material: materialId });
 
-            // Retorna os parâmetros padrão
-            return res.json({ 
-                estrategia, 
-                parametros: parametrosPadrao 
-            });
+      if (!estrategia) {
+        const material = await grupo_material.findOne({ cod_item_material: materialId })
+
+        const estrategiaPadrao = {
+          cod_grupo: material.cod_grupo,
+          cod_item_material: materialId,
+          client: 'default',
+          cods_parametro: [0,1,2,3,4,5,6,7,8],
+          cods_opcao: [0,0,0,0,0,0,0,0,0],
+          data_estrategia: new Date(),
         }
-
-        // Busca os parâmetros apenas pelo cod_parametro
-        const parametros = await config_parametros.find({
-            cod_parametro: { $in: estrategia.cods_parametro }
-        });
-
-        // Se não encontrar parâmetros, retorna os padrão
-        if (parametros.length === 0) {
-            return res.json({ 
-                estrategia, 
-                parametros: parametrosPadrao 
-            });
-        }
-
-        return res.json({ estrategia, parametros });
+        return res.json({ message: 'Item atualmente sem estratégia, retornando padrão', estrategiaPadrao });
+      } else {
+        return res.json(estrategia);
+      }
     } catch (error) {
-        console.error('Erro em getMaterialParams:', error);
-        return res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: error.message });
     }
-}
-    async updateGroupParams(req, res) {
-      console.log('req.params',req.params);
-      console.log('req.body',req.body)
-        try {
-          const { cod_grupo } = req.params;
-          const { cods_parametro, cods_opcao, client, data_estrategia } = req.body;
-          if (!cods_parametro || !cods_opcao) {
-            return res.status(400).json({ message: "Parâmetros obrigatórios não foram enviados" });
-          }
-          if (cods_parametro.length !== cods_opcao.length) {
-            return res.status(400).json({ message: "Parâmetros e opções devem ter o mesmo tamanho" });
-          }
-          const existingStrategies = await estrategia_parametros.find({ cod_grupo });
-         
-          if (existingStrategies.length > 0) {
-            const updateData = {};
-            if (cods_parametro) updateData.cods_parametro = cods_parametro;
-            if (cods_opcao) updateData.cods_opcao = cods_opcao;
-            if (client) updateData.client = client;
-            if (data_estrategia) updateData.data_estrategia = data_estrategia;
-  
-            await estrategia_parametros.updateMany(
-              { cod_grupo },
-              { $set: updateData }
-            );
-            return res.json({ message: "Parâmetros atualizados com sucesso" });
-          } else {
-            const materiaisDoGrupo = await grupo_material.find({ cod_grupo }).distinct("cod_grupo");
-      
-            if (materiaisDoGrupo.length === 0) {
-              return res.status(404).json({ message: "Nenhum item encontrado para esse grupo" });
-            }
-      
-            const novasEstrategias = materiaisDoGrupo.map(cod_grupo => ({
-              cod_grupo,
-              cod_item_material,
-              cods_parametro,
-              cods_opcao,
-              client,
-              data_estrategia
-            }));
-            
-            await estrategia_parametros.insertMany(novasEstrategias);
-      
-            return res.json({ message: "Novas estratégias criadas para todos os itens do grupo", estrategias: novasEstrategias });
-          }
-      
-        } catch (error) {
-          return res.status(500).json({ error: error.message });
-        }
-    }
-    
-    async updateMaterialParams(req, res) {
-        try {
-          const { cod_item_material } = req.params;
-          const { cods_parametro, cods_opcao, client, data_estrategia } = req.body;
-    
-          const estrategia = await estrategia_parametros.findOneAndUpdate(
-            { cod_item_material },
-            { cods_parametro, cods_opcao, client, data_estrategia },
-          );
-    
-          return res.json({ message: "Parâmetros atualizados com sucesso", estrategia });
-        } catch (error) {
-          return res.status(500).json({ error: error.message });
-        }
-    }
+  }
 
-    async resetToDefault(req, res) {
-        try {
-            const { type, id } = req.params; // type pode ser 'group' ou 'material'
-            
-            // Cria os parâmetros padrão no banco se não existirem
-            await config_parametros.insertMany(parametrosPadrao);
-            
-            if (type === 'group') {
-                // Remove estratégia existente do grupo
-                await estrategia_parametros.deleteMany({ cod_grupo: id });
-                
-                // Cria nova estratégia com parâmetros padrão
-                const response = await estrategia_parametros.create({ 
-                    cod_grupo: id, 
-                    cods_parametro: parametrosPadrao.map(p => p.cod_parametro), 
-                    cods_opcao: parametrosPadrao.map(p => 0),
-                    client: "default" 
-                });
-                
-                return res.json({ 
-                    message: "Parâmetros do grupo resetados com sucesso",
-                    estrategia: response, 
-                    parametros: parametrosPadrao 
-                });
-            } else if (type === 'material') {
-                // Remove estratégia existente do material
-                await estrategia_parametros.deleteOne({ cod_item_material: id });
-                
-                // Cria nova estratégia com parâmetros padrão
-                const response = await estrategia_parametros.create({ 
-                    cod_item_material: id, 
-                    cods_parametro: parametrosPadrao.map(p => p.cod_parametro), 
-                    cods_opcao: parametrosPadrao.map(p => 0),
-                    client: "default" 
-                });
-                
-                return res.json({ 
-                    message: "Parâmetros do material resetados com sucesso",
-                    estrategia: response, 
-                    parametros: parametrosPadrao 
-                });
-            } else {
-                return res.status(400).json({ error: "Tipo inválido. Use 'group' ou 'material'" });
-            }
-        } catch (error) {
-            return res.status(500).json({ error: error.message });
+  async updateGroupParams(req, res) {
+    try {
+      const { groupId } = req.params;
+      const { cods_parametro, cods_opcao, client, data_estrategia } = req.body;
+  
+      const existingStrategies = await estrategia_parametros.find({ cod_grupo: groupId });
+  
+      if (existingStrategies.length > 0) {
+        await estrategia_parametros.updateMany(
+          { cod_grupo: groupId },
+          { $set: { cods_parametro: cods_parametro, cods_opcao: cods_opcao, client: client, data_estrategia: data_estrategia } }
+        );
+
+        return res.json({ message: "Parâmetros atualizados com sucesso" });
+      } else {
+        const materiaisDoGrupo = await grupo_material.find({ cod_grupo: groupId }).distinct("cod_item_material");
+  
+        if (materiaisDoGrupo.length === 0) {
+          return res.status(404).json({ message: "Nenhum item encontrado para esse grupo" });
         }
+  
+        const novasEstrategias = [
+          // Primeiro adiciona a estratégia do grupo (cod_item_material = 0)
+          {
+            cod_grupo: groupId,
+            cod_item_material: 0,  // Estratégia base do grupo
+            cods_parametro: cods_parametro,
+            cods_opcao: cods_opcao,
+            client: client,
+            data_estrategia: data_estrategia
+          },
+          // Depois adiciona as estratégias para cada material
+          ...materiaisDoGrupo.map(cod_item_material => ({
+            cod_grupo: groupId,
+            cod_item_material: cod_item_material,
+            cods_parametro: cods_parametro,
+            cods_opcao: cods_opcao,
+            client: client,
+            data_estrategia: data_estrategia
+          }))
+        ];
+        
+        await estrategia_parametros.insertMany(novasEstrategias);
+  
+        return res.json({ message: "Novas estratégias criadas para todos os itens do grupo", estrategias: novasEstrategias });
+      }
+  
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
     }
+  }
+  
+  async updateMaterialParams(req, res) {
+    try {
+      const { materialId } = req.params;
+      const { cods_parametro, cods_opcao, client, data_estrategia } = req.body;
+      const existingStrategie = await estrategia_parametros.find({ cod_item_material: materialId });
+
+      if (!existingStrategie) {
+        return res.status(404).json({ 
+          message: "Estratégia base do grupo não configurada",
+          details: `Não existe uma estratégia padrão  para o grupo desse item`,
+          solution: "Defina primeiro os parâmetros do grupo antes de atualizar itens individuais"
+        })
+      }
+
+      const estrategia = await estrategia_parametros.findOneAndUpdate(
+        { cod_item_material: materialId },
+        { cods_parametro: cods_parametro, cods_opcao: cods_opcao, client: client, data_estrategia: data_estrategia },
+        { new: true }
+      );
+
+      return res.json({ message: "Parâmetros atualizados com sucesso", estrategia });
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  }
+
+  async resetGroupItems(req, res) {
+    try {
+      const { groupId } = req.params;
+
+      const grupoParams = await estrategia_parametros.findOne({ cod_grupo: groupId, cod_item_material: 0 });
+
+      if (!grupoParams) {
+        return res.status(404).json({ message: "Parâmetros base do grupo não encontrados" });
+      }
+
+      const novasEstrategias = await estrategia_parametros.updateMany(
+        { cod_grupo: groupId, cod_item_material: { $ne: 0 } },
+        { 
+          cods_parametro: grupoParams.cods_parametro, 
+          cods_opcao: grupoParams.cods_opcao, 
+          client: grupoParams.client, 
+          data_estrategia: new Date()
+        },
+        { new: true }
+      );
+
+      return res.json({message: "Todos os itens do grupo foram atualizados com os parâmetros do grupo", estrategias: novasEstrategias});
+    } catch (error) { 
+      return res.status(500).json({ error: error.message });
+    }
+  }
+
+  async resetItem(req, res) {
+    try {
+      const { materialId } = req.params;
+
+      const material = await grupo_material.findOne({  cod_item_material: materialId });
+
+      if (!material) {
+        return res.status(404).json({ message: "Item não encontrado" });
+      }
+
+      const groupId = material.cod_grupo;
+
+      const grupoParams = await estrategia_parametros.findOne({ cod_grupo: groupId, cod_item_material: 0 });
+
+      if (!grupoParams) {
+        return res.status(404).json({ message: "Parâmetros base do grupo não encontrados" });
+      }
+
+      const estrategia = await estrategia_parametros.findOneAndUpdate(
+        { cod_item_material: materialId },
+        { 
+          cods_parametro: grupoParams.cods_parametro, 
+          cods_opcao: grupoParams.cods_opcao, 
+          client: grupoParams.client, 
+          data_estrategia: new Date()
+        },
+        { new: true }
+      );
+
+      return res.json({ message: "Item atualizado com os parâmetros do grupo", estrategia});
+
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  }
 }
 
 module.exports = new ParamsController();

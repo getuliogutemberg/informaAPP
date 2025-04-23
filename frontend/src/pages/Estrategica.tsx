@@ -150,10 +150,15 @@ export default function TelaEstrategica() {
   });
 
   // Função para restaurar os padrões
-  const handleRestoreDefault = () => {
-    
+  const handleRestoreDefault = async () => {
+    const id = itemSelecionado?.cod_item_material;
+
+    const response = await axios.put(
+      `http://localhost:5000/params/reset/material/${id}`
+    );
     
   };
+
   const saveGroupParams = async (cod_grupo : number, data: Record<number, number>) => {
     try {
       console.log(data)
@@ -185,8 +190,6 @@ export default function TelaEstrategica() {
     setModalOpen(false);
   };
 
- 
-
   // Função similar para salvar parâmetros de material
   const handleSaveMaterialParams = async () => {
     try {
@@ -196,7 +199,7 @@ export default function TelaEstrategica() {
       const cods_opcao = Object.values(criteriosSelecionados);
 
       const response = await axios.put(
-        `http://localhost:5000/params/material/${itemSelecionado._id}`,
+        `http://localhost:5000/params/material/${itemSelecionado.cod_item_material}`,
         {
           cods_parametro,
           cods_opcao,
@@ -223,11 +226,10 @@ export default function TelaEstrategica() {
         return;
       }
 
-      const type = itemSelecionado ? 'material' : 'group';
-      const id = itemSelecionado ? itemSelecionado._id : grupoSelecionado.cod_grupo;
+      const id = grupoSelecionado.cod_grupo;
 
-      const response = await axios.post(
-        `http://localhost:5000/params/reset/${type}/${id}`
+      const response = await axios.put(
+        `http://localhost:5000/params/reset/group/${id}`
       );
 
       if (response.status === 200) {
@@ -238,12 +240,7 @@ export default function TelaEstrategica() {
         });
         setCriteriosSelecionados(novosCriterios);
 
-        // Se estiver resetando um item específico, fecha o modal
-        if (type === 'material') {
-          setModalOpen(false);
-        }
-
-        alert(itemSelecionado ? 'Parâmetros do item restaurados com sucesso!' : 'Parâmetros do grupo restaurados com sucesso!' );
+        alert('Parâmetros do grupo restaurados com sucesso!');
       }
     } catch (error) {
       console.error('Erro ao restaurar parâmetros:', error);
