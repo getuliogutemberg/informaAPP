@@ -30,13 +30,20 @@ interface Item {
 }
 
 type Opcao = { cod_opcao: string | number; desc_opcao: string };
-type Parametro = {
-  cod_parametro: number;
-  var_name: string;
-  desc_parametro: string;
-  opcoes: Opcao[];
-  tipo: string;
-};
+// type Parametro = {
+//   cod_parametro: number;
+//   var_name: string;
+//   desc_parametro: string;
+//   opcoes: Opcao[];
+//   tipo: string;
+// };
+
+interface ParametroResponse {
+  cod_grupo: number;
+  cod_item_material: number;
+  cods_parametro: number[];
+  cods_opcao: (string | number)[];
+}
 type CriterioComResposta = {
   cod_parametro: number;
   var_name: string;
@@ -45,6 +52,9 @@ type CriterioComResposta = {
   opcoes: Opcao[];
   resposta?: string | boolean | number;
 };
+
+
+
 
 
 export default function TelaEstrategica() {
@@ -59,87 +69,36 @@ export default function TelaEstrategica() {
   const [filtroItemSelecionado, setFiltroItemSelecionado] = useState<string>("Todos");
   
   // Estado para os critérios
-  const [criterios, setCriterios] = useState<CriterioComResposta[]>(CRITERIOS_PADRAO);
+  const criterios = (CRITERIOS_PADRAO);
+  const [criteriosGrupo, setCriteriosGrupo] = useState<CriterioComResposta[]>(CRITERIOS_PADRAO);
   const [criteriosItem, setCriteriosItem] = useState<CriterioComResposta[]>(CRITERIOS_PADRAO);
   const [criteriosSelecionados, setCriteriosSelecionados] = useState<Record<number, number>>({});
+  const [criteriosItemSelecionados, setCriteriosItemSelecionados] = useState<Record<number, number>>({});
 
   // Adicione este estado para controlar a visibilidade dos parâmetros
   const [showParametros, setShowParametros] = useState(false);
 
-  // Carregar grupos ao montar a página
-  useEffect(() => {
-    axios.get("http://localhost:5000/groupDictionary")
-      .then((response) => {
-        setGrupos(response.data); // Carrega os grupos
-        // Para cada grupo, fazer a requisição dos itens
-        response.data.slice(0, 0).forEach((grupo: Grupo) => {
-          axios.get(`http://localhost:5000/materials/${grupo.cod_grupo}`)
-            .then((res) => {
-              setItens((prevItens) => [...prevItens, ...res.data]); // Adiciona os itens ao estado
-            })
-            .catch((error) => console.error(`Erro ao buscar itens do grupo ${grupo.cod_grupo}:`, error));
-        });
-      })
-      .catch((error) => console.error("Erro ao buscar grupos:", error));
-  }, []);
 
-
-
-  const mapRespostaComCriterios = (dadosApi: Parametro[]): CriterioComResposta[] => {
-    const CRITERIOS = CRITERIOS_PADRAO.map(criterioBase => {
-      const encontrado = dadosApi.find(p => p.cod_parametro === criterioBase.cod_parametro);
-      if (encontrado) {
-        return {
-          ...criterioBase,
-          opcoes: encontrado.opcoes,
-          tipo: encontrado.tipo,
-          desc_parametro: encontrado.desc_parametro,
-          var_name: encontrado.var_name,
-        };
-      }
-      return criterioBase; // Se não achar, mantém o padrão
+  const mapRespostaComCriterios = (dadosApi:  ParametroResponse): CriterioComResposta[] => {
+    return CRITERIOS_PADRAO.map((criterioBase) => {
+      const index = dadosApi.cods_parametro.indexOf(criterioBase.cod_parametro);
+      const resposta = index !== -1 ? dadosApi.cods_opcao[index] : undefined;
+  
+      return {
+        ...criterioBase,
+        resposta,
+      };
     });
-    return CRITERIOS;
   };
-  // Carregar os itens apenas quando o grupo for selecionado
-  useEffect(() => {
-    if (grupoSelecionado) {
-      axios.get(`http://localhost:5000/materials/${grupoSelecionado.cod_grupo}`)
-        .then(response => setItens(response.data))
-        .catch(error => console.error("Erro ao buscar itens:", error));
 
-      axios.get(`http://localhost:5000/params/group/${grupoSelecionado.cod_grupo}`)
-      .then(response => {
-        const estrategia = response.data.estrategia;
-        const criteriosComRespostas = mapRespostaComCriterios(estrategia);
-        setCriterios(criteriosComRespostas);
-      })
-        .catch(error => console.error("Erro ao buscar itens:", error));
+  const gruposFiltrados = grupos.filter((grupo) => {
+    const matchBusca = grupo.cod_grupo.toString().includes(buscaGrupo) || 
+  grupo.desc_grupo.toLowerCase().includes(buscaGrupo.toLowerCase());
+if (filtroSelecionado === "Todos") return matchBusca;
 
-        
-    }
-  }, [grupoSelecionado]); // Vai rodar apenas quando o grupoSelecionado mudar
-
-  useEffect(() => {
-    if (itemSelecionado) {
-
-      axios.get(`http://localhost:5000/params/material/${itemSelecionado.cod_item_material}`)
-      .then(response => {
-        // console.log(response.data.estrategia)
-        const estrategia = response.data.estrategia;
-        const criteriosComRespostas = mapRespostaComCriterios(estrategia);
-        setCriteriosItem(criteriosComRespostas);
-      })
-        .catch(error => console.error("Erro ao buscar itens:", error));
-
-        
-    }
-  }, [itemSelecionado]);
-
-  const gruposFiltrados = grupos.filter((grupo) => 
-    grupo.cod_grupo.toString().includes(buscaGrupo) || 
-    grupo.desc_grupo.toLowerCase().includes(buscaGrupo.toLowerCase())
-  );
+const preenchido = criterios.some(c => c.resposta !== undefined && c.resposta !== null && c.resposta !== '');
+return matchBusca && (filtroSelecionado === "Preenchidos" ? preenchido : !preenchido);
+ } );
  
   const itensFiltradosComBusca = itens.filter((item) => {
     const query = buscaItem.toLowerCase();
@@ -156,6 +115,8 @@ export default function TelaEstrategica() {
     const response = await axios.put(
       `http://localhost:5000/params/reset/material/${id}`
     );
+
+    console.log(response)
     
   };
 
@@ -195,8 +156,8 @@ export default function TelaEstrategica() {
     try {
       if (!itemSelecionado) return;
 
-      const cods_parametro = Object.keys(criteriosSelecionados).map(Number);
-      const cods_opcao = Object.values(criteriosSelecionados);
+      const cods_parametro = Object.keys(criteriosItemSelecionados).map(Number);
+      const cods_opcao = Object.values(criteriosItemSelecionados);
 
       const response = await axios.put(
         `http://localhost:5000/params/material/${itemSelecionado.cod_item_material}`,
@@ -250,6 +211,56 @@ export default function TelaEstrategica() {
 
 
 
+  
+  // Carregar grupos ao montar a página
+  useEffect(() => {
+    axios.get("http://localhost:5000/groupDictionary")
+      .then((response) => {
+        setGrupos(response.data); // Carrega os grupos
+      
+      })
+      .catch((error) => console.error("Erro ao buscar grupos:", error));
+  }, []);
+
+    // Carregar os itens apenas quando o grupo for selecionado
+    useEffect(() => {
+      if (grupoSelecionado) {
+        // console.log(grupoSelecionado)
+        axios.get(`http://localhost:5000/materials/${grupoSelecionado.cod_grupo}`)
+        .then(response => setItens(response.data))
+        .catch(error => console.error("Erro ao buscar itens:", error));
+  
+        axios.get(`http://localhost:5000/params/group/${grupoSelecionado.cod_grupo}`)
+        .then(response => {
+          // console.log(response.data)
+          const criteriosComRespostas = mapRespostaComCriterios(response.data);
+          // console.log(criteriosComRespostas);
+          setCriteriosGrupo(criteriosComRespostas);
+        })
+          .catch(error => console.error("Erro ao buscar itens:", error));
+  
+          
+      }
+    }, [grupoSelecionado]); // Vai rodar apenas quando o grupoSelecionado mudar
+
+    useEffect(() => {
+      if (itemSelecionado) {
+  
+        axios.get(`http://localhost:5000/params/material/${itemSelecionado.cod_item_material}`)
+        .then(response => {
+          // console.log(response.data.estrategia)
+          const criteriosComRespostas = mapRespostaComCriterios(response.data);
+          setCriteriosItem(criteriosComRespostas);
+        })
+          .catch(error => console.error("Erro ao buscar itens:", error));
+  
+          
+      }
+    }, [itemSelecionado]);
+
+
+ 
+
   return (
     <Box sx={{position:'fixed',top:'62px',left:"80px", display: "flex", gap: 2, background: "#0A1C44", height: "calc(100vh - 93px)", padding: 2 ,width:'calc(100vw - 110px)'}}>
       
@@ -299,11 +310,10 @@ export default function TelaEstrategica() {
         alignItems: "start", 
       }}
       onClick={() => {
-        console.log(grupo);
+        
         setGrupoSelecionado(grupo);
         setShowParametros(true);
-        // Limpa o item selecionado quando muda de grupo
-        // setItemSelecionado(null);
+       
       }}
     >
       <Typography variant="body1" sx={{  }}>
@@ -314,6 +324,8 @@ export default function TelaEstrategica() {
   ))}
   </Box>
 </Card>
+
+
       {/* Itens */}
       <Card sx={{ flex: 1, background: "#1F2A4C", padding: 2 }}>
         <Typography variant="h6" sx={{ color: "#F7F7F7"}}>Itens</Typography>
@@ -388,7 +400,8 @@ export default function TelaEstrategica() {
           {"Critérios Padrão do Grupo"}
         </Typography>
         <Box sx={{ height: "calc(100vh - 280px)", overflowY: "auto", paddingRight: "5px" }}>
-        {showParametros && criterios.map((criterio) => (
+        
+        {showParametros && criteriosGrupo.slice(0,-1).map((criterio) => (
       <Box key={criterio.cod_parametro} sx={{ marginTop: 1 }}>
        
         {criterio.tipo === 'boolean' ? (
@@ -396,7 +409,7 @@ export default function TelaEstrategica() {
             sx={{ color: "white" ,m:1,gap: 2} }
             control={
               <CustomSwitch
-                checked={criteriosSelecionados[criterio.cod_parametro] === 1}
+                checked={criteriosSelecionados[criterio.cod_parametro] === criterio.resposta}
                 onChange={(e) => {
                   setCriteriosSelecionados(prev => ({
                     ...prev,
@@ -413,10 +426,11 @@ export default function TelaEstrategica() {
           <Typography sx={{ color: "white", marginBottom: 1 }}>
           {criterio.desc_parametro}
         </Typography>
+
           <FormControl >
             <RadioGroup 
               row
-              value={criteriosSelecionados[criterio.cod_parametro]}
+              // value={criteriosSelecionados[criterio.cod_parametro]}
               onChange={(e) => {
                 setCriteriosSelecionados(prev => ({
                   ...prev,
@@ -424,8 +438,10 @@ export default function TelaEstrategica() {
                 }));
               }}
             >
-              {criterio.opcoes.map((opcao) => (
-                <FormControlLabel
+              {criterio.opcoes.map((opcao) => {
+                // console.log(opcao)
+                
+                return <FormControlLabel
                   key={opcao.cod_opcao}
                   value={opcao.cod_opcao}
                   control={<Radio 
@@ -439,13 +455,14 @@ export default function TelaEstrategica() {
                   label={opcao.desc_opcao}
                   sx={{ color: "white" }}
                 />
-              ))}
+})}
             </RadioGroup>
           </FormControl>
           </>
         )}
       </Box>
     ))}</Box>
+
           <Box sx={{ display: showParametros ? 'flex' : 'flex' ,flexDirection:"column", alignItems: "end",gap:2 }}>
         { (
           <>
@@ -501,9 +518,9 @@ export default function TelaEstrategica() {
             sx={{ color: "white" ,m:1,gap: 2} }
             control={
               <CustomSwitch
-                checked={criteriosSelecionados[criterio.cod_parametro] === 1}
+                checked={criteriosItemSelecionados[criterio.cod_parametro] === criterio.resposta}
                 onChange={(e) => {
-                  setCriteriosSelecionados(prev => ({
+                  setCriteriosItemSelecionados(prev => ({
                     ...prev,
                     [criterio.cod_parametro]: e.target.checked ? 1 : 0
                   }));
@@ -521,9 +538,9 @@ export default function TelaEstrategica() {
           <FormControl >
             <RadioGroup 
               row
-              value={criteriosSelecionados[criterio.cod_parametro]}
+              // value={criteriosSelecionados[criterio.cod_parametro]}
               onChange={(e) => {
-                setCriteriosSelecionados(prev => ({
+                setCriteriosItemSelecionados(prev => ({
                   ...prev,
                   [criterio.cod_parametro]: parseInt(e.target.value)
                 }));

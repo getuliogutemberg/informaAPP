@@ -213,7 +213,8 @@ export default function Login() {
       alignItems: "center",
     }}>
       <Box sx={{
-          width: "50vw",
+          width: "100vw",
+          height: "100vh",
           minWidth: "500px",
           display: "flex",
           justifyContent: "center",
@@ -229,12 +230,12 @@ export default function Login() {
               alignItems: "center",
               borderRadius: "0.5rem",
               padding: "40px 20px 20px 20px",
-              backgroundColor: "rgba(255, 255, 255, 0.3)",
+              backgroundColor: "rgba(83, 83, 83, 0.1)",
               color: "#111",
               fontWeight: "bold",
               textAlign: "center",
               backdropFilter: "blur(15px)",
-              boxShadow: "0 8px 20px rgba(0, 0, 0, 0.2)",
+              boxShadow: "0 8px 20px rgba(0, 0, 0, 0.1)",
               border: "1px solid rgba(255, 255, 255, 0.1)",
               background: "linear-gradient(145deg, rgba(255, 255, 255, 0.3), rgba(0, 0, 0, 0.2))",
             }}
@@ -249,8 +250,8 @@ export default function Login() {
             }}
           >
 
-            <Typography variant="h3" gutterBottom sx={{ marginBottom: 4, color: "#0a4a6d" }}>
-              Login
+            <Typography variant="h3" gutterBottom sx={{ marginBottom: 4, color: "#F5f5f5",fontWeight: 'bold' }}>
+              ENERGEST
             </Typography>
 
             <Box component="form" onSubmit={settings ? handleLogin : ()=> {}}>

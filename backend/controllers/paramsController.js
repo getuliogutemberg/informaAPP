@@ -16,7 +16,7 @@ class ParamsController {
           cods_opcao: [0,0,0,0,0,0,0,0,0],
           data_estrategia: new Date(),
         }
-        return res.json({ message: 'Grupo atualmente sem estratégia, retornando padrão', estrategiaPadrao }); 
+        return res.json(estrategiaPadrao); 
       }
 
       return res.json(estrategia); 
