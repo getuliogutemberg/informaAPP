@@ -56,11 +56,11 @@ class ParamsController {
       const { groupId } = req.params;
       const { cods_parametro, cods_opcao, client, data_estrategia } = req.body;
   
-      const existingStrategies = await estrategia_parametros.find({ cod_grupo: groupId });
+      const existingStrategies = await estrategia_parametros.find({ cod_grupo: groupId , cod_item_material: 0});
   
       if (existingStrategies.length > 0) {
         await estrategia_parametros.updateMany(
-          { cod_grupo: groupId },
+          { cod_grupo: groupId, cod_item_material: 0 },
           { $set: { cods_parametro: cods_parametro, cods_opcao: cods_opcao, client: client, data_estrategia: data_estrategia } }
         );
 
@@ -83,19 +83,19 @@ class ParamsController {
             data_estrategia: data_estrategia
           },
           // Depois adiciona as estratégias para cada material
-          ...materiaisDoGrupo.map(cod_item_material => ({
-            cod_grupo: groupId,
-            cod_item_material: cod_item_material,
-            cods_parametro: cods_parametro,
-            cods_opcao: cods_opcao,
-            client: client,
-            data_estrategia: data_estrategia
-          }))
+          // ...materiaisDoGrupo.map(cod_item_material => ({
+          //   cod_grupo: groupId,
+          //   cod_item_material: cod_item_material,
+          //   cods_parametro: cods_parametro,
+          //   cods_opcao: cods_opcao,
+          //   client: client,
+          //   data_estrategia: data_estrategia
+          // }))
         ];
         
         await estrategia_parametros.insertMany(novasEstrategias);
   
-        return res.json({ message: "Novas estratégias criadas para todos os itens do grupo", estrategias: novasEstrategias });
+        return res.json({ estrategias: novasEstrategias });
       }
   
     } catch (error) {
@@ -150,7 +150,7 @@ class ParamsController {
         { new: true }
       );
 
-      return res.json({message: "Todos os itens do grupo foram atualizados com os parâmetros do grupo", estrategias: novasEstrategias});
+      return res.json({ estrategias: novasEstrategias});
     } catch (error) { 
       return res.status(500).json({ error: error.message });
     }
