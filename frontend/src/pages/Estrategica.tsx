@@ -74,6 +74,7 @@ export default function TelaEstrategica() {
   const [grupos, setGrupos] = useState<Grupo[]>([]);
   const [itens, setItens] = useState<Item[]>([]); // Para armazenar todos os itens
   const [modalOpen, setModalOpen] = useState(false); // Estado para controlar o modal
+  const [onlyMatchingGroup, setOnlyMatchingGroup] = useState(false);
   const [filtroSelecionado, setFiltroSelecionado] = useState<
     "Todos" | "Não preenchidos" | "Preenchidos"
   >("Todos");
@@ -161,6 +162,7 @@ export default function TelaEstrategica() {
           cods_opcao,
           client: "default",
           data_estrategia: new Date(),
+          onlyMatchingGroupParams: onlyMatchingGroup
         }
       );
 
@@ -667,7 +669,13 @@ export default function TelaEstrategica() {
                 </Typography>
                 <FormControlLabel
                   sx={{ color: "white" }}
-                  control={<CustomSwitch sx={{ m: 1 }} defaultChecked />}
+                  control={
+                    <CustomSwitch 
+                      sx={{ m: 1 }} 
+                      checked={onlyMatchingGroup}
+                      onChange={(event) => setOnlyMatchingGroup(event.target.checked)}
+                    />
+                  }
                   label=""
                 />
               </Box>
