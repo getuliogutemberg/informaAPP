@@ -187,6 +187,7 @@ export default function TelaEstrategica() {
   // Função para fechar o modal
   const handleCloseModal = () => {
     setModalOpen(false);
+    setItemSelecionado(null);
   };
 
   // Função similar para salvar parâmetros de material
@@ -469,7 +470,7 @@ export default function TelaEstrategica() {
               onDoubleClick={() => handleEditClick(item)}
               onClick={() => {
                 console.log(item);
-                setItemSelecionado(item);
+                // setItemSelecionado(item);
               }}
               sx={{
                 background:
