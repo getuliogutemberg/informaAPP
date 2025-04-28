@@ -54,13 +54,27 @@ class ParamsController {
   async updateGroupParams(req, res) {
     try {
       const { groupId } = req.params;
-      const { cods_parametro, cods_opcao, client, data_estrategia } = req.body;
+      const { cods_parametro, cods_opcao, client, data_estrategia, onlyMatchingGroupParams } = req.body;
   
-      const existingStrategies = await estrategia_parametros.find({ cod_grupo: groupId , cod_item_material: 0});
+      const existingStrategies = await estrategia_parametros.find({ cod_grupo: groupId, cod_item_material: 0 });
   
       if (existingStrategies.length > 0) {
         await estrategia_parametros.updateMany(
           { cod_grupo: groupId, cod_item_material: 0 },
+          { cods_parametro: cods_parametro, cods_opcao: cods_opcao, client: client, data_estrategia: data_estrategia }
+        );
+
+        // Filtrando apenas itens com parâmetros iguais ao grupo
+        const filter = { cod_grupo: groupId, cod_item_material: { $ne: 0 } };
+        
+        if (onlyMatchingGroupParams) {
+          filter.cods_parametro = existingStrategies[0].cods_parametro;
+          filter.cods_opcao = existingStrategies[0].cods_opcao;
+        }
+
+        // Atualiza os materiais conforme o filtro
+        await estrategia_parametros.updateMany(
+          filter,
           { $set: { cods_parametro: cods_parametro, cods_opcao: cods_opcao, client: client, data_estrategia: data_estrategia } }
         );
 
@@ -83,14 +97,14 @@ class ParamsController {
             data_estrategia: data_estrategia
           },
           // Depois adiciona as estratégias para cada material
-          // ...materiaisDoGrupo.map(cod_item_material => ({
-          //   cod_grupo: groupId,
-          //   cod_item_material: cod_item_material,
-          //   cods_parametro: cods_parametro,
-          //   cods_opcao: cods_opcao,
-          //   client: client,
-          //   data_estrategia: data_estrategia
-          // }))
+          ...materiaisDoGrupo.map(cod_item_material => ({
+            cod_grupo: groupId,
+            cod_item_material: cod_item_material,
+            cods_parametro: cods_parametro,
+            cods_opcao: cods_opcao,
+            client: client,
+            data_estrategia: data_estrategia
+          }))
         ];
         
         await estrategia_parametros.insertMany(novasEstrategias);
