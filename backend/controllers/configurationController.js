@@ -1,17 +1,18 @@
 
 const Configuration = require("../models/Configuration");
 
-
- const getConfiguration = async (req, res) => {
+class ConfigurationController {
+  getConfiguration = async (req, res) => {
     try {
-      const config = (await Configuration.find())[0];
+      let config = await Configuration.findOne();
+  
       if (config) {
         const { _id, createdAt, updatedAt, __v, ...filteredConfig } = config.toObject();
         return res.json(filteredConfig);
       } else {
-        // Se não houver configuração, cria uma nova com os valores padrão
         const newConfig = new Configuration();
         await newConfig.save();
+  
         const { _id, createdAt, updatedAt, __v, ...filteredNewConfig } = newConfig.toObject();
         return res.json(filteredNewConfig);
       }
@@ -21,7 +22,7 @@ const Configuration = require("../models/Configuration");
     }
   };
   
-  const updateConfiguration = async (req, res) => {
+  updateConfiguration = async (req, res) => {
     try {
       const updatedConfig = await Configuration.findOneAndUpdate({}, req.body, { new: true });
   
@@ -36,8 +37,6 @@ const Configuration = require("../models/Configuration");
       res.status(500).json({ message: "Erro ao atualizar configurações" });
     }
   };
+}
 
-  module.exports = {
-    getConfiguration,
-    updateConfiguration,
-  }
+module.exports = new ConfigurationController();

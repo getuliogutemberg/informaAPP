@@ -146,7 +146,7 @@ class ParamsController {
   async resetGroupItems(req, res) {
     try {
       const { groupId } = req.params;
-
+ 
       const grupoParams = await estrategia_parametros.findOne({ cod_grupo: groupId, cod_item_material: 0 });
 
       if (!grupoParams) {
