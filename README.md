@@ -1,144 +1,188 @@
-# Plataforma - Backend e Frontend
+# Plataforma InformaAPP
 
-Este projeto contém o **backend** e o **frontend** de uma plataforma com diversas funcionalidades, incluindo autenticação, gerenciamento de usuários, rotas dinâmicas, integração com Power BI e comunicação em tempo real via **Socket.IO**.
+Esta plataforma é uma solução completa para gestão, visualização de dados, administração de usuários e comunicação em tempo real, integrando recursos de autenticação, dashboards Power BI, gerenciamento de materiais e alertas, tudo em uma interface moderna e responsiva.
 
+---
+
+## Objetivos da Plataforma
+
+- **Centralizar a gestão de usuários, permissões e rotas** de acesso.
+- **Integrar dashboards do Power BI** para visualização de indicadores e relatórios.
+- **Gerenciar materiais e grupos estratégicos** de estoque.
+- **Emitir e gerenciar alertas** em tempo real.
+- **Permitir comunicação e atualização de dados em tempo real** via Socket.IO.
+- **Oferecer uma interface moderna, personalizável e segura** para diferentes perfis de usuários (Admin, Cliente, Funcionário, etc).
+
+---
 
 ![Platform Architecture](platform-architecture.svg)
 ![Platform](plataform.jpg)
 ![](image.png)
 ![](image2.png)
 
-## Backend
+## Tecnologias Utilizadas
 
-**Tecnologias Utilizadas**:
-* **Node.js**, **Express**, **MongoDB**
-* **Socket.IO** para comunicação em tempo real
-* **JWT** para autenticação
-* **MSAL Node** para integração com Power BI
-* **Bcrypt.js** para criptografia de senhas
+### Backend
 
-**Instalação**:
-1. Clone o repositório:
+- **Node.js**: Ambiente de execução JavaScript no servidor.
+- **Express**: Framework para criação de APIs REST.
+- **MongoDB (Mongoose)**: Banco de dados NoSQL para persistência dos dados.
+- **Socket.IO**: Comunicação em tempo real (WebSockets).
+- **JWT (jsonwebtoken)**: Autenticação baseada em tokens.
+- **bcryptjs**: Criptografia de senhas.
+- **dotenv**: Gerenciamento de variáveis de ambiente.
+- **MSAL Node (@azure/msal-node)**: Integração com Microsoft Azure AD e Power BI.
+- **Sequelize, pg, pg-hstore**: (Opcional) Suporte a bancos relacionais PostgreSQL.
+
+### Frontend
+
+- **React**: Biblioteca para construção de interfaces de usuário.
+- **TypeScript**: Superset do JavaScript para tipagem estática.
+- **Vite**: Bundler e servidor de desenvolvimento rápido.
+- **Material UI (@mui/material)**: Componentes de UI modernos e responsivos.
+- **Framer Motion**: Animações fluidas e interativas.
+- **Axios**: Cliente HTTP para comunicação com a API.
+- **Socket.IO Client**: Comunicação em tempo real com o backend.
+- **Leaflet, Mapbox, react-leaflet, react-map-gl**: Visualização de mapas e geolocalização.
+- **PowerBI Client**: Embedding de dashboards Power BI.
+- **React Router DOM**: Gerenciamento de rotas no frontend.
+
+---
+
+## Funcionalidades Principais
+
+- **Autenticação e Registro de Usuários** (com proteção de rotas e permissões).
+- **Gestão de Usuários** (CRUD, alteração de senha, ativação/desativação).
+- **Gerenciamento de Rotas Dinâmicas** (acesso controlado por perfil).
+- **Dashboards Power BI** integrados e protegidos.
+- **Gestão de Materiais e Grupos Estratégicos**.
+- **Alertas em tempo real** (criação, edição, exclusão).
+- **Configurações Dinâmicas da Plataforma** (tema, permissões, chaves de integração).
+- **Comunicação em tempo real** (atualização de posições, alertas, etc).
+- **Interface responsiva e personalizável**.
+
+---
+
+## Como Rodar a Aplicação
+
+### 1. Clone o repositório
+
 ```bash
 git clone <URL_DO_REPOSITORIO>
-cd <diretorio_do_projeto>
+cd informaAPP
 ```
 
-2. Instale as dependências:
+### 2. Configuração do Backend
+
 ```bash
+cd backend
 npm install
 ```
 
-3. Configure as variáveis de ambiente no arquivo `.env`:
-```plaintext
-MONGO_URI=mongodb://<usuário>:<senha>@localhost:27017/<nome_do_banco>
+Crie um arquivo `.env` na pasta `backend` com o seguinte conteúdo (ajuste os valores conforme seu ambiente):
+
+```env
+MONGO_URI=mongodb://<usuario>:<senha>@localhost:27017/<nome_do_banco>
 JWT_SECRET=<seu_segredo_para_token>
 JWT_REFRESH_SECRET=<seu_segredo_para_refresh_token>
 AZURE_APP_ID=<client_id>
 AZURE_APP_SECRET=<client_secret>
 POWER_BI_WORKSPACE_ID=<workspace_id>
+PORT=5000
 ```
 
-4. Execute o servidor:
+Inicie o servidor backend:
+
 ```bash
 npm start
 ```
 
-**Principais Endpoints**:
-* **POST /register**: Registrar um novo usuário
-* **POST /login**: Login de usuário
-* **POST /refresh**: Renovar o token
-* **GET /me**: Informações do usuário autenticado
-* **GET /admin**: Endpoint para administradores
-* **GET /getPBIToken/:pageId**: Token para relatórios Power BI
-* **GET /users**: Listar usuários
-* **GET /routes**: Listar rotas
+### 3. Configuração do Frontend
 
-## Frontend
+Abra outro terminal e execute:
 
-**Tecnologias Utilizadas**:
-* **React**, **TypeScript**, **Vite**
-* **Socket.IO** para comunicação em tempo real
-* **Material UI**, **Framer Motion** para UI e animações
-* **Axios** para requisições HTTP
-* **Leaflet**, **Mapbox** para visualizações de mapas
-
-**Instalação**:
-1. Clone o repositório:
 ```bash
-git clone https://seu-repositorio.git
-cd nome-do-repositorio
-```
-
-2. Instale as dependências:
-```bash
+cd frontend
 npm install
-```
-
-3. Execute o ambiente de desenvolvimento:
-```bash
 npm run dev
 ```
 
-**Rotas principais**:
-* `/login`: Página de login
-* `/registro`: Página de registro
-* `/admin`: Página de administração
-* `/perfil`: Perfil do usuário
-* `/opções`: Configurações da plataforma
+Acesse o frontend em [http://localhost:5173](http://localhost:5173) (ou a porta indicada pelo Vite).
 
-**Proteção de Rotas**:
-* O componente **ProtectedRoute** garante que rotas restritas (como `/admin`) sejam acessíveis apenas por usuários com a permissão adequada (ADMIN ou OWNER).
-
-**Configurações**:
-* As configurações da plataforma são dinamicamente obtidas do backend e incluem opções como habilitar registro de usuários e definir o tema visual.
+---
 
 ## Estrutura de Diretórios
 
-**Backend**:
 ```bash
-├── src/
-│   ├── controllers  # Controladores das rotas
-│   ├── models       # Modelos de dados
-│   ├── routes       # Definições das rotas
-│   ├── middleware   # Middlewares
-│   └── utils        # Funções auxiliares
-├── .env             # Variáveis de ambiente
-├── package.json     # Dependências e scripts
-└── README.md        # Este arquivo
+informaAPP/
+│
+├── backend/
+│ ├── controllers/
+│ ├── models/
+│ ├── routes/
+│ ├── middleware/
+│ ├── utils/
+│ ├── server.js
+│ └── .env
+│
+├── frontend/
+│ ├── src/
+│ │ ├── components/
+│ │ ├── pages/
+│ │ ├── services/
+│ │ ├── utils/
+│ │ ├── App.tsx
+│ │ └── index.tsx
+│ └── vite.config.ts
+│
+└── README.md
 ```
 
-**Frontend**:
-```bash
-/src
-  /components  # Componentes reutilizáveis
-  /pages       # Páginas da aplicação
-  /services    # Comunicação com a API
-  /utils       # Funções utilitárias
-  App.tsx      # Componente principal
-  index.tsx    # Ponto de entrada
-```
+## Descrição das Dependências
 
-## Como Contribuir
+### Backend
 
-1. Faça o **fork** do projeto.
-2. Crie uma branch com a sua feature:
-```bash
-git checkout -b minha-feature
-```
+- **express**: Criação de rotas e middlewares HTTP.
+- **mongoose**: Modelagem e comunicação com o MongoDB.
+- **socket.io**: Comunicação bidirecional em tempo real.
+- **jsonwebtoken**: Geração e validação de tokens JWT.
+- **bcryptjs**: Hash e verificação de senhas.
+- **dotenv**: Carregamento de variáveis de ambiente.
+- **@azure/msal-node**: Autenticação com Azure AD e integração com Power BI.
+- **cors**: Permitir requisições de diferentes origens (CORS).
+- **sequelize, pg, pg-hstore**: (Opcional) ORM e drivers para PostgreSQL.
 
-3. Faça as alterações e commit:
-```bash
-git commit -am 'Adiciona nova feature'
-```
+### Frontend
 
-4. Envie para o seu fork:
-```bash
-git push origin minha-feature
-```
+- **react, react-dom**: Construção da interface de usuário.
+- **@mui/material, @mui/icons-material**: Componentes visuais e ícones.
+- **framer-motion**: Animações.
+- **axios**: Requisições HTTP.
+- **socket.io-client**: Comunicação em tempo real com o backend.
+- **leaflet, mapbox-gl, react-leaflet, react-map-gl**: Mapas e geolocalização.
+- **powerbi-client**: Embedding de dashboards Power BI.
+- **react-router-dom**: Navegação entre páginas.
+- **typescript**: Tipagem estática para maior robustez.
 
-5. Abra um **pull request**.
+---
+
+## Funcionalidades Detalhadas
+
+- **Login/Logout/Registro**: Usuários podem se registrar, logar e renovar tokens de acesso.
+- **Gestão de Usuários**: Listagem, criação, edição, exclusão e alteração de senha.
+- **Rotas Dinâmicas**: Backend fornece rotas e permissões, frontend monta menus e páginas dinamicamente.
+- **Dashboards Power BI**: Visualização de relatórios com autenticação e embed seguro.
+- **Alertas**: CRUD de alertas, com exibição em tempo real.
+- **Configurações**: Tema, permissões, chaves de integração, tudo configurável via painel.
+- **Comunicação em Tempo Real**: Atualização de dados e alertas instantâneos via WebSockets.
+
+---
 
 ## Licença
 
-Este projeto está sob a licença **MIT**. Veja o arquivo LICENSE para mais informações.
+Este projeto está sob a licença MIT.
+
+---
+
+**Dúvidas?**  
+Abra uma issue ou entre em contato com o mantenedor do projeto.
