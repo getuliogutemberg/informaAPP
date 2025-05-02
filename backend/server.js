@@ -3,7 +3,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const http = require("http");
-const { Server } = require("socket.io");
+const io = require("./socket");
 const UserController = require("./controllers/userController");
 const RouteController = require("./controllers/routeController");
 const PBIController = require("./controllers/pbiController");
@@ -88,16 +88,5 @@ server.listen(process.env.PORT || 5000, () => {
   console.log("Servidor rodando na porta", process.env.PORT || 5000);
 });
 
-// Socket.io
-const io = new Server(server, { cors: { origin: "*" } });
-try {
-  io.on("connection", (socket) => {
-  console.log("Usuário conectado:", socket.id);
-
-  socket.on("disconnect", () => {
-    console.log("Usuário desconectado:", socket.id);
-  });
-})
-} catch (err) {
-  console.error("Erro ao inicializar o socket.io:", err);
-}
+// Inicializa o socket
+io(server);
