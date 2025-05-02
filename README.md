@@ -15,10 +15,9 @@ Esta plataforma é uma solução completa para gestão, visualização de dados,
 
 ---
 
-![Platform Architecture](platform-architecture.svg)
-![Platform](plataform.jpg)
 ![](image.png)
 ![](image2.png)
+
 
 ## Tecnologias Utilizadas
 
@@ -137,6 +136,9 @@ informaAPP/
 │
 └── README.md
 ```
+
+![Platform Architecture](platform-architecture.svg)
+![Platform](plataform.jpg)
 
 ## Descrição das Dependências
 
