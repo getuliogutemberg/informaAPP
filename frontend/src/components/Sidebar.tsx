@@ -66,6 +66,7 @@ const Sidebar = () => {
     // Carregar os grupos de menu do backend
     const fetchMenuGroups = async () => {
       const routes = await fetchRoutes() as SubRoute[];
+      // console.log(routes)
       try {
         const response = routes && [
           // {
@@ -95,7 +96,7 @@ const Sidebar = () => {
               })),
              
              
-            ].slice(0,2),
+            ].filter((router) => router.component === "Dashboard Power BI" ),
             "requiredRole": ["OWNER","ADMIN","CLIENT"]
           },
          

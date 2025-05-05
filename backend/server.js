@@ -643,6 +643,7 @@ app.delete("/routes/:id", async (req, res) => {
 
 app.get("/getPBIToken/:pageId/:reportId/:workspaceId", async (req, res) => {
     const { pageId, reportId,workspaceId } = req.params;
+    console.log('pageId:', pageId, 'reportId:',reportId ,'workspaceId:', workspaceId)
 
     try {
        

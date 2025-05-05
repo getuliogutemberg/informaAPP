@@ -251,7 +251,7 @@ export default function Login() {
           >
 
             <Typography variant="h3" gutterBottom sx={{ marginBottom: 4, color: "#F5f5f5",fontWeight: 'bold' }}>
-              ENERGEST
+            SIGMA
             </Typography>
 
             <Box component="form" onSubmit={settings ? handleLogin : ()=> {}}>
