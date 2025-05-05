@@ -20,11 +20,6 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import CRITERIOS_PADRAO from "../components/CriteriosPadrao";
 
-// const gruposData = ["001 - ABRACADEIRA", "002 - ABRACADEIRA", "003 - ABRACADEIRA", "004 - ABRACADEIRA", "005 - ABRACADEIRA"];
-// const itensData = [
-//   { name: "ABRACADEIRA ELETROD ACO GALV D1", tag: "Estratégico" }, { name: "ABRACADEIRA ELETROD SAE1020 GALV D1.12", tag: "Estratégico" }, { name: "ABRACADEIRA ELETROD SAE1020 GALV D12" }, { name: "ABRACADEIRA ELETROD ACO GALV D2" }, { name: "ABRACADEIRA ELETROD SAE1020 GALV D34" }
-// ];
-// const criterios = ["Risco de gerar indisponibilidade da UG", "Risco de gerar indisponibilidade de Sistema de Segurança", "Indisponibilidade do item gera risco de afetar o ativo", "Processo de compras superior a 6 meses", "Custo superior a R$ 10.000,00", "Mais de 1 fornecedor disponível", "Risco de ser descontinuado pelo fabricante em até 2 anos", "Item utilizado por pelo menos 10 ativos", "Alta probabilidade de uso", "Item considerado estratégico"]
 interface Grupo {
   id: string; // _id da API
   cod_grupo: number; // cod_grupo da API
@@ -43,13 +38,7 @@ interface Item {
 }
 
 type Opcao = { cod_opcao: string | number; desc_opcao: string };
-// type Parametro = {
-//   cod_parametro: number;
-//   var_name: string;
-//   desc_parametro: string;
-//   opcoes: Opcao[];
-//   tipo: string;
-// };
+
 
 interface ParametroResponse {
   cod_grupo: number;
@@ -189,6 +178,7 @@ export default function TelaEstrategica() {
   // Função para fechar o modal
   const handleCloseModal = () => {
     setModalOpen(false);
+    setItemSelecionado(null);
   };
 
   // Função similar para salvar parâmetros de material
@@ -471,7 +461,7 @@ export default function TelaEstrategica() {
               onDoubleClick={() => handleEditClick(item)}
               onClick={() => {
                 console.log(item);
-                setItemSelecionado(item);
+                // setItemSelecionado(item);
               }}
               sx={{
                 background:
@@ -710,7 +700,7 @@ export default function TelaEstrategica() {
 
               <Typography>{itemSelecionado.desc_material}</Typography>
               <Typography variant="caption">
-                Última atualização: 26/07/2024
+                {/* Última atualização: 26/07/2024 */}
               </Typography>
             </Box>
           )}

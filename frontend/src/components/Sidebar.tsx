@@ -66,6 +66,7 @@ const Sidebar = () => {
     // Carregar os grupos de menu do backend
     const fetchMenuGroups = async () => {
       const routes = await fetchRoutes() as SubRoute[];
+      // console.log(routes)
       try {
         const response = routes && [
           // {
@@ -94,7 +95,8 @@ const Sidebar = () => {
                 workspaceId: route.workspaceId,
               })),
              
-            ].slice(0,2),
+             
+            ].filter((router) => router.component === "Dashboard Power BI" ),
             "requiredRole": ["OWNER","ADMIN","CLIENT"]
           },
          
@@ -139,13 +141,15 @@ const Sidebar = () => {
 
   if (user ) return (
     <aside 
+    onMouseLeave={()=>setExpanded(false)}
       className={`sidebar ${expanded ? "expanded" : ""}`} 
       // onMouseEnter={() => setExpanded(true)} 
+      onMouseEnter={()=>setExpanded(true)}
       // onMouseLeave={() => setExpanded(false)}
     >
       
-      <ul className="sidebar-list" onMouseLeave={()=>setExpanded(false)}>
-      <li title="Menu" ><button onClick={()=>setExpanded(true)} className="menu-button" ><FaBars  onMouseEnter={()=>setExpanded(true)} /><span>{expanded && ""}</span></button></li>
+      <ul className="sidebar-list" >
+      <li title="Menu" ><button onClick={()=>setExpanded(true)} className="menu-button" ><FaBars   /><span>{expanded && ""}</span></button></li>
         {/* <li title="Home"><Link to="/"><FaHome /><span>Home</span></Link></li> */}
         {user && menuGroups
           // .filter(group => user.className !== 'OWNER' ? group.requiredRole?.includes(user.category) : group)
@@ -169,6 +173,7 @@ const Sidebar = () => {
                   expandedGroups.has(group._id) ? <FaChevronDown /> : <FaChevronRight />
                 )}
               </div>
+
               {expandedGroups.has(group._id) && (
                 <ul className="submenu" style={{
                   background: "rgba(255, 255, 255, 0.2)",

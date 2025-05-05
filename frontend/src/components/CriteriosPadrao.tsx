@@ -43,7 +43,7 @@ const CRITERIOS_PADRAO: CriterioComResposta[] = [
     {
       cod_parametro: 3,
       var_name: 'leadtime',
-      desc_parametro: "Processo de compras superior a 6 meses",
+      desc_parametro: "O processo de compras pode durar até:",
       tipo: 'radio',
       opcoes: [
         { cod_opcao: 0, desc_opcao: "1 mês" },
@@ -57,7 +57,7 @@ const CRITERIOS_PADRAO: CriterioComResposta[] = [
     {
       cod_parametro: 4,
       var_name: 'diversidade_fornecedor',
-      desc_parametro: "Mais de 1 fornecedor disponível",
+      desc_parametro: "O número de fornecedores disponiveis é de até:",
       tipo: 'radio',
       opcoes: [
         { cod_opcao: 0, desc_opcao: "1" },
@@ -70,7 +70,7 @@ const CRITERIOS_PADRAO: CriterioComResposta[] = [
     {
       cod_parametro: 5,
       var_name: 'descontinuidade_material',
-      desc_parametro: "Risco de ser descontinuado pelo fabricante em até 2 anos",
+      desc_parametro: "Há risco do item ser descontinuado em até:",
       tipo: 'radio',
       opcoes: [
         { cod_opcao: 0, desc_opcao: "N/A" },
@@ -82,7 +82,7 @@ const CRITERIOS_PADRAO: CriterioComResposta[] = [
     {
       cod_parametro: 6,
       var_name: 'multiplos_ativos',
-      desc_parametro: "Item utilizado por pelo menos 10 ativos",
+      desc_parametro: "Utilizado por até:",
       tipo: 'radio',
       opcoes: [
         { cod_opcao: 0, desc_opcao: "1 ativo" },
@@ -94,7 +94,7 @@ const CRITERIOS_PADRAO: CriterioComResposta[] = [
     {
       cod_parametro: 7,
       var_name: 'probabilidade_uso',    
-      desc_parametro: "Alta probabilidade de uso",
+      desc_parametro: "Probabilidade de uso",
       tipo: 'radio',
       opcoes: [
         { cod_opcao: 0, desc_opcao: "Irrisória" },
