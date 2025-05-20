@@ -10,10 +10,11 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
-    "resolveJsonModule": true
-  },
-  "paths": {
-    "@models/*": ["src/models/*"]
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@models/*": ["src/models/*"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]

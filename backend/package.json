@@ -5,7 +5,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "start": "ts-node src/server.ts",
+    "start": "node dist/server.js",
     "dev": "ts-node-dev --transpile-only --ignore-watch node_modules src/server.ts",
     "migrate": "npx sequelize-cli db:migrate --require ts-node/register --require tsconfig-paths/register",
     "seed": "npx sequelize-cli db:seed:all --require ts-node/register --require tsconfig-paths/register"
