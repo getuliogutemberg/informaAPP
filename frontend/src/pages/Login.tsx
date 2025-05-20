@@ -65,7 +65,7 @@ export default function Login() {
     // Buscar configurações do backend
     const fetchSettings = async () => {
       try {
-        const response = await axios.get('https://informa-app.vercel.app/configuration');
+        const response = await axios.get('http://localhost:5000/configuration');
         setSettings(response.data); // Atualiza o estado com os dados do backend
       } catch (error) {
         console.error('Erro ao buscar configurações:', error);
@@ -78,7 +78,7 @@ export default function Login() {
   useEffect(() => {
     const fetchRoutes = async () => {
       try {
-        const response = await axios.get("https://informa-app.vercel.app/routes");
+        const response = await axios.get("http://localhost:5000/routes");
         return response.data;
       } catch (error) {
         console.error("Erro ao buscar as rotas:", error);
@@ -137,7 +137,7 @@ export default function Login() {
     setError(null);
     setAnimating(true);
     try {
-      const response = await axios.post("https://informa-app.vercel.app/login", {
+      const response = await axios.post("http://localhost:5000/login", {
         email: username,
         password,
       });

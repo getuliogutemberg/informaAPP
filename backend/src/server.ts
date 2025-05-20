@@ -22,7 +22,7 @@ import { verifyToken, verifyCategory } from "./middleware/authVerifier";
 
 dotenv.config({ path: '../../.env' });
 
-const sequelize = new Sequelize(process.env.DATABASE_URL || "https://informa-app.vercel.app", {
+const sequelize = new Sequelize(process.env.DATABASE_URL || "http://localhost:5000", {
   dialect: 'postgres',
   logging: false, // set to console.log to see SQL queries
   pool: {

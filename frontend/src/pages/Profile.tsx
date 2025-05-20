@@ -59,7 +59,7 @@ const handleSaveChanges = async () => {
   setError(null);
   
   try {
-    const response = await axios.put(`https://informa-app.vercel.app/users/${user._id}`, {
+    const response = await axios.put(`http://localhost:5000/users/${user._id}`, {
       name,
       email,
       bio,
@@ -100,7 +100,7 @@ const handleChangePassword = async () => {
   setPasswordError(null);
 
   try {
-    await axios.put(`https://informa-app.vercel.app/users/${user?._id}/password`, {
+    await axios.put(`http://localhost:5000/users/${user?._id}/password`, {
       currentPassword: passwordData.currentPassword,
       newPassword: passwordData.newPassword
     });

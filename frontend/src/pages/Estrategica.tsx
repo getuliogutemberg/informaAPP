@@ -129,7 +129,7 @@ export default function TelaEstrategica() {
     const id = itemSelecionado?.cod_item_material;
 
     const response = await axios.put(
-      `https://informa-app.vercel.app/params/reset/material/${id}`
+      `http://localhost:5000/params/reset/material/${id}`
     );
 
     console.log(response);
@@ -145,7 +145,7 @@ export default function TelaEstrategica() {
       const cods_opcao = Object.values(data);
 
       const response = await axios.put(
-        `https://informa-app.vercel.app/params/group/${cod_grupo}`,
+        `http://localhost:5000/params/group/${cod_grupo}`,
         {
           cods_parametro,
           cods_opcao,
@@ -160,7 +160,7 @@ export default function TelaEstrategica() {
       // // Re-fetch items for the selected group to update their criteria
       if (grupoSelecionado) {
         const itensResponse = await axios.get(
-          `https://informa-app.vercel.app/materials/${grupoSelecionado.cod_grupo}`
+          `http://localhost:5000/materials/${grupoSelecionado.cod_grupo}`
         );
         setItens(itensResponse.data);
       }
@@ -190,7 +190,7 @@ export default function TelaEstrategica() {
       const cods_opcao = Object.values(criteriosItemSelecionados);
 
       const response = await axios.put(
-        `https://informa-app.vercel.app/params/material/${itemSelecionado.cod_item_material}`,
+        `http://localhost:5000/params/material/${itemSelecionado.cod_item_material}`,
         {
           cods_parametro,
           cods_opcao,
@@ -220,7 +220,7 @@ export default function TelaEstrategica() {
       const id = grupoSelecionado.cod_grupo;
 
       await axios.put(
-        `https://informa-app.vercel.app/params/reset/group/${id}`
+        `http://localhost:5000/params/reset/group/${id}`
       );
 
       // if (response.status === 200) {
@@ -244,7 +244,7 @@ export default function TelaEstrategica() {
   // Carregar grupos ao montar a página
   useEffect(() => {
     axios
-      .get("https://informa-app.vercel.app/groupDictionary")
+      .get("http://localhost:5000/groupDictionary")
       .then((response) => {
         setGrupos(response.data); // Carrega os grupos
       })
@@ -255,12 +255,12 @@ export default function TelaEstrategica() {
   useEffect(() => {
     if (grupoSelecionado) {
       axios
-        .get(`https://informa-app.vercel.app/materials/${grupoSelecionado.cod_grupo}`)
+        .get(`http://localhost:5000/materials/${grupoSelecionado.cod_grupo}`)
         .then((response) => setItens(response.data))
         .catch((error) => console.error("Erro ao buscar itens:", error));
 
       axios
-        .get(`https://informa-app.vercel.app/params/group/${grupoSelecionado.cod_grupo}`)
+        .get(`http://localhost:5000/params/group/${grupoSelecionado.cod_grupo}`)
         .then((response) => {
           const criteriosComRespostas = mapRespostaComCriterios(response.data);
           setCriteriosGrupo(criteriosComRespostas);
@@ -282,7 +282,7 @@ export default function TelaEstrategica() {
     if (itemSelecionado) {
       axios
         .get(
-          `https://informa-app.vercel.app/params/material/${itemSelecionado.cod_item_material}`
+          `http://localhost:5000/params/material/${itemSelecionado.cod_item_material}`
         )
         .then((response) => {
           const criteriosComRespostas = mapRespostaComCriterios(response.data);

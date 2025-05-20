@@ -41,7 +41,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Instância do axios
   const api: AxiosInstance = axios.create({
-    baseURL: "https://informa-app.vercel.app",
+    baseURL: "http://localhost:5000",
     headers: { Authorization: `Bearer ${accessToken}` },
   });
 
@@ -61,7 +61,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Login
   const login = async (email: string, password: string): Promise<void> => {
     try {
-      const { data } = await axios.post("https://informa-app.vercel.app/login", { email, password });
+      const { data } = await axios.post("http://localhost:5000/login", { email, password });
       setAccessToken(data.accessToken);
       localStorage.setItem("accessToken", data.accessToken);
       localStorage.setItem("refreshToken", data.refreshToken);
@@ -76,7 +76,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const refreshToken = localStorage.getItem("refreshToken");
       if (!refreshToken) return false;
 
-      const { data } = await axios.post("https://informa-app.vercel.app/refresh", { refreshToken });
+      const { data } = await axios.post("http://localhost:5000/refresh", { refreshToken });
       setAccessToken(data.accessToken);
       localStorage.setItem("accessToken", data.accessToken);
       return true;

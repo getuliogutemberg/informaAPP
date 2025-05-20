@@ -35,7 +35,7 @@ const DashboardPBI: React.FC<DashboardPBIPageProps> = ({ pageId,reportId,workspa
 
     const fetchReportDetails = async () => {
       try {
-        const response = await axios.get(`https://informa-app.vercel.app/getPBIToken/${pageId}/${reportId}/${workspaceId}`);
+        const response = await axios.get(`http://localhost:5000/getPBIToken/${pageId}/${reportId}/${workspaceId}`);
         console.log({
           accessToken: response.data.accessToken,
           embedUrl: response.data.embedUrl,
