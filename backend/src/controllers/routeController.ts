@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
-import Route, { IRoute } from '../models/Route';
+import { Op } from 'sequelize';
+import Route from '../models/Route';
 
 interface RouteRequestBody {
     path: string;
@@ -13,154 +14,179 @@ interface RouteRequestBody {
 }
 
 class RouteController {
-    getRoutes = async (req: Request, res: Response): Promise<Response> => {
+    getRoutes = async (req: Request, res: Response): Promise<void> => {
         try {
-            let routes = await Route.find();
-
-            if (routes.length === 0) {
-                const defaultRoutes: IRoute[] = [
-                    // {
-                    //   path: "/indicadores",
-                    //   component: `<ProtectedRoute><DashPBI pageId="d7d35c6daec9e7e50737" /></ProtectedRoute>`,
-                    //   requiredRole: ["admin", "user"],
-                    //   pageId: "d7d35c6daec9e7e50737"
-                    // },
-                ];
-
-                await Route.insertMany(defaultRoutes);
-                routes = await Route.find();
-                console.log("Rotas padrão inseridas com sucesso.");
+          // Verifica se já existem rotas no banco
+          let routes = await Route.findAll();
+      
+          // Se não houver rotas, cria as rotas padrão
+          if (routes.length === 0) {
+            const defaultRoutes = [
+              // Exemplo de rota
+              {
+                id:'01',
+                path: '/dashboard',
+                component: 'Dashboard',
+                name: 'Dashboard',
+                requiredRole: ['admin', 'user'],
+                icon: 'DashboardIcon',
+              },
+              // Adicione mais aqui se quiser
+            ];
+      
+            if (defaultRoutes.length > 0) {
+              await Route.bulkCreate(defaultRoutes);
+              routes = await Route.findAll();
+              console.log("Rotas padrão inseridas com sucesso.");
             }
-
-            return res.status(200).json(routes);
-        } catch (err: unknown) {
-            const error = err as Error;
-            console.error("Erro ao buscar rotas:", error);
-            return res.status(500).json({ 
-                message: "Erro ao buscar rotas", 
-                error: error.message 
-            });
+      
+            res.status(200).json(routes);
+            return;
+          }
+      
+          res.status(200).json(routes);
+        } catch (err: any) {
+          console.error("Erro ao buscar rotas:", err);
+          res.status(500).json({ message: "Erro ao buscar rotas", error: err.message });
         }
-    };
+      };
 
-    createRoute = async (req: Request<{}, {}, RouteRequestBody>, res: Response): Promise<Response> => {
+    createRoute = async (req: Request, res: Response): Promise<void> => {
         try {
-            const { path, component, requiredRole, pageId, reportId, icon, name, workspaceId } = req.body;
-
-            if (!path || !component) {
-                return res.status(400).json({ 
-                    message: "Path e component são campos obrigatórios" 
-                });
-            }
-
-            const existingRoute = await Route.findOne({ path });
-            if (existingRoute) {
-                return res.status(400).json({ 
-                    message: "Já existe uma rota com este path" 
-                });
-            }
-
-            const newRoute = new Route({
-                path,
-                component,
-                requiredRole: requiredRole || [],
-                pageId: pageId || "",
-                name: name || "",
-                reportId: reportId || "",
-                workspaceId: workspaceId || "",
-                icon: icon || "",
+          const {id, path, component, requiredRole, pageId, reportId, icon, name, workspaceId } = req.body;
+      
+          // Validações básicas
+          if (!path || !component) {
+            res.status(400).json({
+              message: "Path e component são campos obrigatórios"
             });
-
-            const savedRoute = await newRoute.save();
-            return res.status(201).json(savedRoute);
-        } catch (err: unknown) {
-            const error = err as Error;
-            console.error("Erro ao criar rota:", error);
-            return res.status(500).json({ 
-                message: "Erro ao criar rota", 
-                error: error.message 
+            return;
+          }
+      
+          // Verifica se já existe uma rota com o mesmo path
+          const existingRoute = await Route.findOne({ where: { path } });
+          if (existingRoute) {
+            res.status(400).json({
+              message: "Já existe uma rota com este path"
             });
+            return;
+          }
+      
+          // Cria e salva a nova rota no banco de dados
+          const savedRoute = await Route.create({
+            id,
+            path,
+            component,
+            requiredRole: requiredRole || [],
+            pageId: pageId || "",
+            name: name || "",
+            reportId: reportId || "",
+            workspaceId: workspaceId || "",
+            icon: icon || ""
+          });
+      
+          res.status(201).json(savedRoute);
+        } catch (err: any) {
+          console.error("Erro ao criar rota:", err);
+          res.status(500).json({
+            message: "Erro ao criar rota",
+            error: err.message
+          });
         }
-    };
+      };
 
-    updateRoute = async (req: Request<{ id: string }, {}, RouteRequestBody>, res: Response): Promise<Response> => {
+    updateRoute = async (req: Request, res: Response): Promise<void> => {
         try {
-            const routeId = req.params.id;
-            const { path, component, requiredRole, pageId, reportId, workspaceId, icon, name } = req.body;
-
-            if (!path || !component) {
-                return res.status(400).json({ 
-                    message: "Path e component são campos obrigatórios" 
-                });
-            }
-
-            const existingRoute = await Route.findOne({ 
-                path, 
-                _id: { $ne: routeId } 
+          const { path, component, requiredRole, pageId, reportId, workspaceId, icon, name } = req.body;
+          const routeId = req.params.id;
+      
+          // Validações básicas
+          if (!path || !component) {
+            res.status(400).json({
+              message: "Path e component são campos obrigatórios"
             });
-            
-            if (existingRoute) {
-                return res.status(400).json({ 
-                    message: "Já existe outra rota com este path" 
-                });
+            return;
+          }
+      
+          // Verifica se já existe outra rota com o mesmo path (exceto a que está sendo editada)
+          const existingRoute = await Route.findOne({
+            where: {
+              path,
+                id: { [Op.ne]: routeId }
             }
-
-            const updatedRoute = await Route.findByIdAndUpdate(
-                routeId,
-                {
-                    path,
-                    component,
-                    name,
-                    requiredRole: requiredRole || [],
-                    pageId: pageId || "",
-                    reportId: reportId || "",
-                    workspaceId: workspaceId || "",
-                    icon: icon || ""
-                },
-                { new: true }
-            );
-
-            if (!updatedRoute) {
-                return res.status(404).json({ 
-                    message: "Rota não encontrada" 
-                });
-            }
-
-            return res.json(updatedRoute);
-        } catch (err: unknown) {
-            const error = err as Error;
-            console.error("Erro ao atualizar rota:", error);
-            return res.status(500).json({ 
-                message: "Erro ao atualizar rota", 
-                error: error.message 
+          });
+      
+          if (existingRoute) {
+            res.status(400).json({
+              message: "Já existe outra rota com este path"
             });
+            return;
+          }
+      
+          // Atualiza a rota
+          const [affectedRows] = await Route.update(
+            {
+              path,
+              component,
+              name,
+              requiredRole: requiredRole || [],
+              pageId: pageId || "",
+              reportId: reportId || "",
+              workspaceId: workspaceId || "",
+              icon: icon || ""
+            },
+            {
+                where: { id: routeId },
+                returning: true
+              }
+          );
+      
+          if (affectedRows === 0) {
+            res.status(404).json({
+              message: "Rota não encontrada"
+            });
+            return;
+          }
+      
+          const updatedRoute = await Route.findByPk(routeId);
+          res.json(updatedRoute);
+        } catch (err: any) {
+          console.error("Erro ao atualizar rota:", err);
+          res.status(500).json({
+            message: "Erro ao atualizar rota",
+            error: err.message
+          });
         }
-    };
+      };;
 
-    deleteRoute = async (req: Request<{ id: string }>, res: Response): Promise<Response> => {
+    deleteRoute = async (req: Request, res: Response): Promise<void> => {
         try {
-            const routeId = req.params.id;
-            const deletedRoute = await Route.findByIdAndDelete(routeId);
-
-            if (!deletedRoute) {
-                return res.status(404).json({ 
-                    message: "Rota não encontrada" 
-                });
-            }
-
-            return res.json({ 
-                message: "Rota excluída com sucesso", 
-                route: deletedRoute 
+          const routeId = req.params.id;
+      
+          const deletedRoute = await Route.findByPk(routeId);
+      
+          if (!deletedRoute) {
+            res.status(404).json({ 
+              message: "Rota não encontrada" 
             });
-        } catch (err: unknown) {
-            const error = err as Error;
-            console.error("Erro ao excluir rota:", error);
-            return res.status(500).json({ 
-                message: "Erro ao excluir rota", 
-                error: error.message 
-            });
+            return;
+          }
+      
+          await deletedRoute.destroy();
+      
+          res.json({ 
+            message: "Rota excluída com sucesso", 
+            route: deletedRoute 
+          });
+      
+        } catch (err: any) {
+          console.error("Erro ao excluir rota:", err);
+          res.status(500).json({ 
+            message: "Erro ao excluir rota", 
+            error: err.message 
+          });
         }
-    };
+      };
 }
 
 export default new RouteController();

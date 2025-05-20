@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { Op } from 'sequelize';
 import EstrategiaParametros, { IEstrategiaParametros } from '../models/EstrategiaParametros';
 import GrupoMaterial from '../models/GrupoMaterial';
 
@@ -30,7 +31,10 @@ class ParamsController {
   async getGroupParams(req: Request, res: Response): Promise<Response> {
     try {
       const { groupId } = req.params;
-      const estrategia = await EstrategiaParametros.findOne({ cod_grupo: Number(groupId), cod_item_material: 0 });
+
+      const estrategia = await EstrategiaParametros.findOne({
+        where: { cod_grupo: Number(groupId), cod_item_material: 0 },
+      });
 
       if (!estrategia) {
         const estrategiaPadrao: EstrategiaPadrao = {
@@ -46,10 +50,7 @@ class ParamsController {
 
       return res.json(estrategia);
     } catch (error) {
-      if (error instanceof Error) {
-        return res.status(500).json({ error: error.message });
-      }
-      return res.status(500).json({ error: 'Erro desconhecido' });
+      return res.status(500).json({ error: (error as Error).message || 'Erro desconhecido' });
     }
   }
 
@@ -57,10 +58,14 @@ class ParamsController {
     try {
       const { materialId } = req.params;
 
-      const estrategia = await EstrategiaParametros.findOne({ cod_item_material: Number(materialId) });
+      const estrategia = await EstrategiaParametros.findOne({
+        where: { cod_item_material: Number(materialId) },
+      });
 
       if (!estrategia) {
-        const material = await GrupoMaterial.findOne({ cod_item_material: Number(materialId) });
+        const material = await GrupoMaterial.findOne({
+          where: { cod_item_material: Number(materialId) },
+        });
 
         if (!material) {
           return res.status(404).json({ message: 'Material não encontrado' });
@@ -74,122 +79,119 @@ class ParamsController {
           cods_opcao: [0, 0, 0, 0, 0, 0, 0, 0, 0],
           data_estrategia: new Date(),
         };
-        return res.json({ 
-          message: 'Item atualmente sem estratégia, retornando padrão', 
-          estrategiaPadrao 
+        return res.json({
+          message: 'Item atualmente sem estratégia, retornando padrão',
+          estrategiaPadrao,
         });
       } else {
         return res.json(estrategia);
       }
     } catch (error) {
-      if (error instanceof Error) {
-        return res.status(500).json({ error: error.message });
-      }
-      return res.status(500).json({ error: 'Erro desconhecido' });
+      return res.status(500).json({ error: (error as Error).message || 'Erro desconhecido' });
     }
   }
 
   async updateGroupParams(req: Request, res: Response): Promise<Response> {
     try {
       const { groupId } = req.params;
-      const { cods_parametro, cods_opcao, client, data_estrategia, onlyMatchingGroupParams } = req.body as UpdateGroupParamsBody;
+      const { cods_parametro, cods_opcao, client, data_estrategia, onlyMatchingGroupParams } =
+        req.body as UpdateGroupParamsBody;
 
-      const existingStrategies = await EstrategiaParametros.find({ 
-        cod_grupo: Number(groupId), 
-        cod_item_material: 0 
+      const existingStrategies = await EstrategiaParametros.findAll({
+        where: { cod_grupo: Number(groupId), cod_item_material: 0 },
       });
 
       if (existingStrategies.length > 0) {
-        await EstrategiaParametros.updateMany(
-          { cod_grupo: Number(groupId), cod_item_material: 0 },
-          { cods_parametro, cods_opcao, client, data_estrategia }
+        // Atualiza estratégia do grupo
+        await EstrategiaParametros.update(
+          { cods_parametro, cods_opcao, client, data_estrategia },
+          { where: { cod_grupo: Number(groupId), cod_item_material: 0 } }
         );
 
-        // Filtrando apenas itens com parâmetros iguais ao grupo
-        const filter: any = { 
-          cod_grupo: Number(groupId), 
-          cod_item_material: { $ne: 0 } 
+        // Filtro para materiais do grupo
+        const filter: any = {
+          cod_grupo: Number(groupId),
+          cod_item_material: { [Op.ne]: 0 },
         };
-        
+
         if (onlyMatchingGroupParams) {
           filter.cods_parametro = existingStrategies[0].cods_parametro;
           filter.cods_opcao = existingStrategies[0].cods_opcao;
         }
 
-        // Atualiza os materiais conforme o filtro
-        await EstrategiaParametros.updateMany(
-          filter,
-          { $set: { cods_parametro, cods_opcao, client, data_estrategia } }
+        // Atualiza os materiais conforme filtro
+        await EstrategiaParametros.update(
+          { cods_parametro, cods_opcao, client, data_estrategia },
+          { where: filter }
         );
 
-        return res.json({ message: "Parâmetros atualizados com sucesso" });
+        return res.json({ message: 'Parâmetros atualizados com sucesso' });
       } else {
-        const materiaisDoGrupo = await GrupoMaterial.find({ cod_grupo: Number(groupId) }).distinct("cod_item_material");
+        // Busca materiais do grupo
+        const materiaisDoGrupo = await GrupoMaterial.findAll({
+          attributes: ['cod_item_material'],
+          where: { cod_grupo: Number(groupId) },
+        });
 
         if (materiaisDoGrupo.length === 0) {
-          return res.status(404).json({ message: "Nenhum item encontrado para esse grupo" });
+          return res.status(404).json({ message: 'Nenhum item encontrado para esse grupo' });
         }
 
+        // Cria estratégias para grupo e seus materiais
         const novasEstrategias: IEstrategiaParametros[] = [
-          // Primeiro adiciona a estratégia do grupo (cod_item_material = 0)
           {
             cod_grupo: Number(groupId),
-            cod_item_material: 0,  // Estratégia base do grupo
+            cod_item_material: 0,
             cods_parametro,
             cods_opcao,
             client,
-            data_estrategia
+            data_estrategia,
           } as IEstrategiaParametros,
-          // Depois adiciona as estratégias para cada material
-          ...materiaisDoGrupo.map(cod_item_material => ({
+          ...materiaisDoGrupo.map((m) => ({
             cod_grupo: Number(groupId),
-            cod_item_material,
+            cod_item_material: m.cod_item_material,
             cods_parametro,
             cods_opcao,
             client,
-            data_estrategia
-          } as IEstrategiaParametros))
+            data_estrategia,
+          })),
         ];
-        
-        await EstrategiaParametros.insertMany(novasEstrategias);
+
+        await EstrategiaParametros.bulkCreate(novasEstrategias);
 
         return res.json({ estrategias: novasEstrategias });
       }
     } catch (error) {
-      if (error instanceof Error) {
-        return res.status(500).json({ error: error.message });
-      }
-      return res.status(500).json({ error: 'Erro desconhecido' });
+      return res.status(500).json({ error: (error as Error).message || 'Erro desconhecido' });
     }
   }
 
   async updateMaterialParams(req: Request, res: Response): Promise<Response> {
     try {
       const { materialId } = req.params;
-      const { cods_parametro, cods_opcao, client, data_estrategia } = req.body as UpdateMaterialParamsBody;
-      
-      const existingStrategy = await EstrategiaParametros.findOne({ cod_item_material: Number(materialId) });
+      const { cods_parametro, cods_opcao, client, data_estrategia } =
+        req.body as UpdateMaterialParamsBody;
+
+      const existingStrategy = await EstrategiaParametros.findOne({
+        where: { cod_item_material: Number(materialId) },
+      });
 
       if (!existingStrategy) {
-        return res.status(404).json({ 
-          message: "Estratégia base do grupo não configurada",
+        return res.status(404).json({
+          message: 'Estratégia base do grupo não configurada',
           details: `Não existe uma estratégia padrão para o grupo desse item`,
-          solution: "Defina primeiro os parâmetros do grupo antes de atualizar itens individuais"
+          solution: 'Defina primeiro os parâmetros do grupo antes de atualizar itens individuais',
         });
       }
 
-      const estrategia = await EstrategiaParametros.findOneAndUpdate(
-        { cod_item_material: Number(materialId) },
+      const estrategia = await EstrategiaParametros.update(
         { cods_parametro, cods_opcao, client, data_estrategia },
-        { new: true }
+        { where: { cod_item_material: Number(materialId) }, returning: true }
       );
 
-      return res.json({ message: "Parâmetros atualizados com sucesso", estrategia });
+      return res.json({ message: 'Parâmetros atualizados com sucesso', estrategia: estrategia[1][0] });
     } catch (error) {
-      if (error instanceof Error) {
-        return res.status(500).json({ error: error.message });
-      }
-      return res.status(500).json({ error: 'Erro desconhecido' });
+      return res.status(500).json({ error: (error as Error).message || 'Erro desconhecido' });
     }
   }
 
@@ -197,32 +199,30 @@ class ParamsController {
     try {
       const { groupId } = req.params;
 
-      const grupoParams = await EstrategiaParametros.findOne({ 
-        cod_grupo: Number(groupId), 
-        cod_item_material: 0 
+      const grupoParams = await EstrategiaParametros.findOne({
+        where: { cod_grupo: Number(groupId), cod_item_material: 0 },
       });
 
       if (!grupoParams) {
-        return res.status(404).json({ message: "Parâmetros base do grupo não encontrados" });
+        return res.status(404).json({ message: 'Parâmetros base do grupo não encontrados' });
       }
 
-      const novasEstrategias = await EstrategiaParametros.updateMany(
-        { cod_grupo: Number(groupId), cod_item_material: { $ne: 0 } },
-        { 
-          cods_parametro: grupoParams.cods_parametro, 
-          cods_opcao: grupoParams.cods_opcao, 
-          client: grupoParams.client, 
-          data_estrategia: new Date()
+      const [affectedCount, updatedStrategies] = await EstrategiaParametros.update(
+        {
+          cods_parametro: grupoParams.cods_parametro,
+          cods_opcao: grupoParams.cods_opcao,
+          client: grupoParams.client,
+          data_estrategia: new Date(),
         },
-        { new: true }
+        {
+          where: { cod_grupo: Number(groupId), cod_item_material: { [Op.ne]: 0 } },
+          returning: true,
+        }
       );
 
-      return res.json({ estrategias: novasEstrategias });
+      return res.json({ message: 'Itens do grupo resetados', updatedStrategies });
     } catch (error) {
-      if (error instanceof Error) {
-        return res.status(500).json({ error: error.message });
-      }
-      return res.status(500).json({ error: 'Erro desconhecido' });
+      return res.status(500).json({ error: (error as Error).message || 'Erro desconhecido' });
     }
   }
 
@@ -230,43 +230,37 @@ class ParamsController {
     try {
       const { materialId } = req.params;
 
-      const material = await GrupoMaterial.findOne({ cod_item_material: Number(materialId) });
+      const material = await GrupoMaterial.findOne({
+        where: { cod_item_material: Number(materialId) },
+      });
 
       if (!material) {
-        return res.status(404).json({ message: "Item não encontrado" });
+        return res.status(404).json({ message: 'Item não encontrado' });
       }
 
       const groupId = material.cod_grupo;
 
-      const grupoParams = await EstrategiaParametros.findOne({ 
-        cod_grupo: groupId, 
-        cod_item_material: 0 
+      const grupoParams = await EstrategiaParametros.findOne({
+        where: { cod_grupo: groupId, cod_item_material: 0 },
       });
 
       if (!grupoParams) {
-        return res.status(404).json({ message: "Parâmetros base do grupo não encontrados" });
+        return res.status(404).json({ message: 'Parâmetros base do grupo não encontrados' });
       }
 
-      const estrategia = await EstrategiaParametros.findOneAndUpdate(
-        { cod_item_material: Number(materialId) },
-        { 
-          cods_parametro: grupoParams.cods_parametro, 
-          cods_opcao: grupoParams.cods_opcao, 
-          client: grupoParams.client, 
-          data_estrategia: new Date()
+      const [affectedCount, updatedStrategies] = await EstrategiaParametros.update(
+        {
+          cods_parametro: grupoParams.cods_parametro,
+          cods_opcao: grupoParams.cods_opcao,
+          client: grupoParams.client,
+          data_estrategia: new Date(),
         },
-        { new: true }
+        { where: { cod_item_material: Number(materialId) }, returning: true }
       );
 
-      return res.json({ 
-        message: "Item atualizado com os parâmetros do grupo", 
-        estrategia 
-      });
+      return res.json({ message: 'Item resetado', updatedStrategies });
     } catch (error) {
-      if (error instanceof Error) {
-        return res.status(500).json({ error: error.message });
-      }
-      return res.status(500).json({ error: 'Erro desconhecido' });
+      return res.status(500).json({ error: (error as Error).message || 'Erro desconhecido' });
     }
   }
 }

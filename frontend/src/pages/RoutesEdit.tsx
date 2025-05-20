@@ -27,7 +27,7 @@ const iconOptions = [
 ];
 
 interface Route {
-  _id: string;
+  id: string;
   path: string;
   component: string;
   name: string;
@@ -121,9 +121,9 @@ const RoutesEdit = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.put(`http://localhost:5000/routes/${selectedRoute._id}`, selectedRoute);
+      const response = await axios.put(`http://localhost:5000/routes/${selectedRoute.id}`, selectedRoute);
       setRoutes(routes.map(route => 
-        route._id === selectedRoute._id ? response.data : route
+        route.id === selectedRoute.id ? response.data : route
       ));
       handleClose();
     } catch (error) {
@@ -154,7 +154,7 @@ const RoutesEdit = () => {
     setError(null);
     try {
       await axios.delete(`http://localhost:5000/routes/${routeToDelete}`);
-      setRoutes(routes.filter(route => route._id !== routeToDelete));
+      setRoutes(routes.filter(route => route.id !== routeToDelete));
       handleCloseDeleteDialog();
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -284,7 +284,7 @@ const RoutesEdit = () => {
           </TableHead>
           <TableBody>
             {filteredRoutes.map((route) => (
-              <TableRow key={route._id}>
+              <TableRow key={route.id}>
                 <TableCell>{route.path.slice(1, 2).toUpperCase() + route.path.slice(2)}</TableCell>
                 <TableCell sx={{ display: { xs: "none", sm: "table-cell" } }}>{route.component}</TableCell>
                 <TableCell sx={{ display: { xs: "none", sm: "table-cell" } }}>
@@ -292,7 +292,7 @@ const RoutesEdit = () => {
                 </TableCell>
                 <TableCell align="right">
                   <IconButton onClick={() => handleEditClick(route)}><Edit /></IconButton>
-                  <IconButton onClick={() => handleOpenDeleteDialog(route._id)} color="error"><Delete /></IconButton>
+                  <IconButton onClick={() => handleOpenDeleteDialog(route.id)} color="error"><Delete /></IconButton>
                 </TableCell>
               </TableRow>
             ))}

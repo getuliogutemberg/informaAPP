@@ -1,7 +1,12 @@
-import { Document, Schema, model, Model } from 'mongoose';
+import { Sequelize, DataTypes, Model, Optional } from 'sequelize';
+import sequelize from "../database"; // Adjust path if necessary
 
-// Interface que representa o documento Route
-export interface IRoute extends Document {
+
+
+
+// Define an interface for the model attributes including timestamps
+export interface IRouteAttributes {
+  id: string;
   path: string;
   component: string;
   name: string;
@@ -14,49 +19,83 @@ export interface IRoute extends Document {
   updatedAt: Date;
 }
 
-// Schema do Mongoose com tipagem
-const RouteSchema: Schema<IRoute> = new Schema({
-  path: { 
-    type: String, 
-    required: [true, 'O caminho da rota é obrigatório'],
-    unique: true 
-  },
-  component: { 
-    type: String, 
-    required: [true, 'O componente da rota é obrigatório'] 
-  },
-  name: { 
-    type: String, 
-    required: [true, 'O nome da rota é obrigatório'] 
-  },
-  requiredRole: { 
-    type: [String], 
-    default: [],
-    validate: {
-      validator: (roles: string[]) => roles.every(role => typeof role === 'string'),
-      message: 'Todos os roles devem ser strings'
+// Define os campos opcionais na criação
+type IRouteCreationAttributes = Optional<
+  IRouteAttributes,
+   'pageId' | 'reportId' | 'workspaceId' | 'icon' | 'createdAt' | 'updatedAt'
+>;
+
+class Route extends Model<IRouteAttributes, IRouteCreationAttributes> implements IRouteAttributes {
+  public id!: string;
+  public path!: string;
+  public component!: string;
+  public name!: string;
+  public requiredRole!: string[];
+  public pageId?: string;
+  public reportId?: string;
+  public workspaceId?: string;
+  public icon?: string;
+  public readonly createdAt!: Date;
+  public readonly updatedAt!: Date;
+}
+
+Route.init(
+  {
+    id: {
+      type: DataTypes.UUID,  // ou outro tipo que estiver usando
+      primaryKey: true,      // <<-- ESSENCIAL
+      defaultValue: DataTypes.UUIDV4,
+      allowNull: false,
+    },
+    path: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true // Added unique constraint based on Mongoose schema
+    },
+    component: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    requiredRole: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      defaultValue: []
+    },
+    pageId: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    reportId: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    workspaceId: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    icon: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
     }
   },
-  pageId: { 
-    type: String,
-    required: false
-  },
-  reportId: { 
-    type: String,
-    required: false 
-  },
-  workspaceId: { 
-    type: String,
-    required: false 
-  },
-  icon: { 
-    type: String,
-    required: false 
+  {
+    sequelize,
+    modelName: 'Route',
+    tableName: 'routes',
+    schema: 'internal',
+    timestamps: true,
   }
-}, { 
-  timestamps: true 
-});
-
-const Route: Model<IRoute> = model<IRoute>('Route', RouteSchema);
+);
 
 export default Route;

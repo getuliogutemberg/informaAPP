@@ -40,7 +40,7 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
         }
 
         // 2. Busca o usuário para obter o `jwtSecret`
-        const user = await User.findById(unverifiedPayload.id);
+        const user = await User.findByPk(unverifiedPayload.id);
         if (!user || !user.jwtSecret) {
         res.status(401).json({ message: "Usuário não autorizado!" });
         return;

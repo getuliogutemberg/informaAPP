@@ -1,30 +1,55 @@
-import { Document, Schema, model } from 'mongoose';
+import { DataTypes, Model, Optional } from 'sequelize';
+import sequelize from "../database"; // ajuste se necessário
 
-// Interface que representa o documento DicionarioGrupo
-export interface IDicionarioGrupo extends Document {
+// Interface com os atributos
+export interface IDicionarioGrupoAttributes {
+  id: string;
   cod_grupo: number;
   desc_grupo: string;
 }
 
-// Schema do Mongoose com tipagem
-const DicionarioGrupoSchema: Schema<IDicionarioGrupo> = new Schema({
-  cod_grupo: { 
-    type: Number, 
-    required: [true, 'Código do grupo é obrigatório'],
-    unique: true,
-    index: true
-  },
-  desc_grupo: { 
-    type: String, 
-    required: [true, 'Descrição do grupo é obrigatória'],
-    trim: true,
-    maxlength: [100, 'Descrição não pode exceder 100 caracteres']
-  }
-}, {
-  collection: 'dicionario_grupos' // Mantendo o nome da collection original
-});
+// Campos opcionais na criação
+type IDicionarioGrupoCreationAttributes = Optional<IDicionarioGrupoAttributes, 'id'>;
 
-// Model TypeScript
-const DicionarioGrupo = model<IDicionarioGrupo>('DicionarioGrupo', DicionarioGrupoSchema);
+// Definição do model
+class DicionarioGrupo extends Model<IDicionarioGrupoAttributes, IDicionarioGrupoCreationAttributes>
+  implements IDicionarioGrupoAttributes {
+  public id!: string;
+  public cod_grupo!: number;
+  public desc_grupo!: string;
+}
+
+DicionarioGrupo.init(
+  {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true
+    },
+    cod_grupo: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      unique: true
+    },
+    desc_grupo: {
+      type: DataTypes.STRING(100),
+      allowNull: false,
+      validate: {
+        len: {
+          args: [0, 100],
+          msg: 'Descrição não pode exceder 100 caracteres'
+        }
+      }
+    }
+  },
+  {
+    sequelize,
+    modelName: 'DicionarioGrupo',
+    tableName: 'dicionario_grupos',
+    schema: 'internal', // remova se não estiver usando schemas
+    timestamps: false,
+    indexes: [{ fields: ['cod_grupo'] }]
+  }
+);
 
 export default DicionarioGrupo;

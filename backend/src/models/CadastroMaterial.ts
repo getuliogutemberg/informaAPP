@@ -1,59 +1,91 @@
-import { Document, Schema, model } from 'mongoose';
+import {
+  Model,
+  DataTypes,
+  Optional,
+  Sequelize
+} from 'sequelize';
 
-// Interface que representa o documento CadastroMaterial
-export interface ICadastroMaterial extends Document {
+// Interface com os atributos
+export interface ICadastroMaterialAttributes {
   cod_item_material: number;
-  cod_itemmaterial_ext?: number; // Opcional
+  cod_itemmaterial_ext?: number;
   desc_material: string;
-  desc_numero_itemmaterial?: number; // Opcional
+  desc_numero_itemmaterial?: number;
   cod_unidade_medida: string;
   cod_classematerial: number;
   cod_grupo: number;
 }
 
-// Schema do Mongoose com tipagem
-const CadastroMaterialSchema: Schema<ICadastroMaterial> = new Schema({
-  cod_item_material: { 
-    type: Number, 
-    required: [true, 'Código do item material é obrigatório'],
-    unique: true,
-    index: true
-  },
-  cod_itemmaterial_ext: { 
-    type: Number,
-    index: true
-  },
-  desc_material: { 
-    type: String, 
-    required: [true, 'Descrição do material é obrigatória'],
-    trim: true,
-    maxlength: [200, 'Descrição não pode exceder 200 caracteres']
-  },
-  desc_numero_itemmaterial: { 
-    type: Number 
-  },
-  cod_unidade_medida: { 
-    type: String, 
-    required: [true, 'Código da unidade de medida é obrigatório'],
-    trim: true,
-    uppercase: true,
-    maxlength: [10, 'Código da unidade não pode exceder 10 caracteres']
-  },
-  cod_classematerial: { 
-    type: Number, 
-    required: [true, 'Código da classe de material é obrigatório'],
-    index: true
-  },
-  cod_grupo: { 
-    type: Number, 
-    required: [true, 'Código do grupo é obrigatório'],
-    index: true
-  }
-}, {
-  collection: 'cadastro_materials'
-});
+// Interface para criação (atributos opcionais no insert)
+export interface ICadastroMaterialCreationAttributes
+  extends Optional<ICadastroMaterialAttributes, 'cod_itemmaterial_ext' | 'desc_numero_itemmaterial'> {}
 
-const CadastroMaterial = model<ICadastroMaterial>('CadastroMaterial', CadastroMaterialSchema);
+// Modelo Sequelize
+export class CadastroMaterial
+  extends Model<ICadastroMaterialAttributes, ICadastroMaterialCreationAttributes>
+  implements ICadastroMaterialAttributes
+{
+  public cod_item_material!: number;
+  public cod_itemmaterial_ext?: number;
+  public desc_material!: string;
+  public desc_numero_itemmaterial?: number;
+  public cod_unidade_medida!: string;
+  public cod_classematerial!: number;
+  public cod_grupo!: number;
 
-export default CadastroMaterial;
- 
+  // timestamps (caso queira usar futuramente)
+  public readonly createdAt!: Date;
+  public readonly updatedAt!: Date;
+}
+
+// Função para inicializar o modelo
+export function initCadastroMaterial(sequelize: Sequelize): void {
+  CadastroMaterial.init(
+    {
+      cod_item_material: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        primaryKey: true,
+        unique: true
+      },
+      cod_itemmaterial_ext: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+      },
+      desc_material: {
+        type: DataTypes.STRING(200),
+        allowNull: false,
+        validate: {
+          len: {
+            args: [1, 200],
+            msg: 'Descrição não pode exceder 200 caracteres'
+          }
+        }
+      },
+      desc_numero_itemmaterial: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+      },
+      cod_unidade_medida: {
+        type: DataTypes.STRING(10),
+        allowNull: false,
+        set(value: string) {
+          this.setDataValue('cod_unidade_medida', value.trim().toUpperCase());
+        }
+      },
+      cod_classematerial: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+      },
+      cod_grupo: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+      }
+    },
+    {
+      sequelize,
+      tableName: 'cadastro_materials',
+      timestamps: false
+    }
+  );
+}

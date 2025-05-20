@@ -22,13 +22,13 @@ interface Configuration {
   secondaryColor: number;
   backgroundColor: number;
   textColor: number;
-  pbiKeys: {
-    clientId: string;
-    clientSecret: string;
-    authority: string;
-    workspaceId: string;
-    reportId: string;
-  };
+ pbiKeys: {
+  clientId: string;
+  clientSecret: string;
+  authority: string;
+  workspaceId: string;
+  reportId: string;
+}
 }
 
 export default function Settings() {
@@ -38,17 +38,33 @@ export default function Settings() {
   const [success, setSuccess] = useState<string | null>(null);
 
   useEffect(() => {
-    // Buscar configurações do backend
     const fetchSettings = async () => {
       try {
         const response = await axios.get('http://localhost:5000/configuration');
-        setSettings(response.data); // Atualiza o estado com os dados do backend
+        const data = response.data;
+  
+        // Corrige pbiKeys caso venha errado
+        const fixedPbiKeys = {
+          clientId: data.pbiKeys?.clientId || '',
+          clientSecret: data.pbiKeys?.clientSecret || '',
+          authority: data.pbiKeys?.authority || '',
+          workspaceId: data.pbiKeys?.workspaceId || '',
+          reportId: data.pbiKeys?.reportId || '',
+        };
+  console.log({
+    ...data,
+    pbiKeys: fixedPbiKeys,
+  })
+        setSettings({
+          ...data,
+          pbiKeys: fixedPbiKeys,
+        });
       } catch (error) {
         console.error('Erro ao buscar configurações:', error);
         setError('Erro ao carregar configurações');
       }
     };
-
+  
     fetchSettings();
   }, []);
 

@@ -1,10 +1,9 @@
 import dotenv from "dotenv";
 import express, { Request, Response, NextFunction } from "express";
-import mongoose from "mongoose";
 import cors from "cors";
 import http from "http";
 import initializeSocket from "./socket";
-
+import { Sequelize, where, Op, DataTypes } from "sequelize";
 // Import controllers
 import AuthController from "./controllers/authController";
 import UserController from "./controllers/userController";
@@ -20,12 +19,33 @@ import ParamsController from "./controllers/paramsController";
 import { verifyToken, verifyCategory } from "./middleware/authVerifier";
 
 // Load environment variables
+
 dotenv.config({ path: '../../.env' });
 
-// Database connection
-mongoose.connect(process.env.MONGO_URI || '')
+const sequelize = new Sequelize(process.env.DATABASE_URL || "http://localhost:5000", {
+  dialect: 'postgres',
+  logging: false, // set to console.log to see SQL queries
+  pool: {
+    max: 5,
+    min: 0,
+    acquire: 30000,
+    idle: 10000
+  },
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false
+    }
+  }
+});
+sequelize.authenticate()
   .then(() => console.log("Banco de dados conectado"))
-  .catch((err: Error) => console.log("Erro ao conectar ao banco de dados:", err));
+  .catch((err) => console.log("Erro ao conectar ao banco de dados:", err));
+
+// // Database connection
+// mongoose.connect(process.env.MONGO_URI || '')
+//   .then(() => console.log("Banco de dados conectado"))
+//   .catch((err: Error) => console.log("Erro ao conectar ao banco de dados:", err));
 
 // Initialize express app
 const app = express();
@@ -54,6 +74,9 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
   next();
 });
+
+// Serve static frontend files
+app.use(express.static('./public'));
 
 // Auth routes
 app.post("/register", AuthController.register);

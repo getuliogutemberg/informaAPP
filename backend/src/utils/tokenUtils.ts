@@ -1,60 +1,43 @@
 import jwt from "jsonwebtoken";
-import crypto from "crypto";
-import { IUser } from "../models/User";
+import { IUserAttributes } from "../models/User";
 
-// Interface para o payload do token de acesso
+// Payload do access token
 interface AccessTokenPayload {
   id: string;
   category: string;
   className: string;
 }
 
-// Interface para o payload do refresh token
+// Payload do refresh token
 interface RefreshTokenPayload {
   id: string;
 }
 
-// Extendendo a interface IUser para garantir que _id existe
-interface UserWithId extends IUser {
-  _id: any;
-}
-
-// Função para gerar token de acesso
-export const generateAccessToken = (user: UserWithId): string => {
-
-  if (!user.jwtSecret){
-    const jwtSecret = crypto.randomBytes(32).toString("hex");
-    user.jwtSecret = jwtSecret;
+export const generateAccessToken = (user: IUserAttributes): string => {
+  // console.log(user.jwtSecret)
+  if (!user.jwtSecret) {
+    // throw new Error("jwtSecret do usuário não está definido");
+    user.jwtSecret = '123456789';
   }
 
-  // Convertendo _id para string (funciona para ObjectId e string)
-  const userId = user._id.toString ? user._id.toString() : String(user._id);
-
   const payload: AccessTokenPayload = {
-    id: userId,
+    id: user.id,
     category: user.category,
-    className: user.className
+    className: user.className,
   };
 
   return jwt.sign(payload, user.jwtSecret, { expiresIn: "15m" });
 };
 
-// Função para gerar refresh token
-export const generateRefreshToken = (user: UserWithId): string => {
+export const generateRefreshToken = (user: IUserAttributes): string => {
+  // console.log(user)
   if (!user.jwtSecret) {
     throw new Error("jwtSecret do usuário não está definido");
   }
 
-  const userId = user._id.toString ? user._id.toString() : String(user._id);
-
   const payload: RefreshTokenPayload = {
-    id: userId
+    id: user.id,
   };
 
   return jwt.sign(payload, user.jwtSecret, { expiresIn: "7d" });
-};
-
-export default {
-  generateAccessToken,
-  generateRefreshToken
 };

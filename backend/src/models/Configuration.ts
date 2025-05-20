@@ -1,7 +1,8 @@
-import { Document, Schema, model } from 'mongoose';
+import { DataTypes, Model, Optional } from 'sequelize';
+import sequelize from "../database";
 
-// Interface para o documento Configuration
-export interface IConfiguration extends Document {
+export interface IConfigurationAttributes {
+  id: string;
   notifications: boolean;
   allowRegister: boolean;
   allowRequireRegister: boolean;
@@ -25,83 +26,123 @@ export interface IConfiguration extends Document {
   updatedAt: Date;
 }
 
-// Schema do Mongoose com tipagem
-const ConfigurationSchema: Schema<IConfiguration> = new Schema({
-  notifications: { 
-    type: Boolean, 
-    default: true 
-  },
-  allowRegister: { 
-    type: Boolean, 
-    default: false 
-  },
-  allowRequireRegister: { 
-    type: Boolean, 
-    default: false 
-  },
-  allowNewCategory: { 
-    type: Boolean, 
-    default: false 
-  },
-  allowNewClassName: { 
-    type: Boolean, 
-    default: false 
-  },
-  addSecretKey: { 
-    type: Boolean, 
-    default: false 
-  },
-  addCategory: { 
-    type: Boolean, 
-    default: true 
-  },
-  fontFamily: { 
-    type: String, 
-    default: "Arial" 
-  },
-  pageTitle: { 
-    type: String, 
-    default: "Configurações" 
-  },
-  themeMode: { 
-    type: String, 
-    enum: ["light", "dark"], 
-    default: "light" 
-  },
-  primaryColor: { 
-    type: Number, 
-    default: 56 
-  },
-  secondaryColor: { 
-    type: Number, 
-    default: 180 
-  },
-  backgroundColor: { 
-    type: Number, 
-    default: 0 
-  },
-  textColor: { 
-    type: Number, 
-    default: 0 
-  },
-  pbiKeys: {
-    clientId: { 
-      type: String, 
-      default: "b918d10b-19f4-44c3-a58e-36e311e734ce" 
-    },
-    clientSecret: { 
-      type: String, 
-      default: "dmZ8Q~Nmgk-9wiaO2Wxe6qRc8TZI.MZ8ob3psaP5" 
-    },
-    authority: { 
-      type: String, 
-      default: "https://login.microsoftonline.com/80899d73-a5f2-4a53-b252-077af6003b36" 
-    },
-  },
-}, { 
-  timestamps: true
-});
+type IConfigurationCreationAttributes = Optional<IConfigurationAttributes, 'id' | 'createdAt' | 'updatedAt'>;
 
-const Configuration = model<IConfiguration>("Configuration", ConfigurationSchema);
+class Configuration extends Model<IConfigurationAttributes, IConfigurationCreationAttributes>
+  implements IConfigurationAttributes {
+  public id!: string;
+  public notifications!: boolean;
+  public allowRegister!: boolean;
+  public allowRequireRegister!: boolean;
+  public allowNewCategory!: boolean;
+  public allowNewClassName!: boolean;
+  public addSecretKey!: boolean;
+  public addCategory!: boolean;
+  public fontFamily!: string;
+  public pageTitle!: string;
+  public themeMode!: 'light' | 'dark';
+  public primaryColor!: number;
+  public secondaryColor!: number;
+  public backgroundColor!: number;
+  public textColor!: number;
+  public pbiKeys!: {
+    clientId: string;
+    clientSecret: string;
+    authority: string;
+  };
+  public readonly createdAt!: Date;
+  public readonly updatedAt!: Date;
+}
+
+Configuration.init(
+  {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true
+    },
+    notifications: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true
+    },
+    allowRegister: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    allowRequireRegister: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    allowNewCategory: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    allowNewClassName: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    addSecretKey: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    addCategory: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true
+    },
+    fontFamily: {
+      type: DataTypes.STRING,
+      defaultValue: 'Arial'
+    },
+    pageTitle: {
+      type: DataTypes.STRING,
+      defaultValue: 'Configurações'
+    },
+    themeMode: {
+      type: DataTypes.ENUM('light', 'dark'),
+      defaultValue: 'light'
+    },
+    primaryColor: {
+      type: DataTypes.INTEGER,
+      defaultValue: 56
+    },
+    secondaryColor: {
+      type: DataTypes.INTEGER,
+      defaultValue: 180
+    },
+    backgroundColor: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0
+    },
+    textColor: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0
+    },
+    pbiKeys: {
+      type: DataTypes.JSONB,
+      defaultValue: {
+        clientId: "b918d10b-19f4-44c3-a58e-36e311e734ce",
+        clientSecret: "dmZ8Q~Nmgk-9wiaO2Wxe6qRc8TZI.MZ8ob3psaP5",
+        authority: "https://login.microsoftonline.com/80899d73-a5f2-4a53-b252-077af6003b36"
+      }
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW
+    }
+  },
+  {
+    sequelize,
+    modelName: 'Configuration',
+    tableName: 'configurations',
+    schema: 'internal',
+    timestamps: true
+  }
+);
 
 export default Configuration;

@@ -6,7 +6,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "start": "ts-node src/server.ts",
-    "dev": "ts-node-dev --transpile-only --ignore-watch node_modules src/server.ts"
+    "dev": "ts-node-dev --transpile-only --ignore-watch node_modules src/server.ts",
+    "migrate": "npx sequelize-cli db:migrate --require ts-node/register --require tsconfig-paths/register",
+    "seed": "npx sequelize-cli db:seed:all --require ts-node/register --require tsconfig-paths/register"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +17,7 @@
   "description": "",
   "dependencies": {
     "@azure/msal-node": "^3.2.3",
+    "@types/sequelize": "^4.28.20",
     "bcryptjs": "^3.0.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
@@ -24,7 +27,7 @@
     "node-fetch": "^2.7.0",
     "pg": "^8.14.1",
     "pg-hstore": "^2.3.4",
-    "sequelize": "^6.37.6",
+    "sequelize": "^6.37.7",
     "socket.io": "^4.8.1"
   },
   "devDependencies": {
@@ -33,10 +36,12 @@
     "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.5",
     "@types/mongoose": "^5.11.97",
-    "@types/node": "^20.17.47",
+    "@types/node": "^20.17.48",
     "@types/node-fetch": "^2.6.12",
+    "sequelize-cli": "^6.6.3",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.8.3"
   }
 }
