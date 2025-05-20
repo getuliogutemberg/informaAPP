@@ -40,7 +40,7 @@ export default function Settings() {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/configuration');
+        const response = await axios.get('https://informa-app.vercel.app/configuration');
         const data = response.data;
   
         // Corrige pbiKeys caso venha errado
@@ -134,7 +134,7 @@ export default function Settings() {
     setSuccess(null);
 
     try {
-      await axios.put('http://localhost:5000/configuration', settings);
+      await axios.put('https://informa-app.vercel.app/configuration', settings);
       setSuccess('Configurações salvas com sucesso!');
     } catch (error) {
       console.error('Erro ao salvar configurações:', error);

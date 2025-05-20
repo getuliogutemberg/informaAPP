@@ -66,7 +66,7 @@ const RoutesEdit = () => {
 
   const fetchRoutes = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/routes");
+      const response = await axios.get("https://informa-app.vercel.app/routes");
       setRoutes(response.data);
     } catch (error) {
       console.error("Erro ao buscar as rotas:", error);
@@ -100,7 +100,7 @@ const RoutesEdit = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.post("http://localhost:5000/routes", formData);
+      const response = await axios.post("https://informa-app.vercel.app/routes", formData);
       setRoutes([...routes, response.data]);
       handleCloseCreateModal();
       
@@ -121,7 +121,7 @@ const RoutesEdit = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.put(`http://localhost:5000/routes/${selectedRoute.id}`, selectedRoute);
+      const response = await axios.put(`https://informa-app.vercel.app/routes/${selectedRoute.id}`, selectedRoute);
       setRoutes(routes.map(route => 
         route.id === selectedRoute.id ? response.data : route
       ));
@@ -153,7 +153,7 @@ const RoutesEdit = () => {
     setLoading(true);
     setError(null);
     try {
-      await axios.delete(`http://localhost:5000/routes/${routeToDelete}`);
+      await axios.delete(`https://informa-app.vercel.app/routes/${routeToDelete}`);
       setRoutes(routes.filter(route => route.id !== routeToDelete));
       handleCloseDeleteDialog();
     } catch (error) {

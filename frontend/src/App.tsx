@@ -61,7 +61,7 @@ interface Route {
 }
 
 // Criar uma conexão com o socket.io
-socket('http://localhost:5000');
+socket('https://informa-app.vercel.app');
 
 interface SubRoute {
 
@@ -93,7 +93,7 @@ function App() {
   useEffect(() => {
     const fetchRoutes = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/routes");
+        const response = await axios.get("https://informa-app.vercel.app/routes");
         // setRoutes(response.data); // Atualiza o estado com os dados recebidos
         return response.data
       } catch (error) {
@@ -149,7 +149,7 @@ function App() {
     // Fetch settings from backend
     const fetchSettings = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/configuration');
+        const response = await axios.get('https://informa-app.vercel.app/configuration');
         setSettings(response.data);
         
         // // Update PowerBI configuration in backend

@@ -41,7 +41,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // Instância do axios
   const api: AxiosInstance = axios.create({
-    baseURL: "http://localhost:5000",
+    baseURL: "https://informa-app.vercel.app",
     headers: { Authorization: `Bearer ${accessToken}` },
   });
 
@@ -61,7 +61,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Login
   const login = async (email: string, password: string): Promise<void> => {
     try {
-      const { data } = await axios.post("http://localhost:5000/login", { email, password });
+      const { data } = await axios.post("https://informa-app.vercel.app/login", { email, password });
       setAccessToken(data.accessToken);
       localStorage.setItem("accessToken", data.accessToken);
       localStorage.setItem("refreshToken", data.refreshToken);
@@ -76,12 +76,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const refreshToken = localStorage.getItem("refreshToken");
       if (!refreshToken) return false;
 
-      const { data } = await axios.post("http://localhost:5000/refresh", { refreshToken });
+      const { data } = await axios.post("https://informa-app.vercel.app/refresh", { refreshToken });
       setAccessToken(data.accessToken);
       localStorage.setItem("accessToken", data.accessToken);
       return true;
     } catch (err) {
       await logout();
+      console.log(err)
       return false;
     }
   }, [logout]);
@@ -94,6 +95,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       try {
         await api.get("/me").then(({ data }) => setUser(data));
       } catch (error) {
+        console.log(error)
         // Tenta renovar se o accessToken estiver expirado
         const newToken = await refreshAccessToken();
         if (newToken) {
@@ -107,7 +109,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
   
     initializeAuth();
-  }, [accessToken, refreshAccessToken, logout]);
+  }, [accessToken, refreshAccessToken, logout, api]);
 
   // Interceptor para tratar erros 401
   useEffect(() => {

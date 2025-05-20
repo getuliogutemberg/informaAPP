@@ -51,8 +51,8 @@ const Users = () => {
       
   
       const url = isOwner 
-        ? "http://localhost:5000/users" 
-        : `http://localhost:5000/users?category=${user?.category}`;
+        ? "https://informa-app.vercel.app/users" 
+        : `https://informa-app.vercel.app/users?category=${user?.category}`;
         const response = await axios.get<User[]>(url);
         setUsers(response.data);
         setFormData({ name: "", email: "", password: "", category: isOwner ? "" : user?.category , className: "CLIENT" })
@@ -79,7 +79,7 @@ const Users = () => {
   const handleCreateUser = async () => {
     setLoading(true);
     try {
-      await axios.post("http://localhost:5000/users", formData);
+      await axios.post("https://informa-app.vercel.app/users", formData);
       fetchUsers();
       handleCloseCreateModal();
     } catch (err) {
@@ -104,7 +104,7 @@ const Users = () => {
   const handleSave = async () => {
     if (editData && editData.id) {
       try {
-        await axios.put(`http://localhost:5000/users/${editData.id}`, editData);
+        await axios.put(`https://informa-app.vercel.app/users/${editData.id}`, editData);
         fetchUsers();
         handleClose();
       } catch (err) {
@@ -116,7 +116,7 @@ const Users = () => {
 
   const handleDeleteUser = async (userId: string) => {
     try {
-      await axios.delete(`http://localhost:5000/users/${userId}`);
+      await axios.delete(`https://informa-app.vercel.app/users/${userId}`);
       fetchUsers();
       setDeleteDialogOpen(false); // Fecha o modal após a exclusão
     } catch (err) {

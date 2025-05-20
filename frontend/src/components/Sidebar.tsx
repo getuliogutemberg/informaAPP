@@ -54,7 +54,7 @@ const Sidebar = () => {
   useEffect(() => {
     const fetchRoutes = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/routes");
+        const response = await axios.get("https://informa-app.vercel.app/routes");
        
         return response.data
       } catch (error) {

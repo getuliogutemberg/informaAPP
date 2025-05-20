@@ -23,7 +23,7 @@ const paramsController_1 = __importDefault(require("./controllers/paramsControll
 const authVerifier_1 = require("./middleware/authVerifier");
 // Load environment variables
 dotenv_1.default.config({ path: '../../.env' });
-const sequelize = new sequelize_1.Sequelize(process.env.DATABASE_URL || "http://localhost:5000", {
+const sequelize = new sequelize_1.Sequelize(process.env.DATABASE_URL || "https://informa-app.vercel.app", {
     dialect: 'postgres',
     logging: false, // set to console.log to see SQL queries
     pool: {

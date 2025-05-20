@@ -46,7 +46,7 @@ export default function RequireRegister() {
     // Buscar configurações do backend
     const fetchSettings = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/configuration');
+        const response = await axios.get('https://informa-app.vercel.app/configuration');
         setSettings(response.data); // Atualiza o estado com os dados do backend
       } catch (error) {
         console.error('Erro ao buscar configurações:', error);
@@ -114,7 +114,7 @@ export default function RequireRegister() {
     }
 
     try {
-      await axios.post("http://localhost:5000/register", {
+      await axios.post("https://informa-app.vercel.app/register", {
         name,
         email: username,
         password,

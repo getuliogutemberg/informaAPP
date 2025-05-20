@@ -36,7 +36,7 @@ export default function Alerts() {
 
   const loadAlerts = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/alerts');
+      const response = await axios.get('https://informa-app.vercel.app/alerts');
       const alertsWithIcons = response.data.map((alert: Alert) => ({
         ...alert,
         icon: iconMapping[alert.icon] || <Info />,
@@ -49,7 +49,7 @@ export default function Alerts() {
 
   const markAsRead = async (id: string) => {
     try {
-      await axios.put(`http://localhost:5000/alerts/${id}`);
+      await axios.put(`https://informa-app.vercel.app/alerts/${id}`);
       loadAlerts();
     } catch (error) {
       console.error("Erro ao marcar como lido", error);
@@ -63,7 +63,7 @@ export default function Alerts() {
     }
 
     try {
-      await axios.post('http://localhost:5000/alerts', newAlert);
+      await axios.post('https://informa-app.vercel.app/alerts', newAlert);
       loadAlerts();
       setNewAlert({
         _id: '',
@@ -81,7 +81,7 @@ export default function Alerts() {
   const deleteAlert = async (id: string) => {
     if (window.confirm(`Deseja excluir o alerta?`)) {
       try {
-        await axios.delete(`http://localhost:5000/alerts/${id}`);
+        await axios.delete(`https://informa-app.vercel.app/alerts/${id}`);
         loadAlerts();
       } catch (error) {
         console.error("Erro ao excluir o alerta", error);
@@ -117,7 +117,7 @@ export default function Alerts() {
     };
   
     try {
-      await axios.put(`http://localhost:5000/alerts/${updatedAlert._id}`, updatedAlert);
+      await axios.put(`https://informa-app.vercel.app/alerts/${updatedAlert._id}`, updatedAlert);
       loadAlerts();
       handleCloseEditModal();
     } catch (error) {
