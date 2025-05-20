@@ -7,7 +7,7 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const http_1 = __importDefault(require("http"));
-const socket_1 = __importDefault(require("./socket"));
+// import initializeSocket from "./socket";
 const sequelize_1 = require("sequelize");
 // Import controllers
 const authController_1 = __importDefault(require("./controllers/authController"));
@@ -117,4 +117,4 @@ server.listen(port, () => {
     console.log("Servidor rodando na porta", port);
 });
 // Initialize Socket.IO
-(0, socket_1.default)(server);
+// initializeSocket(server);

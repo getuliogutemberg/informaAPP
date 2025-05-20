@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import http from "http";
-import initializeSocket from "./socket";
+// import initializeSocket from "./socket";
 import { Sequelize, where, Op, DataTypes } from "sequelize";
 // Import controllers
 import AuthController from "./controllers/authController";
@@ -136,4 +136,4 @@ server.listen(port, () => {
 });
 
 // Initialize Socket.IO
-initializeSocket(server);
+// initializeSocket(server);

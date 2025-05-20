@@ -18,7 +18,7 @@ import Register from './pages/Register.tsx';
 import Settings from './pages/Settings';
 import Unauthorized from './pages/Unauthorized.tsx';
 import Estrategica from './pages/Estrategica.tsx';
-import socket from  'socket.io-client';
+// import socket from  'socket.io-client';
 import Users from './pages/Users.tsx';
 import RoutesEdit from './pages/RoutesEdit.tsx';
 import axios from 'axios';
@@ -61,7 +61,7 @@ interface Route {
 }
 
 // Criar uma conexão com o socket.io
-socket('https://informa-app.vercel.app');
+// socket('https://informa-app.vercel.app');
 
 interface SubRoute {
 
