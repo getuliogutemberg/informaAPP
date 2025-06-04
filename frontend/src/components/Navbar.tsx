@@ -40,8 +40,7 @@ const Navbar = () => {
     
    
 
-      
-    if (["/login","/registro","/solicitar-registro"].includes(location.pathname)) {
+    if (["/login","/registro","/solicitar-registro","/esqueci-senha","/redefinir-senha"].includes(location.pathname) || location.pathname.startsWith("/redefinir-senha/")) {
         return null;
     }
 

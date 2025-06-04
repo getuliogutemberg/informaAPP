@@ -16,6 +16,8 @@ export interface IUserAttributes {
   status: string;
   isActive: boolean;
   jwtSecret?: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpires?: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -23,7 +25,7 @@ export interface IUserAttributes {
 // Campos opcionais na criação
 type IUserCreationAttributes = Optional<
   IUserAttributes,
-  'id' | 'RG' | 'refreshToken' | 'jwtSecret' | 'status' | 'customIcon' | 'createdAt' | 'updatedAt'
+  'id' | 'RG' | 'refreshToken' | 'jwtSecret' | 'status' | 'customIcon' | 'resetPasswordToken' | 'resetPasswordExpires' | 'createdAt' | 'updatedAt'
 >;
 
 // Classe User
@@ -41,6 +43,8 @@ class User extends Model<IUserAttributes, IUserCreationAttributes> implements IU
   public status!: string;
   public isActive!: boolean;
   public jwtSecret?: string;
+  public resetPasswordToken?: string | null;
+  public resetPasswordExpires?: Date | null;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
@@ -96,9 +100,16 @@ User.init(
     isActive: {
       type: DataTypes.BOOLEAN,
       defaultValue: false
-    },
-    jwtSecret: {
+    },    jwtSecret: {
       type: DataTypes.STRING,
+      allowNull: true
+    },
+    resetPasswordToken: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    resetPasswordExpires: {
+      type: DataTypes.DATE,
       allowNull: true
     },
     createdAt: {

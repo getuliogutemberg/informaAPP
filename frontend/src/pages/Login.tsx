@@ -309,6 +309,25 @@ export default function Login() {
               >
                 {loading ? <CircularProgress size={24} sx={{ color: "white" }} /> : "Entrar"}
               </Button>
+
+              <Box sx={{ mt: 2, textAlign: "center" }}>
+                <Button
+                  variant="text"
+                  onClick={() => navigate("/esqueci-senha")}
+                  sx={{
+                    color: "#ffffff",
+                    textTransform: "none",
+                    textDecoration: "underline",
+                    fontSize: "0.9rem",
+                    "&:hover": {
+                      backgroundColor: "transparent",
+                      textDecoration: "underline",
+                    },
+                  }}
+                >
+                  Esqueci minha senha
+                </Button>
+              </Box>
             </Box>
           </motion.div>
 
@@ -332,20 +351,20 @@ export default function Login() {
 
       {/* Modal de Registro */}
       <Dialog
-  open={openRegisterDialog}
-  onClose={handleCloseDialog}
-  sx={{
-    "& .MuiPaper-root": {
-      borderRadius: "0.5rem",
-      padding: "20px",
-      backgroundColor: "rgba(255, 255, 255, 0.3)",
-      backdropFilter: "blur(15px)",
-      boxShadow: "0 8px 20px rgba(0, 0, 0, 0.2)",
-      border: "1px solid rgba(255, 255, 255, 0.1)",
-      background: "linear-gradient(145deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.02))",
-    },
-  }}
->
+        open={openRegisterDialog}
+        onClose={handleCloseDialog}
+        sx={{
+          "& .MuiPaper-root": {
+            borderRadius: "0.5rem",
+            padding: "20px",
+            backgroundColor: "rgba(255, 255, 255, 0.3)",
+            backdropFilter: "blur(15px)",
+            boxShadow: "0 8px 20px rgba(0, 0, 0, 0.2)",
+            border: "1px solid rgba(255, 255, 255, 0.1)",
+            background: "linear-gradient(145deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.02))",
+          },
+        }}
+      >
   <DialogTitle sx={{ textAlign: "center",fontSize: "1.5rem", fontWeight: "bold", color: "#111" }}>
     Login Falhou
   </DialogTitle>

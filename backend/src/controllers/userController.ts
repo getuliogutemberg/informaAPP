@@ -2,7 +2,6 @@ import dotenv from "dotenv";
 import bcrypt from "bcryptjs";
 import { Request, Response } from "express";
 import User from "../models/User"; // Sequelize Model
-import { generateUsers } from "../utils/userGenerator";
 
 dotenv.config({ path: '../../.env' });
 
@@ -31,22 +30,6 @@ class UserController {
       if (category) where.category = category;
 
       let existingUsers = await User.findAll({ where });
-
-      // if (existingUsers.length === 0) {
-      //   // Geração dos usuários usando sua função
-      //   const groups = ["A", "B", "C"];
-      //   const tags = ["1", "2", "3", "4"];
-      //   const generatedUsers = generateUsers(groups, tags);
-
-      //   const usersToInsert = Object.values(generatedUsers).flat();
-
-      //   if (usersToInsert.length > 0) {
-      //     // Bulk create users no Sequelize
-      //     await User.bulkCreate(usersToInsert);
-      //   }
-
-      //   existingUsers = await User.findAll({ where });
-      // }
 
       return res.status(200).json(existingUsers);
     } catch (err: unknown) {
