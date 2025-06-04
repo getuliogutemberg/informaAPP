@@ -111,10 +111,8 @@ export default function Register() {
       setError("Nome é obrigatório!");
       setLoading(false);
       return;
-    }
-
-    try {
-      await axios.post("http://localhost:5000register", {
+    }    try {
+      await axios.post("http://localhost:5000/register", {
         name,
         email: username,
         password,
