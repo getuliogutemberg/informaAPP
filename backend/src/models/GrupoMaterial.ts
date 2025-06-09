@@ -50,7 +50,8 @@ GrupoMaterial.init(
     sequelize,
     modelName: 'GrupoMaterial',
     tableName: 'grupo_materiais',
-    schema: 'internal', // remova se não usar schemas    timestamps: false,
+    schema: 'internal', // remova se não usar schemas    
+    timestamps: false,
     indexes: [
       { fields: ['cod_grupo'] }
     ]

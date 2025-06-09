@@ -1,11 +1,12 @@
 import { Request, Response } from 'express';
 import GrupoMaterial,{ IGrupoMaterialAttributes } from '../models/GrupoMaterial';
 import { CadastroMaterial,  ICadastroMaterialAttributes } from '../models/CadastroMaterial';
+import { initializeModels } from '../models/index';
 
 interface ErrorResponse {
   message: string;
   error?: string;
-}
+} 
 
 class MaterialController {
   public async getMaterialByGroup(
@@ -13,6 +14,9 @@ class MaterialController {
     res: Response<ICadastroMaterialAttributes[] | ErrorResponse>
   ): Promise<Response> {
     try {
+      // Inicializar os modelos
+      initializeModels();
+      
       const { cod_grupo } = req.params;
 
       if (!cod_grupo) {

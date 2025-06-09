@@ -30,10 +30,6 @@ export class CadastroMaterial
   public desc_numero_itemmaterial?: number;
   public cod_unidade_medida!: string;
   public cod_classematerial!: number;
-
-  // timestamps (caso queira usar futuramente)
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
 }
 
 // Função para inicializar o modelo

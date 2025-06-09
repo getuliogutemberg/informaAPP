@@ -41,9 +41,9 @@ export class Alert
 // Função de inicialização do modelo
 export function initAlert(sequelize: Sequelize): void {
   Alert.init(
-    {
+    {      
       id: {
-        type: DataTypes.INTEGER.UNSIGNED,
+        type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true
       },

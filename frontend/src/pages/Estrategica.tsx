@@ -253,6 +253,7 @@ export default function TelaEstrategica() {
 
   // Carregar os itens apenas quando o grupo for selecionado
   useEffect(() => {
+    console.log("Grupo selecionado:", grupoSelecionado);
     if (grupoSelecionado) {
       axios
         .get(`http://localhost:5000/materials/${grupoSelecionado.cod_grupo}`)
