@@ -3,7 +3,6 @@ import sequelize from "../database"; // ajuste o caminho se necessário
 
 // Interface com todos os atributos
 export interface IEstrategiaParametros {
-  id?: string;
   cod_grupo: number;
   cod_item_material: number;
   client: string;
@@ -15,7 +14,7 @@ export interface IEstrategiaParametros {
 // Campos opcionais na criação
 type IEstrategiaParametrosCreationAttributes = Optional<
   IEstrategiaParametros,
-  'id' | 'data_estrategia'
+  'data_estrategia'
 >;
 
 // Definição do model
@@ -23,7 +22,6 @@ class EstrategiaParametros extends Model<
   IEstrategiaParametros,
   IEstrategiaParametrosCreationAttributes
 > implements IEstrategiaParametros {
-  public id!: string;
   public cod_grupo!: number;
   public cod_item_material!: number;
   public client!: string;
@@ -34,22 +32,38 @@ class EstrategiaParametros extends Model<
 
 EstrategiaParametros.init(
   {
-    id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      primaryKey: true,
-    },
     cod_grupo: {
       type: DataTypes.INTEGER,
       allowNull: false,
-    },
+      primaryKey: true,
+      references: {
+        model: {
+          tableName: 'dicionario_grupos',
+          schema: 'internal'
+        },
+        key: 'cod_grupo'
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'RESTRICT'
+    },    
     cod_item_material: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      primaryKey: true,
+      references: {
+        model: {
+          tableName: 'cadastro_materiais',
+          schema: 'internal'
+        },
+        key: 'cod_item_material'
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'RESTRICT'
     },
     client: {
       type: DataTypes.STRING,
       allowNull: false,
+      primaryKey: true,
       defaultValue: 'default',
     },
     cods_parametro: {
@@ -86,7 +100,7 @@ EstrategiaParametros.init(
     sequelize,
     modelName: 'EstrategiaParametros',
     tableName: 'estrategia_parametros',
-    schema: 'internal', // remova se não estiver usando schemas
+    schema: 'internal',
     timestamps: false,
     indexes: [
       { fields: ['cod_grupo'] },

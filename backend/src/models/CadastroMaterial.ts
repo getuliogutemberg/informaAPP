@@ -13,7 +13,6 @@ export interface ICadastroMaterialAttributes {
   desc_numero_itemmaterial?: number;
   cod_unidade_medida: string;
   cod_classematerial: number;
-  cod_grupo: number;
 }
 
 // Interface para criação (atributos opcionais no insert)
@@ -31,7 +30,6 @@ export class CadastroMaterial
   public desc_numero_itemmaterial?: number;
   public cod_unidade_medida!: string;
   public cod_classematerial!: number;
-  public cod_grupo!: number;
 
   // timestamps (caso queira usar futuramente)
   public readonly createdAt!: Date;
@@ -51,7 +49,8 @@ export function initCadastroMaterial(sequelize: Sequelize): void {
       cod_itemmaterial_ext: {
         type: DataTypes.INTEGER,
         allowNull: true
-      },      desc_material: {
+      },      
+      desc_material: {
         type: DataTypes.STRING(1000),
         allowNull: false,
         validate: {
@@ -64,7 +63,8 @@ export function initCadastroMaterial(sequelize: Sequelize): void {
       desc_numero_itemmaterial: {
         type: DataTypes.INTEGER,
         allowNull: true
-      },      cod_unidade_medida: {
+      },      
+      cod_unidade_medida: {
         type: DataTypes.STRING(1000),
         allowNull: false,
         references: {
@@ -81,14 +81,6 @@ export function initCadastroMaterial(sequelize: Sequelize): void {
         references: {
           model: 'classe_materiais',
           key: 'cod_classematerial'
-        }
-      },
-      cod_grupo: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'dicionario_grupos',
-          key: 'cod_grupo'
         }
       }
     },
