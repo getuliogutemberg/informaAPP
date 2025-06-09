@@ -3,32 +3,26 @@ import sequelize from "../database"; // ajuste se necessário
 
 // Interface com os atributos
 export interface IDicionarioGrupoAttributes {
-  id: string;
   cod_grupo: number;
   desc_grupo: string;
 }
 
 // Campos opcionais na criação
-type IDicionarioGrupoCreationAttributes = Optional<IDicionarioGrupoAttributes, 'id'>;
+type IDicionarioGrupoCreationAttributes = Optional<IDicionarioGrupoAttributes, 'cod_grupo'>;
 
 // Definição do model
 class DicionarioGrupo extends Model<IDicionarioGrupoAttributes, IDicionarioGrupoCreationAttributes>
   implements IDicionarioGrupoAttributes {
-  public id!: string;
   public cod_grupo!: number;
   public desc_grupo!: string;
 }
 
 DicionarioGrupo.init(
   {
-    id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      primaryKey: true
-    },
     cod_grupo: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      primaryKey: true,
       unique: true
     },
     desc_grupo: {

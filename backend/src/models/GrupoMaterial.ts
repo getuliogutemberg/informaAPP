@@ -3,7 +3,6 @@ import sequelize from "../database"; // ajuste o caminho conforme necessário
 
 // Interface com todos os atributos
 export interface IGrupoMaterialAttributes {
-  id: string;
   cod_item_material: number;
   cod_grupo: number;
   data_grupo?: Date;
@@ -12,13 +11,12 @@ export interface IGrupoMaterialAttributes {
 // Campos opcionais na criação
 type IGrupoMaterialCreationAttributes = Optional<
   IGrupoMaterialAttributes,
-  'id' | 'data_grupo'
+  'data_grupo'
 >;
 
 // Model Sequelize
 class GrupoMaterial extends Model<IGrupoMaterialAttributes, IGrupoMaterialCreationAttributes>
   implements IGrupoMaterialAttributes {
-  public id!: string;
   public cod_item_material!: number;
   public cod_grupo!: number;
   public data_grupo?: Date;
@@ -26,18 +24,22 @@ class GrupoMaterial extends Model<IGrupoMaterialAttributes, IGrupoMaterialCreati
 
 GrupoMaterial.init(
   {
-    id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      primaryKey: true
-    },
     cod_item_material: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
+      primaryKey: true,
+      references: {
+        model: 'cadastro_materiais',
+        key: 'cod_item_material'
+      }
     },
     cod_grupo: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
+      references: {
+        model: 'dicionario_grupos',
+        key: 'cod_grupo'
+      }
     },
     data_grupo: {
       type: DataTypes.DATE,
@@ -47,11 +49,10 @@ GrupoMaterial.init(
   {
     sequelize,
     modelName: 'GrupoMaterial',
-    tableName: 'grupo_materials',
-    schema: 'internal', // remova se não usar schemas
+    tableName: 'grupo_materiais',
+    schema: 'internal', // remova se não usar schemas    
     timestamps: false,
     indexes: [
-      { fields: ['cod_item_material'] },
       { fields: ['cod_grupo'] }
     ]
   }

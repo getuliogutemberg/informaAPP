@@ -1,0 +1,1052 @@
+[{
+  "cod_grupo": 1,
+  "desc_grupo": "ABRACADEIRA"
+},
+{
+  "cod_grupo": 2,
+  "desc_grupo": "ACELEROMETRO"
+},
+{
+  "cod_grupo": 3,
+  "desc_grupo": "ACIONADOR"
+},
+{
+  "cod_grupo": 4,
+  "desc_grupo": "ACOPLADOR"
+},
+{
+  "cod_grupo": 5,
+  "desc_grupo": "ACOPLAMENTO"
+},
+{
+  "cod_grupo": 6,
+  "desc_grupo": "ADAPTADOR"
+},
+{
+  "cod_grupo": 7,
+  "desc_grupo": "ALAVANCA"
+},
+{
+  "cod_grupo": 8,
+  "desc_grupo": "ALOJAMENTO"
+},
+{
+  "cod_grupo": 9,
+  "desc_grupo": "ANEL"
+},
+{
+  "cod_grupo": 10,
+  "desc_grupo": "ANILHA"
+},
+{
+  "cod_grupo": 11,
+  "desc_grupo": "AQUECEDOR"
+},
+{
+  "cod_grupo": 12,
+  "desc_grupo": "ARRUELA"
+},
+{
+  "cod_grupo": 13,
+  "desc_grupo": "ASSENTO"
+},
+{
+  "cod_grupo": 14,
+  "desc_grupo": "ATUADOR"
+},
+{
+  "cod_grupo": 15,
+  "desc_grupo": "AUTOTRANSFORMADOR"
+},
+{
+  "cod_grupo": 16,
+  "desc_grupo": "BARRAMENTO"
+},
+{
+  "cod_grupo": 17,
+  "desc_grupo": "BARREIRA"
+},
+{
+  "cod_grupo": 18,
+  "desc_grupo": "BASE"
+},
+{
+  "cod_grupo": 19,
+  "desc_grupo": "BATERIA"
+},
+{
+  "cod_grupo": 20,
+  "desc_grupo": "BICO"
+},
+{
+  "cod_grupo": 21,
+  "desc_grupo": "BLOCO"
+},
+{
+  "cod_grupo": 22,
+  "desc_grupo": "BOBINA"
+},
+{
+  "cod_grupo": 23,
+  "desc_grupo": "BOCAL"
+},
+{
+  "cod_grupo": 24,
+  "desc_grupo": "BOMBA"
+},
+{
+  "cod_grupo": 25,
+  "desc_grupo": "BORNES"
+},
+{
+  "cod_grupo": 26,
+  "desc_grupo": "BORRACHA"
+},
+{
+  "cod_grupo": 27,
+  "desc_grupo": "BOTOEIRA"
+},
+{
+  "cod_grupo": 28,
+  "desc_grupo": "BRONZE"
+},
+{
+  "cod_grupo": 29,
+  "desc_grupo": "BUCHA"
+},
+{
+  "cod_grupo": 30,
+  "desc_grupo": "BUJAO"
+},
+{
+  "cod_grupo": 31,
+  "desc_grupo": "CABECOTE"
+},
+{
+  "cod_grupo": 32,
+  "desc_grupo": "CABOS"
+},
+{
+  "cod_grupo": 33,
+  "desc_grupo": "CAIXA"
+},
+{
+  "cod_grupo": 34,
+  "desc_grupo": "CALCO"
+},
+{
+  "cod_grupo": 35,
+  "desc_grupo": "CAMPAINHA"
+},
+{
+  "cod_grupo": 36,
+  "desc_grupo": "CANALETA"
+},
+{
+  "cod_grupo": 37,
+  "desc_grupo": "CANTONEIRA"
+},
+{
+  "cod_grupo": 38,
+  "desc_grupo": "CAPACITOR"
+},
+{
+  "cod_grupo": 39,
+  "desc_grupo": "CARREGADOR"
+},
+{
+  "cod_grupo": 40,
+  "desc_grupo": "CARTAO"
+},
+{
+  "cod_grupo": 41,
+  "desc_grupo": "CARTUCHO"
+},
+{
+  "cod_grupo": 42,
+  "desc_grupo": "CELULA"
+},
+{
+  "cod_grupo": 43,
+  "desc_grupo": "CENTRAL"
+},
+{
+  "cod_grupo": 44,
+  "desc_grupo": "CHAPA"
+},
+{
+  "cod_grupo": 45,
+  "desc_grupo": "CHAVES"
+},
+{
+  "cod_grupo": 46,
+  "desc_grupo": "CHUMBADOR"
+},
+{
+  "cod_grupo": 47,
+  "desc_grupo": "CINTA"
+},
+{
+  "cod_grupo": 48,
+  "desc_grupo": "CLP"
+},
+{
+  "cod_grupo": 49,
+  "desc_grupo": "CM"
+},
+{
+  "cod_grupo": 50,
+  "desc_grupo": "CODIFICADOR"
+},
+{
+  "cod_grupo": 51,
+  "desc_grupo": "COMPLEMENTO"
+},
+{
+  "cod_grupo": 52,
+  "desc_grupo": "COMPRESSOR"
+},
+{
+  "cod_grupo": 53,
+  "desc_grupo": "COMUTADOR"
+},
+{
+  "cod_grupo": 54,
+  "desc_grupo": "CONDULETE"
+},
+{
+  "cod_grupo": 55,
+  "desc_grupo": "CONECTOR"
+},
+{
+  "cod_grupo": 56,
+  "desc_grupo": "CONEXAO"
+},
+{
+  "cod_grupo": 57,
+  "desc_grupo": "CONSOLA"
+},
+{
+  "cod_grupo": 58,
+  "desc_grupo": "CONTADOR"
+},
+{
+  "cod_grupo": 59,
+  "desc_grupo": "CONTATORA"
+},
+{
+  "cod_grupo": 60,
+  "desc_grupo": "CONTROLADOR"
+},
+{
+  "cod_grupo": 61,
+  "desc_grupo": "CONVERSOR"
+},
+{
+  "cod_grupo": 62,
+  "desc_grupo": "CORDAO"
+},
+{
+  "cod_grupo": 63,
+  "desc_grupo": "CORPO"
+},
+{
+  "cod_grupo": 64,
+  "desc_grupo": "CORREIA"
+},
+{
+  "cod_grupo": 65,
+  "desc_grupo": "CORRENTE"
+},
+{
+  "cod_grupo": 66,
+  "desc_grupo": "COTOVELO"
+},
+{
+  "cod_grupo": 67,
+  "desc_grupo": "COXIM"
+},
+{
+  "cod_grupo": 68,
+  "desc_grupo": "CP"
+},
+{
+  "cod_grupo": 69,
+  "desc_grupo": "CRUZETA"
+},
+{
+  "cod_grupo": 70,
+  "desc_grupo": "CUNHA"
+},
+{
+  "cod_grupo": 71,
+  "desc_grupo": "CURVA"
+},
+{
+  "cod_grupo": 72,
+  "desc_grupo": "DESSIPADOR"
+},
+{
+  "cod_grupo": 73,
+  "desc_grupo": "DETECTOR"
+},
+{
+  "cod_grupo": 74,
+  "desc_grupo": "DIAFRAGMA"
+},
+{
+  "cod_grupo": 75,
+  "desc_grupo": "DIODO"
+},
+{
+  "cod_grupo": 76,
+  "desc_grupo": "DISCO"
+},
+{
+  "cod_grupo": 77,
+  "desc_grupo": "DISJUNTOR"
+},
+{
+  "cod_grupo": 78,
+  "desc_grupo": "DISPOSITIVO"
+},
+{
+  "cod_grupo": 79,
+  "desc_grupo": "DISTRIBUIDOR"
+},
+{
+  "cod_grupo": 80,
+  "desc_grupo": "DUPLICADOR"
+},
+{
+  "cod_grupo": 81,
+  "desc_grupo": "EIXO"
+},
+{
+  "cod_grupo": 82,
+  "desc_grupo": "ELASTICO"
+},
+{
+  "cod_grupo": 83,
+  "desc_grupo": "ELDRO"
+},
+{
+  "cod_grupo": 84,
+  "desc_grupo": "ELEMEN"
+},
+{
+  "cod_grupo": 85,
+  "desc_grupo": "ELETROCALHA"
+},
+{
+  "cod_grupo": 86,
+  "desc_grupo": "ELETRODO"
+},
+{
+  "cod_grupo": 87,
+  "desc_grupo": "ELETRODUTO"
+},
+{
+  "cod_grupo": 88,
+  "desc_grupo": "ELETRONICA"
+},
+{
+  "cod_grupo": 89,
+  "desc_grupo": "ELETROVALVULA"
+},
+{
+  "cod_grupo": 90,
+  "desc_grupo": "EMBREAGEM"
+},
+{
+  "cod_grupo": 91,
+  "desc_grupo": "EMENDA"
+},
+{
+  "cod_grupo": 92,
+  "desc_grupo": "ENGATE"
+},
+{
+  "cod_grupo": 93,
+  "desc_grupo": "ESCOVA"
+},
+{
+  "cod_grupo": 94,
+  "desc_grupo": "ESFERA"
+},
+{
+  "cod_grupo": 95,
+  "desc_grupo": "ESPACADOR"
+},
+{
+  "cod_grupo": 96,
+  "desc_grupo": "ESPAGUETE"
+},
+{
+  "cod_grupo": 97,
+  "desc_grupo": "ESPELHO"
+},
+{
+  "cod_grupo": 98,
+  "desc_grupo": "EXAUTOR"
+},
+{
+  "cod_grupo": 99,
+  "desc_grupo": "FILTRANTE"
+},
+{
+  "cod_grupo": 100,
+  "desc_grupo": "FIM"
+},
+{
+  "cod_grupo": 101,
+  "desc_grupo": "FIXADOR"
+},
+{
+  "cod_grupo": 102,
+  "desc_grupo": "FLANGE"
+},
+{
+  "cod_grupo": 103,
+  "desc_grupo": "FLUTUANTE"
+},
+{
+  "cod_grupo": 104,
+  "desc_grupo": "FONTE"
+},
+{
+  "cod_grupo": 105,
+  "desc_grupo": "FREIO"
+},
+{
+  "cod_grupo": 106,
+  "desc_grupo": "FUSIVEL"
+},
+{
+  "cod_grupo": 107,
+  "desc_grupo": "GANCHO"
+},
+{
+  "cod_grupo": 108,
+  "desc_grupo": "GARRAS"
+},
+{
+  "cod_grupo": 109,
+  "desc_grupo": "GAXETA"
+},
+{
+  "cod_grupo": 110,
+  "desc_grupo": "GRADE"
+},
+{
+  "cod_grupo": 111,
+  "desc_grupo": "GRAMPO"
+},
+{
+  "cod_grupo": 112,
+  "desc_grupo": "GRAXEIRA"
+},
+{
+  "cod_grupo": 113,
+  "desc_grupo": "GRAXEIRO"
+},
+{
+  "cod_grupo": 114,
+  "desc_grupo": "GRELHA"
+},
+{
+  "cod_grupo": 115,
+  "desc_grupo": "HASTE"
+},
+{
+  "cod_grupo": 116,
+  "desc_grupo": "HELICE"
+},
+{
+  "cod_grupo": 117,
+  "desc_grupo": "HORIMETRO"
+},
+{
+  "cod_grupo": 118,
+  "desc_grupo": "IDENTIFICACAO"
+},
+{
+  "cod_grupo": 119,
+  "desc_grupo": "IHM"
+},
+{
+  "cod_grupo": 120,
+  "desc_grupo": "INDICADORCONTROLADOR"
+},
+{
+  "cod_grupo": 121,
+  "desc_grupo": "INST"
+},
+{
+  "cod_grupo": 122,
+  "desc_grupo": "INTERRUPTOR"
+},
+{
+  "cod_grupo": 123,
+  "desc_grupo": "INTERTRAVAMENTO"
+},
+{
+  "cod_grupo": 124,
+  "desc_grupo": "INVERSOR"
+},
+{
+  "cod_grupo": 125,
+  "desc_grupo": "ISOLADORES"
+},
+{
+  "cod_grupo": 126,
+  "desc_grupo": "JAMPER"
+},
+{
+  "cod_grupo": 127,
+  "desc_grupo": "JANELA"
+},
+{
+  "cod_grupo": 128,
+  "desc_grupo": "JOELHO"
+},
+{
+  "cod_grupo": 129,
+  "desc_grupo": "JOGO"
+},
+{
+  "cod_grupo": 130,
+  "desc_grupo": "JUNTA"
+},
+{
+  "cod_grupo": 131,
+  "desc_grupo": "LAMINAS"
+},
+{
+  "cod_grupo": 132,
+  "desc_grupo": "LAMPADA"
+},
+{
+  "cod_grupo": 133,
+  "desc_grupo": "LEITO"
+},
+{
+  "cod_grupo": 134,
+  "desc_grupo": "LENCOL"
+},
+{
+  "cod_grupo": 135,
+  "desc_grupo": "LENTE"
+},
+{
+  "cod_grupo": 136,
+  "desc_grupo": "LIMITADOR"
+},
+{
+  "cod_grupo": 137,
+  "desc_grupo": "LINGA"
+},
+{
+  "cod_grupo": 138,
+  "desc_grupo": "LUBRIFIL"
+},
+{
+  "cod_grupo": 139,
+  "desc_grupo": "LUMINARIA"
+},
+{
+  "cod_grupo": 140,
+  "desc_grupo": "LUMINFAROL"
+},
+{
+  "cod_grupo": 141,
+  "desc_grupo": "LUVA"
+},
+{
+  "cod_grupo": 142,
+  "desc_grupo": "MAGNETICO"
+},
+{
+  "cod_grupo": 143,
+  "desc_grupo": "MANCAIS"
+},
+{
+  "cod_grupo": 144,
+  "desc_grupo": "MANCAL"
+},
+{
+  "cod_grupo": 145,
+  "desc_grupo": "MANGUEIRAS"
+},
+{
+  "cod_grupo": 146,
+  "desc_grupo": "MANILHA"
+},
+{
+  "cod_grupo": 147,
+  "desc_grupo": "MANOMETRO"
+},
+{
+  "cod_grupo": 148,
+  "desc_grupo": "MANOPLA"
+},
+{
+  "cod_grupo": 149,
+  "desc_grupo": "MANTA"
+},
+{
+  "cod_grupo": 150,
+  "desc_grupo": "MANUTENCAO"
+},
+{
+  "cod_grupo": 151,
+  "desc_grupo": "MAO"
+},
+{
+  "cod_grupo": 152,
+  "desc_grupo": "MATRIZ"
+},
+{
+  "cod_grupo": 153,
+  "desc_grupo": "MEDIDOR"
+},
+{
+  "cod_grupo": 154,
+  "desc_grupo": "MICROPROC"
+},
+{
+  "cod_grupo": 155,
+  "desc_grupo": "MICROVENTILADOR"
+},
+{
+  "cod_grupo": 156,
+  "desc_grupo": "MINI"
+},
+{
+  "cod_grupo": 157,
+  "desc_grupo": "MODELO"
+},
+{
+  "cod_grupo": 158,
+  "desc_grupo": "MODULO"
+},
+{
+  "cod_grupo": 159,
+  "desc_grupo": "MOLAS"
+},
+{
+  "cod_grupo": 160,
+  "desc_grupo": "MONITOR"
+},
+{
+  "cod_grupo": 161,
+  "desc_grupo": "MONTAGEM"
+},
+{
+  "cod_grupo": 162,
+  "desc_grupo": "MOTOBOMBA"
+},
+{
+  "cod_grupo": 163,
+  "desc_grupo": "MOTOR"
+},
+{
+  "cod_grupo": 164,
+  "desc_grupo": "MOTOVENTILADOR"
+},
+{
+  "cod_grupo": 165,
+  "desc_grupo": "NIPLE"
+},
+{
+  "cod_grupo": 166,
+  "desc_grupo": "NIVEL"
+},
+{
+  "cod_grupo": 167,
+  "desc_grupo": "OLHAL"
+},
+{
+  "cod_grupo": 168,
+  "desc_grupo": "OPCIONAL"
+},
+{
+  "cod_grupo": 169,
+  "desc_grupo": "PAINEL"
+},
+{
+  "cod_grupo": 170,
+  "desc_grupo": "PAPELAO"
+},
+{
+  "cod_grupo": 171,
+  "desc_grupo": "PARAFUSO"
+},
+{
+  "cod_grupo": 172,
+  "desc_grupo": "PARTE"
+},
+{
+  "cod_grupo": 173,
+  "desc_grupo": "PASTILHA"
+},
+{
+  "cod_grupo": 174,
+  "desc_grupo": "PATCH"
+},
+{
+  "cod_grupo": 175,
+  "desc_grupo": "PENDULO"
+},
+{
+  "cod_grupo": 176,
+  "desc_grupo": "PERFILADO"
+},
+{
+  "cod_grupo": 177,
+  "desc_grupo": "PERIFERICO"
+},
+{
+  "cod_grupo": 178,
+  "desc_grupo": "PINCEL"
+},
+{
+  "cod_grupo": 179,
+  "desc_grupo": "PINO"
+},
+{
+  "cod_grupo": 180,
+  "desc_grupo": "PLACA"
+},
+{
+  "cod_grupo": 181,
+  "desc_grupo": "PLUGUE"
+},
+{
+  "cod_grupo": 182,
+  "desc_grupo": "POLIAS"
+},
+{
+  "cod_grupo": 183,
+  "desc_grupo": "PONTEIRA"
+},
+{
+  "cod_grupo": 184,
+  "desc_grupo": "PONTO"
+},
+{
+  "cod_grupo": 185,
+  "desc_grupo": "PORCA"
+},
+{
+  "cod_grupo": 186,
+  "desc_grupo": "PORTA"
+},
+{
+  "cod_grupo": 187,
+  "desc_grupo": "POSTE"
+},
+{
+  "cod_grupo": 188,
+  "desc_grupo": "PRENSA"
+},
+{
+  "cod_grupo": 189,
+  "desc_grupo": "PRESSOSTATO"
+},
+{
+  "cod_grupo": 190,
+  "desc_grupo": "PROC"
+},
+{
+  "cod_grupo": 191,
+  "desc_grupo": "PROJETOR"
+},
+{
+  "cod_grupo": 192,
+  "desc_grupo": "PROLONGADOR"
+},
+{
+  "cod_grupo": 193,
+  "desc_grupo": "PROTETOR"
+},
+{
+  "cod_grupo": 194,
+  "desc_grupo": "PS"
+},
+{
+  "cod_grupo": 195,
+  "desc_grupo": "PT"
+},
+{
+  "cod_grupo": 196,
+  "desc_grupo": "PURGADOR"
+},
+{
+  "cod_grupo": 197,
+  "desc_grupo": "QUADRADOR"
+},
+{
+  "cod_grupo": 198,
+  "desc_grupo": "QUADRO"
+},
+{
+  "cod_grupo": 199,
+  "desc_grupo": "RACK"
+},
+{
+  "cod_grupo": 200,
+  "desc_grupo": "RADIADOR"
+},
+{
+  "cod_grupo": 201,
+  "desc_grupo": "RADIO"
+},
+{
+  "cod_grupo": 202,
+  "desc_grupo": "REATOR"
+},
+{
+  "cod_grupo": 203,
+  "desc_grupo": "REBITE"
+},
+{
+  "cod_grupo": 204,
+  "desc_grupo": "REDUTOR"
+},
+{
+  "cod_grupo": 205,
+  "desc_grupo": "REFLETOR"
+},
+{
+  "cod_grupo": 206,
+  "desc_grupo": "REGISTRO"
+},
+{
+  "cod_grupo": 207,
+  "desc_grupo": "REGUA"
+},
+{
+  "cod_grupo": 208,
+  "desc_grupo": "REGULADOR"
+},
+{
+  "cod_grupo": 209,
+  "desc_grupo": "RELE"
+},
+{
+  "cod_grupo": 210,
+  "desc_grupo": "REOSTATO"
+},
+{
+  "cod_grupo": 211,
+  "desc_grupo": "REPARO"
+},
+{
+  "cod_grupo": 212,
+  "desc_grupo": "RESFRIADOR"
+},
+{
+  "cod_grupo": 213,
+  "desc_grupo": "RESISTENCIA"
+},
+{
+  "cod_grupo": 214,
+  "desc_grupo": "RESISTOR"
+},
+{
+  "cod_grupo": 215,
+  "desc_grupo": "RETENTOR"
+},
+{
+  "cod_grupo": 216,
+  "desc_grupo": "RODAS"
+},
+{
+  "cod_grupo": 217,
+  "desc_grupo": "ROLAMENTO"
+},
+{
+  "cod_grupo": 218,
+  "desc_grupo": "ROTOR"
+},
+{
+  "cod_grupo": 219,
+  "desc_grupo": "SAIDA"
+},
+{
+  "cod_grupo": 220,
+  "desc_grupo": "SAPATA"
+},
+{
+  "cod_grupo": 221,
+  "desc_grupo": "SECCIONADORA"
+},
+{
+  "cod_grupo": 222,
+  "desc_grupo": "SEGMENTO"
+},
+{
+  "cod_grupo": 223,
+  "desc_grupo": "SEGUIMENTO"
+},
+{
+  "cod_grupo": 224,
+  "desc_grupo": "SELOS"
+},
+{
+  "cod_grupo": 225,
+  "desc_grupo": "SENSORTEMPERATURA"
+},
+{
+  "cod_grupo": 226,
+  "desc_grupo": "SILICONE"
+},
+{
+  "cod_grupo": 227,
+  "desc_grupo": "SINALEIRO"
+},
+{
+  "cod_grupo": 228,
+  "desc_grupo": "SINALIZADOR"
+},
+{
+  "cod_grupo": 229,
+  "desc_grupo": "SIRENE"
+},
+{
+  "cod_grupo": 230,
+  "desc_grupo": "SM"
+},
+{
+  "cod_grupo": 231,
+  "desc_grupo": "SOLDA"
+},
+{
+  "cod_grupo": 232,
+  "desc_grupo": "SOLENOIDE"
+},
+{
+  "cod_grupo": 233,
+  "desc_grupo": "SONDA"
+},
+{
+  "cod_grupo": 234,
+  "desc_grupo": "SOQUETE"
+},
+{
+  "cod_grupo": 235,
+  "desc_grupo": "SUPORTE"
+},
+{
+  "cod_grupo": 236,
+  "desc_grupo": "SUSPIRO"
+},
+{
+  "cod_grupo": 237,
+  "desc_grupo": "SWITCH"
+},
+{
+  "cod_grupo": 238,
+  "desc_grupo": "TAMPA"
+},
+{
+  "cod_grupo": 239,
+  "desc_grupo": "TANQUE"
+},
+{
+  "cod_grupo": 240,
+  "desc_grupo": "TARUGO"
+},
+{
+  "cod_grupo": 241,
+  "desc_grupo": "TERMORRESISTENCIA"
+},
+{
+  "cod_grupo": 242,
+  "desc_grupo": "TIRANTES"
+},
+{
+  "cod_grupo": 243,
+  "desc_grupo": "TIRISTOR"
+},
+{
+  "cod_grupo": 244,
+  "desc_grupo": "TOMADA"
+},
+{
+  "cod_grupo": 245,
+  "desc_grupo": "TOMADOR"
+},
+{
+  "cod_grupo": 246,
+  "desc_grupo": "TRAFO"
+},
+{
+  "cod_grupo": 247,
+  "desc_grupo": "TRANSDUTOR"
+},
+{
+  "cod_grupo": 248,
+  "desc_grupo": "TRANSFORMADOR"
+},
+{
+  "cod_grupo": 249,
+  "desc_grupo": "TRANSMISSOR"
+},
+{
+  "cod_grupo": 250,
+  "desc_grupo": "TRAVA"
+},
+{
+  "cod_grupo": 251,
+  "desc_grupo": "TRILHO"
+},
+{
+  "cod_grupo": 252,
+  "desc_grupo": "TROCADOR"
+},
+{
+  "cod_grupo": 253,
+  "desc_grupo": "TUBO"
+},
+{
+  "cod_grupo": 254,
+  "desc_grupo": "TUNGSTENIO"
+},
+{
+  "cod_grupo": 255,
+  "desc_grupo": "UNIAO"
+},
+{
+  "cod_grupo": 256,
+  "desc_grupo": "UNIDADE"
+},
+{
+  "cod_grupo": 257,
+  "desc_grupo": "VALVULA"
+},
+{
+  "cod_grupo": 258,
+  "desc_grupo": "VARA"
+},
+{
+  "cod_grupo": 259,
+  "desc_grupo": "VARETA"
+},
+{
+  "cod_grupo": 260,
+  "desc_grupo": "VEDACAO"
+},
+{
+  "cod_grupo": 261,
+  "desc_grupo": "VENTILADOR"
+},
+{
+  "cod_grupo": 262,
+  "desc_grupo": "VISOR"
+},
+{
+  "cod_grupo": 263,
+  "desc_grupo": "Y"
+}]
