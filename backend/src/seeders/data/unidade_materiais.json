@@ -1,0 +1,688 @@
+[{
+  "cod_unidade": "S/UN",
+  "desc_unidade": "S/UN"
+},
+{
+  "cod_unidade": "ppmv",
+  "desc_unidade": "ppmv"
+},
+{
+  "cod_unidade": "mOhm",
+  "desc_unidade": "Mili Ohm"
+},
+{
+  "cod_unidade": "rpm",
+  "desc_unidade": "Rotações por minuto"
+},
+{
+  "cod_unidade": "bar",
+  "desc_unidade": "Bar"
+},
+{
+  "cod_unidade": "µA",
+  "desc_unidade": "MicroAmpere"
+},
+{
+  "cod_unidade": "mV",
+  "desc_unidade": "Mili Volt"
+},
+{
+  "cod_unidade": "dBm",
+  "desc_unidade": "dBm"
+},
+{
+  "cod_unidade": "kgf",
+  "desc_unidade": "Quilogramaforça"
+},
+{
+  "cod_unidade": "µF",
+  "desc_unidade": "MicroFarad"
+},
+{
+  "cod_unidade": "dB",
+  "desc_unidade": "Decibel"
+},
+{
+  "cod_unidade": "ns",
+  "desc_unidade": "NanoSegundo"
+},
+{
+  "cod_unidade": "Min",
+  "desc_unidade": "Minuto"
+},
+{
+  "cod_unidade": "N/A",
+  "desc_unidade": "N/A"
+},
+{
+  "cod_unidade": "R$",
+  "desc_unidade": "Reais"
+},
+{
+  "cod_unidade": "kHz",
+  "desc_unidade": "QuiloHertz"
+},
+{
+  "cod_unidade": "Siemens",
+  "desc_unidade": "Siemens"
+},
+{
+  "cod_unidade": "HENRY",
+  "desc_unidade": "Henry"
+},
+{
+  "cod_unidade": "CV",
+  "desc_unidade": "Cavalo vapor"
+},
+{
+  "cod_unidade": "g/ml",
+  "desc_unidade": "Gramas por mililitro"
+},
+{
+  "cod_unidade": "mA",
+  "desc_unidade": "MiliAmpere"
+},
+{
+  "cod_unidade": "Ah",
+  "desc_unidade": "Ampere/hora"
+},
+{
+  "cod_unidade": "kVA",
+  "desc_unidade": "QuiloVolt-Ampere"
+},
+{
+  "cod_unidade": "kW",
+  "desc_unidade": "QuiloWatt"
+},
+{
+  "cod_unidade": "GB",
+  "desc_unidade": "Gigabyte"
+},
+{
+  "cod_unidade": "MB",
+  "desc_unidade": "Megabyte"
+},
+{
+  "cod_unidade": "GHz",
+  "desc_unidade": "Gigahertz"
+},
+{
+  "cod_unidade": "pF",
+  "desc_unidade": "Picofarad"
+},
+{
+  "cod_unidade": "VA",
+  "desc_unidade": "Volt-Ampere"
+},
+{
+  "cod_unidade": "h",
+  "desc_unidade": "Hora"
+},
+{
+  "cod_unidade": "mm",
+  "desc_unidade": "Milímetro"
+},
+{
+  "cod_unidade": "cm",
+  "desc_unidade": "Centímetro"
+},
+{
+  "cod_unidade": "m",
+  "desc_unidade": "Metro"
+},
+{
+  "cod_unidade": "g",
+  "desc_unidade": "Grama"
+},
+{
+  "cod_unidade": "kg",
+  "desc_unidade": "Quilograma"
+},
+{
+  "cod_unidade": "t",
+  "desc_unidade": "Tonelada"
+},
+{
+  "cod_unidade": "V",
+  "desc_unidade": "Volt"
+},
+{
+  "cod_unidade": "Vca",
+  "desc_unidade": "Tensão Alternada"
+},
+{
+  "cod_unidade": "UN",
+  "desc_unidade": "Unidade Material"
+},
+{
+  "cod_unidade": "km",
+  "desc_unidade": "Quilômetro"
+},
+{
+  "cod_unidade": "MVA",
+  "desc_unidade": "MegaVolt-Ampere"
+},
+{
+  "cod_unidade": "Ohmkm",
+  "desc_unidade": "Ohm/km"
+},
+{
+  "cod_unidade": "µS/km",
+  "desc_unidade": "MicroSiemens/km"
+},
+{
+  "cod_unidade": "NC",
+  "desc_unidade": "Não corresponde"
+},
+{
+  "cod_unidade": "Hz",
+  "desc_unidade": "Hertz"
+},
+{
+  "cod_unidade": "A",
+  "desc_unidade": "Ampere"
+},
+{
+  "cod_unidade": "µOhm",
+  "desc_unidade": "MicroOhm"
+},
+{
+  "cod_unidade": "l",
+  "desc_unidade": "Litro"
+},
+{
+  "cod_unidade": "kA",
+  "desc_unidade": "QuiloAmpere"
+},
+{
+  "cod_unidade": "%",
+  "desc_unidade": "Porcentagem"
+},
+{
+  "cod_unidade": "ºC",
+  "desc_unidade": "Graus centígrado"
+},
+{
+  "cod_unidade": "ms",
+  "desc_unidade": "Milisegundo"
+},
+{
+  "cod_unidade": "Ohm",
+  "desc_unidade": "Ohm"
+},
+{
+  "cod_unidade": "Mpa",
+  "desc_unidade": "Megapascal"
+},
+{
+  "cod_unidade": "Vcc",
+  "desc_unidade": "Tensão Contínua"
+},
+{
+  "cod_unidade": "W",
+  "desc_unidade": "Watt"
+},
+{
+  "cod_unidade": "s",
+  "desc_unidade": "Segundo"
+},
+{
+  "cod_unidade": "kV",
+  "desc_unidade": "Quilovolt"
+},
+{
+  "cod_unidade": "MVAr",
+  "desc_unidade": "MegaVolt-Ampere reativo"
+},
+{
+  "cod_unidade": "kJ/kV",
+  "desc_unidade": "QuiloJoule/quilovolt"
+},
+{
+  "cod_unidade": "N/m",
+  "desc_unidade": "Newton por metro"
+},
+{
+  "cod_unidade": "kA/s",
+  "desc_unidade": "QuiloAmpere/segundo"
+},
+{
+  "cod_unidade": "m2",
+  "desc_unidade": "Metro quadrado"
+},
+{
+  "cod_unidade": "MOhm",
+  "desc_unidade": "Mega Ohm"
+},
+{
+  "cod_unidade": "ppm",
+  "desc_unidade": "Partes por milhão"
+},
+{
+  "cod_unidade": "mgK/g",
+  "desc_unidade": "MiligramaKOH por grama"
+},
+{
+  "cod_unidade": "dn/cm",
+  "desc_unidade": "Dina por centímetro"
+},
+{
+  "cod_unidade": "MJ",
+  "desc_unidade": "MegaJoule"
+},
+{
+  "cod_unidade": "kVpico",
+  "desc_unidade": "QuiloVoltPico"
+},
+{
+  "cod_unidade": "kApico",
+  "desc_unidade": "QuiloAmperPico"
+},
+{
+  "cod_unidade": "µ?",
+  "desc_unidade": "µ?"
+},
+{
+  "cod_unidade": "mm2",
+  "desc_unidade": "Milímetro quadrado"
+},
+{
+  "cod_unidade": "MHz",
+  "desc_unidade": "MegaHertz"
+},
+{
+  "cod_unidade": "nF/km",
+  "desc_unidade": "Nano Faraday por Km"
+},
+{
+  "cod_unidade": "Ohm/F",
+  "desc_unidade": "Ohm por fase"
+},
+{
+  "cod_unidade": "Ohm/Km",
+  "desc_unidade": "Ohm por Km"
+},
+{
+  "cod_unidade": "S/km",
+  "desc_unidade": "Siemens por Km"
+},
+{
+  "cod_unidade": "Grau",
+  "desc_unidade": "Grau"
+},
+{
+  "cod_unidade": "KN",
+  "desc_unidade": "QuiloNewton"
+},
+{
+  "cod_unidade": "%mass",
+  "desc_unidade": "Por cento em massa"
+},
+{
+  "cod_unidade": "%UR",
+  "desc_unidade": "Umidade Relativa"
+},
+{
+  "cod_unidade": "ATM",
+  "desc_unidade": "Pressão atmosférica"
+},
+{
+  "cod_unidade": "AWG",
+  "desc_unidade": "Bitola AWG"
+},
+{
+  "cod_unidade": "bl",
+  "desc_unidade": "Bloco"
+},
+{
+  "cod_unidade": "cm2",
+  "desc_unidade": "Centímetro quadrado"
+},
+{
+  "cod_unidade": "cm3",
+  "desc_unidade": "Centímetro cúbico"
+},
+{
+  "cod_unidade": "CX",
+  "desc_unidade": "Caixa"
+},
+{
+  "cod_unidade": "dBi",
+  "desc_unidade": "Ganho dBi"
+},
+{
+  "cod_unidade": "fl",
+  "desc_unidade": "Folha"
+},
+{
+  "cod_unidade": "gl",
+  "desc_unidade": "Galão"
+},
+{
+  "cod_unidade": "GVA",
+  "desc_unidade": "GigaVoltAmpere"
+},
+{
+  "cod_unidade": "GW",
+  "desc_unidade": "GigaWatt"
+},
+{
+  "cod_unidade": "HP",
+  "desc_unidade": "Cavalo força"
+},
+{
+  "cod_unidade": "Jg",
+  "desc_unidade": "Jogo"
+},
+{
+  "cod_unidade": "K",
+  "desc_unidade": "Kelvin"
+},
+{
+  "cod_unidade": "kbar",
+  "desc_unidade": "QuiloBar"
+},
+{
+  "cod_unidade": "KgFcm2",
+  "desc_unidade": "Quilogramaforça p centímetro"
+},
+{
+  "cod_unidade": "Kgfm",
+  "desc_unidade": "Quilogramaforça por metro"
+},
+{
+  "cod_unidade": "Kgmm2",
+  "desc_unidade": "Quilograma p milímetro quadrad"
+},
+{
+  "cod_unidade": "KIT",
+  "desc_unidade": "Kit"
+},
+{
+  "cod_unidade": "Km2",
+  "desc_unidade": "Quilômetro quadrado"
+},
+{
+  "cod_unidade": "Kohm",
+  "desc_unidade": "QuiloOhm"
+},
+{
+  "cod_unidade": "kPa",
+  "desc_unidade": "QuiloPascal"
+},
+{
+  "cod_unidade": "kWh",
+  "desc_unidade": "QuiloWatt hora"
+},
+{
+  "cod_unidade": "l/h",
+  "desc_unidade": "Litros por hora"
+},
+{
+  "cod_unidade": "l/min",
+  "desc_unidade": "Litros por minuto"
+},
+{
+  "cod_unidade": "l/s",
+  "desc_unidade": "Litros por segundo"
+},
+{
+  "cod_unidade": "m/min",
+  "desc_unidade": "Metro por minuto"
+},
+{
+  "cod_unidade": "m/s",
+  "desc_unidade": "Metro por segundo"
+},
+{
+  "cod_unidade": "m/s2",
+  "desc_unidade": "Metro por segundo quadrado"
+},
+{
+  "cod_unidade": "m3",
+  "desc_unidade": "Metro cúbico"
+},
+{
+  "cod_unidade": "m3/h",
+  "desc_unidade": "Metro cúbico por hora"
+},
+{
+  "cod_unidade": "m3/s",
+  "desc_unidade": "Metro cúbico por segundo"
+},
+{
+  "cod_unidade": "MF",
+  "desc_unidade": "Mega Faraday"
+},
+{
+  "cod_unidade": "mH",
+  "desc_unidade": "Mili Henry"
+},
+{
+  "cod_unidade": "ml",
+  "desc_unidade": "Mililitro"
+},
+{
+  "cod_unidade": "MW",
+  "desc_unidade": "Mega Watt"
+},
+{
+  "cod_unidade": "MWh",
+  "desc_unidade": "Mega Watt hora"
+},
+{
+  "cod_unidade": "pC",
+  "desc_unidade": "Pico Coulomb"
+},
+{
+  "cod_unidade": "Pct",
+  "desc_unidade": "Pacote"
+},
+{
+  "cod_unidade": "psi",
+  "desc_unidade": "Libra por polegada quadrada"
+},
+{
+  "cod_unidade": "PU",
+  "desc_unidade": "Por Unidade"
+},
+{
+  "cod_unidade": "rad",
+  "desc_unidade": "Radiano"
+},
+{
+  "cod_unidade": "ano",
+  "desc_unidade": "Ano"
+},
+{
+  "cod_unidade": "Par",
+  "desc_unidade": "Par"
+},
+{
+  "cod_unidade": "pol",
+  "desc_unidade": "Polegada"
+},
+{
+  "cod_unidade": "kV/uS",
+  "desc_unidade": "QuiloVolt/microsegundo"
+},
+{
+  "cod_unidade": "A/us",
+  "desc_unidade": "Ampere/microsegundo"
+},
+{
+  "cod_unidade": "A2s",
+  "desc_unidade": "Ampere quadrado por segundo"
+},
+{
+  "cod_unidade": "N/C",
+  "desc_unidade": "N/C"
+},
+{
+  "cod_unidade": "Pç",
+  "desc_unidade": "Peça"
+},
+{
+  "cod_unidade": "Cj",
+  "desc_unidade": "Conjunto"
+},
+{
+  "cod_unidade": "dN/Am",
+  "desc_unidade": "dN/Am"
+},
+{
+  "cod_unidade": "Wh",
+  "desc_unidade": "Watt hora"
+},
+{
+  "cod_unidade": "kA/1s",
+  "desc_unidade": "Quilo Ampere por um segundo"
+},
+{
+  "cod_unidade": "data",
+  "desc_unidade": "Data"
+},
+{
+  "cod_unidade": "m3/kWh",
+  "desc_unidade": "Metro cúbico / Quilo Watt hora"
+},
+{
+  "cod_unidade": "lat",
+  "desc_unidade": "Latitude"
+},
+{
+  "cod_unidade": "long",
+  "desc_unidade": "Longitude"
+},
+{
+  "cod_unidade": "mca",
+  "desc_unidade": "Metros de coluna dágua"
+},
+{
+  "cod_unidade": "Nm",
+  "desc_unidade": "Newton metro"
+},
+{
+  "cod_unidade": "anos_m3/s",
+  "desc_unidade": "Anos Metro cúbico por segundo"
+},
+{
+  "cod_unidade": "MWmed",
+  "desc_unidade": "MegaWatt médio"
+},
+{
+  "cod_unidade": "kV/kV",
+  "desc_unidade": "QuiloVolt / QuiloVolt"
+},
+{
+  "cod_unidade": "hm3",
+  "desc_unidade": "Hectômetro cúbico"
+},
+{
+  "cod_unidade": "W/m2",
+  "desc_unidade": "Watt/metro quadrado"
+},
+{
+  "cod_unidade": "uV/W/m2",
+  "desc_unidade": "microVolt/Watt/m2"
+},
+{
+  "cod_unidade": "Wp",
+  "desc_unidade": "Watt pico"
+},
+{
+  "cod_unidade": "nm",
+  "desc_unidade": "Nanometro"
+},
+{
+  "cod_unidade": "m³/s",
+  "desc_unidade": "m³/s"
+},
+{
+  "cod_unidade": "NA",
+  "desc_unidade": "NÃO APLICÁVEL"
+},
+{
+  "cod_unidade": "mg/l",
+  "desc_unidade": "Miligrama por Litro"
+},
+{
+  "cod_unidade": "Aac",
+  "desc_unidade": "Aac"
+},
+{
+  "cod_unidade": "Vac",
+  "desc_unidade": "VCA"
+},
+{
+  "cod_unidade": "VCC",
+  "desc_unidade": "VCC"
+},
+{
+  "cod_unidade": "Acc",
+  "desc_unidade": "Acc"
+},
+{
+  "cod_unidade": "g/l",
+  "desc_unidade": "g/l"
+},
+{
+  "cod_unidade": "ºc",
+  "desc_unidade": "ºC"
+},
+{
+  "cod_unidade": "°C",
+  "desc_unidade": "°C"
+},
+{
+  "cod_unidade": "kgf/cm??2",
+  "desc_unidade": "Quilogramaforça p/cm.quadrado"
+},
+{
+  "cod_unidade": "min",
+  "desc_unidade": "minuto"
+},
+{
+  "cod_unidade": "mg/m3",
+  "desc_unidade": "Miligrama por metro cúbico"
+},
+{
+  "cod_unidade": "mm/s",
+  "desc_unidade": "Milímetro por segundo"
+},
+{
+  "cod_unidade": "GHM",
+  "desc_unidade": "GHM"
+},
+{
+  "cod_unidade": "MHM",
+  "desc_unidade": "MHM"
+},
+{
+  "cod_unidade": "1",
+  "desc_unidade": "kgf/cm2"
+},
+{
+  "cod_unidade": "Graus Cels",
+  "desc_unidade": "Graus Celsius"
+},
+{
+  "cod_unidade": "Volt Contí",
+  "desc_unidade": "Volt Contínuo"
+},
+{
+  "cod_unidade": "m³/h",
+  "desc_unidade": "m³/h"
+},
+{
+  "cod_unidade": "l/m",
+  "desc_unidade": "l/m"
+},
+{
+  "cod_unidade": "S",
+  "desc_unidade": "S"
+},
+{
+  "cod_unidade": "KWh",
+  "desc_unidade": "KWh"
+}]

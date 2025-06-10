@@ -1,0 +1,410 @@
+[{
+  "cod_grupo": 1,
+  "cod_item_material": 0,
+  "client": "default",
+  "cods_parametro": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "cods_opcao": [
+    1,
+    1,
+    0,
+    1,
+    4,
+    3,
+    2,
+    0
+  ],
+  "data_estrategia": "2025-05-05T19:12:00.797Z"
+},
+{
+  "cod_grupo": 1,
+  "cod_item_material": 130,
+  "client": "default",
+  "cods_parametro": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "cods_opcao": [
+    1,
+    1,
+    0,
+    5,
+    4,
+    1,
+    2,
+    0
+  ],
+  "data_estrategia": "2025-05-05T19:12:28.232Z"
+},
+{
+  "cod_grupo": 1,
+  "cod_item_material": 1737,
+  "client": "default",
+  "cods_parametro": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "cods_opcao": [
+    1,
+    1,
+    0,
+    1,
+    4,
+    3,
+    2,
+    0
+  ],
+  "data_estrategia": "2025-05-05T19:12:00.797Z"
+},
+{
+  "cod_grupo": 1,
+  "cod_item_material": 1738,
+  "client": "default",
+  "cods_parametro": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "cods_opcao": [
+    1,
+    1,
+    0,
+    1,
+    4,
+    3,
+    2,
+    0
+  ],
+  "data_estrategia": "2025-05-05T19:12:00.797Z"
+},
+{
+  "cod_grupo": 1,
+  "cod_item_material": 1739,
+  "client": "default",
+  "cods_parametro": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "cods_opcao": [
+    1,
+    1,
+    0,
+    1,
+    4,
+    3,
+    2,
+    0
+  ],
+  "data_estrategia": "2025-05-05T19:12:00.797Z"
+},
+{
+  "cod_grupo": 1,
+  "cod_item_material": 2405,
+  "client": "default",
+  "cods_parametro": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "cods_opcao": [
+    1,
+    1,
+    0,
+    1,
+    4,
+    3,
+    2,
+    0
+  ],
+  "data_estrategia": "2025-05-05T19:12:00.797Z"
+},
+{
+  "cod_grupo": 2,
+  "cod_item_material": 0,
+  "client": "default",
+  "cods_parametro": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "cods_opcao": [
+    1,
+    0,
+    0,
+    3
+  ],
+  "data_estrategia": "2025-04-24T13:24:17.366Z"
+},
+{
+  "cod_grupo": 2,
+  "cod_item_material": 2162,
+  "client": "default",
+  "cods_parametro": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "cods_opcao": [
+    1,
+    0,
+    0,
+    3
+  ],
+  "data_estrategia": "2025-04-24T13:24:17.366Z"
+},
+{
+  "cod_grupo": 3,
+  "cod_item_material": 0,
+  "client": "default",
+  "cods_parametro": [
+    3,
+    4,
+    5,
+    6
+  ],
+  "cods_opcao": [
+    0,
+    3,
+    1,
+    2
+  ],
+  "data_estrategia": "2025-04-24T14:22:45.211Z"
+},
+{
+  "cod_grupo": 3,
+  "cod_item_material": 482,
+  "client": "default",
+  "cods_parametro": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "cods_opcao": [
+    0,
+    0,
+    2,
+    3,
+    2,
+    2
+  ],
+  "data_estrategia": "2025-04-24T15:33:15.011Z"
+},
+{
+  "cod_grupo": 3,
+  "cod_item_material": 2263,
+  "client": "default",
+  "cods_parametro": [
+    3,
+    4,
+    5,
+    6
+  ],
+  "cods_opcao": [
+    0,
+    3,
+    1,
+    2
+  ],
+  "data_estrategia": "2025-04-24T14:22:45.211Z"
+},
+{
+  "cod_grupo": 3,
+  "cod_item_material": 2707,
+  "client": "default",
+  "cods_parametro": [
+    3,
+    4,
+    5,
+    6
+  ],
+  "cods_opcao": [
+    0,
+    3,
+    1,
+    2
+  ],
+  "data_estrategia": "2025-04-24T14:22:45.211Z"
+},
+{
+  "cod_grupo": 7,
+  "cod_item_material": 0,
+  "client": "default",
+  "cods_parametro": [
+    0
+  ],
+  "cods_opcao": [
+    0
+  ],
+  "data_estrategia": "2025-04-24T15:14:18.776Z"
+},
+{
+  "cod_grupo": 7,
+  "cod_item_material": 464,
+  "client": "default",
+  "cods_parametro": [
+    0
+  ],
+  "cods_opcao": [
+    0
+  ],
+  "data_estrategia": "2025-04-24T15:14:18.776Z"
+},
+{
+  "cod_grupo": 7,
+  "cod_item_material": 488,
+  "client": "default",
+  "cods_parametro": [
+    0
+  ],
+  "cods_opcao": [
+    0
+  ],
+  "data_estrategia": "2025-04-24T15:14:18.776Z"
+},
+{
+  "cod_grupo": 7,
+  "cod_item_material": 489,
+  "client": "default",
+  "cods_parametro": [
+    0
+  ],
+  "cods_opcao": [
+    0
+  ],
+  "data_estrategia": "2025-04-24T15:14:18.776Z"
+},
+{
+  "cod_grupo": 7,
+  "cod_item_material": 2469,
+  "client": "default",
+  "cods_parametro": [
+    0
+  ],
+  "cods_opcao": [
+    0
+  ],
+  "data_estrategia": "2025-04-24T15:14:18.776Z"
+},
+{
+  "cod_grupo": 8,
+  "cod_item_material": 0,
+  "client": "default",
+  "cods_parametro": [
+    0,
+    3,
+    4,
+    5
+  ],
+  "cods_opcao": [
+    0,
+    2,
+    3,
+    2
+  ],
+  "data_estrategia": "2025-04-24T15:14:51.537Z"
+},
+{
+  "cod_grupo": 8,
+  "cod_item_material": 490,
+  "client": "default",
+  "cods_parametro": [
+    0,
+    3,
+    4,
+    5
+  ],
+  "cods_opcao": [
+    0,
+    2,
+    3,
+    2
+  ],
+  "data_estrategia": "2025-04-24T15:14:51.537Z"
+},
+{
+  "cod_grupo": 8,
+  "cod_item_material": 491,
+  "client": "default",
+  "cods_parametro": [
+    0,
+    3,
+    4,
+    5
+  ],
+  "cods_opcao": [
+    0,
+    2,
+    3,
+    2
+  ],
+  "data_estrategia": "2025-04-24T15:14:51.537Z"
+},
+{
+  "cod_grupo": 21,
+  "cod_item_material": 0,
+  "client": "default",
+  "cods_parametro": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "cods_opcao": [
+    1,
+    1,
+    0,
+    0,
+    0,
+    0,
+    0,
+    4,
+    0
+  ],
+  "data_estrategia": "2025-04-24T20:45:38.065Z"
+}]

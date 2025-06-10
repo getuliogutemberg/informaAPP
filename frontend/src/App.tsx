@@ -12,6 +12,8 @@ import Contact from './pages/Contact.tsx';
 import Faq from './pages/Faq.tsx';
 import HelpDesk from './pages/HelpDesk.tsx';
 import Login from './pages/Login';
+import ForgotPassword from './pages/ForgotPassword.tsx';
+import ResetPassword from './pages/ResetPassword.tsx'; 
 import NotFound from './pages/NotFound.tsx';
 import Profile from './pages/Profile.tsx';
 import Register from './pages/Register.tsx'; 
@@ -257,6 +259,8 @@ function App() {
         <Route path="/" element={<Navigate to={"/login"} />} />
         
         <Route path="/login" element={<Login />} />
+        <Route path="/esqueci-senha" element={<ForgotPassword />} />
+        <Route path="/redefinir-senha/:token" element={<ResetPassword />} />
         {settings?.allowRegister && <Route path="/registro" element={<Register />} />}
            <Route path="/solicitar-registro" element={
             settings?.allowRequireRegister ? <RequireRegister /> :<ProtectedRoute  >

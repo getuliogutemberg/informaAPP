@@ -1,10 +1,10 @@
 import dotenv from "dotenv";
+dotenv.config({ path: '../../.env' });
+
 import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import http from "http";
-// import initializeSocket from "./socket";
-import { Sequelize, where, Op, DataTypes } from "sequelize";
-// Import controllers
+import { Sequelize } from "sequelize";
 import AuthController from "./controllers/authController";
 import UserController from "./controllers/userController";
 import RouteController from "./controllers/routeController";
@@ -17,10 +17,6 @@ import ParamsController from "./controllers/paramsController";
 
 // Import middlewares
 import { verifyToken, verifyCategory } from "./middleware/authVerifier";
-
-// Load environment variables
-
-dotenv.config({ path: '../../.env' });
 
 const sequelize = new Sequelize(process.env.DATABASE_URL || "http://localhost:5000", {
   dialect: 'postgres',
@@ -85,6 +81,8 @@ app.post("/refresh", AuthController.refresh);
 app.post("/logout", verifyToken, AuthController.logout);
 app.get("/me", verifyToken, AuthController.me);
 app.get("/admin", verifyToken, verifyCategory("admin"), AuthController.admin);
+app.post("/forgot-password", AuthController.forgotPassword); // Solicitar recuperação de senha
+app.post("/reset-password", AuthController.resetPassword); // Redefinir senha
 
 // User routes
 app.get('/users', UserController.getUsers);
