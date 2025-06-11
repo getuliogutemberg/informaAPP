@@ -1,10 +1,31 @@
-import { Request, Response } from "express";
-import bcrypt from "bcryptjs";
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
-import jwt from "jsonwebtoken";
-import User from "../models/User";
-import { generateAccessToken, generateRefreshToken } from "../utils/tokenUtils";
+import { Request, Response } from 'express';
+import User from '../models/User';
+import { generateAccessToken, generateRefreshToken, generateUserJWTSecret } from '../utils/tokenUtils';
 import emailService from '../services/emailService';
+
+// Interface para o corpo da requisição de registro
+interface RegisterBody {
+  name: string;
+  email: string;
+  password: string;
+  category: string;
+  className: string;
+  status?: string;
+}
+
+// Interface para o corpo da requisição de login
+interface LoginBody {
+  email: string;
+  password: string;
+}
+
+// Interface para o corpo da requisição de refresh token
+interface RefreshBody {
+  refreshToken: string;
+}
 
 // Interface para solicitação de recuperação de senha
 interface ForgotPasswordBody {
@@ -18,153 +39,134 @@ interface ResetPasswordBody {
 }
 
 class AuthController {
-  async register(req: Request, res: Response): Promise<void> {
+  async register(req: Request<{}, {}, RegisterBody>, res: Response) {
     try {
-      const { name, email, password, category, className, status,position } = req.body;
-
+      const { name, email, password, category, className, status } = req.body;
+      
       if (!name || !email || !password || !category || !className) {
-        res.status(400).json({ message: 'Todos os campos são obrigatórios!' });
-        return;
+        return res.status(400).json({ message: "Todos os campos são obrigatórios!" });
       }
 
       const userExists = await User.findOne({ where: { email } });
-      if (userExists) {
-        res.status(400).json({ message: 'Email já cadastrado!' });
-        return;
-      }
+      if (userExists) return res.status(400).json({ message: "Email já cadastrado!" });
 
-      const newStatus = status === 'cadastro' ? '' : 'pedido de acesso';
-      const isActive = status === 'cadastro';
-
+      const newStatus = status === "cadastro" ? "" : "pedido de acesso";
+      const isActive = status === "cadastro" ? true : false;
       const hashedPassword = await bcrypt.hash(password, 12);
-
-      const newUser = await User.create({
-        name,
-        email,
-        password: hashedPassword,
-        category,
-        className,
-        status: newStatus,
+      const jwtSecret = generateUserJWTSecret();
+      
+      const newUser = await User.create({ 
+        name, 
+        email, 
+        password: hashedPassword, 
+        category, 
+        className, 
+        status: newStatus, 
         isActive,
-        position  // <- obrigatório no model
-      });
-      res.status(201).json({
-        message: status === 'cadastro' ? 'Usuário registrado com sucesso!' : 'Registro solicitado',
-        ...(status === 'cadastro' && { user: newUser })
+        jwtSecret
       });
 
-    } catch (err: any) {
-      res.status(500).json({
-        message: 'Erro no servidor!',
-        error: err.message
+      return res.status(201).json({ 
+        message: `${status === "cadastro" ? 'Usuário registrado com sucesso!' : 'Registro solicitado'}`,
+        ...(status === "cadastro" && { user: newUser })
       });
+    } catch (err) {
+      const error = err as Error;
+      return res.status(500).json({ message: "Erro no servidor!", error: error.message });
     }
   }
 
-  async login(req: Request, res: Response): Promise<void> {
+  async login(req: Request<{}, {}, LoginBody>, res: Response) {
     try {
       const { email, password } = req.body;
+      
       if (!email || !password) {
-        res.status(400).json({ message: "Email e senha são obrigatórios!" });
-        return;
+        return res.status(400).json({ message: "Email e senha são obrigatórios!" });
       }
 
       const user = await User.findOne({ where: { email } });
-      if (!user) {
-        res.status(400).json({ message: "Usuário não encontrado!" });
-        return;
-      }
+      if (!user) return res.status(400).json({ message: "Usuário não encontrado!" });
 
       const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) {
-        res.status(400).json({ message: "Senha incorreta!" });
-        return;
-      }
+      if (!isMatch) return res.status(400).json({ message: "Senha incorreta!" });
 
-      const accessToken = generateAccessToken(user);
-      const refreshToken = generateRefreshToken(user);
+      const accessToken = await generateAccessToken(user);
+      const refreshToken = await generateRefreshToken(user);
 
-      user.refreshToken = refreshToken;
-      await user.save();
+      await user.update({ refreshToken });
 
-      res.json({ message: "Login bem-sucedido!", accessToken, refreshToken, route: "/", user });
-    } catch (err: any) {
-      res.status(500).json({ message: "Erro no servidor!", error: err.message });
+      return res.json({ 
+        message: "Login bem-sucedido!", 
+        accessToken, 
+        refreshToken, 
+        route: '/',
+        user 
+      });
+    } catch (err) {
+      const error = err as Error;
+      return res.status(500).json({ message: "Erro no servidor!", error: error.message });
     }
   }
 
-  async refresh(req: Request, res: Response): Promise<void> {
+  async refresh(req: Request<{}, {}, RefreshBody>, res: Response) {
     try {
       const { refreshToken } = req.body;
-      if (!refreshToken) {
-        res.status(401).json({ message: "Refresh token é obrigatório!" });
-        return;
+      if (!refreshToken) return res.status(401).json({ message: "Refresh Token é obrigatório!" });
+
+      const user = await User.findOne({ where: { refreshToken } });
+      if (!user) return res.status(403).json({ message: "Refresh Token inválido!" });
+
+      if (!user.jwtSecret) {
+        throw new Error("Usuário sem chave JWT específica");
       }
 
-      const decoded = jwt.decode(refreshToken) as { id: string; exp: number } | null;
-      if (!decoded?.id) {
-        res.status(403).json({ message: "Refresh token inválido!" });
-        return;
-      }
-
-      if (decoded.exp && Date.now() >= decoded.exp * 1000) {
-        res.status(403).json({ message: "Refresh token expirado!" });
-        return;
-      }
-
-      const user = await User.findOne({ where: { id: decoded.id, refreshToken } });
-      if (!user) {
-        res.status(403).json({ message: "Refresh token não associado a usuário!" });
-        return;
-      }
-
-      const newAccessToken = generateAccessToken(user);
-      res.json({ accessToken: newAccessToken });
-    } catch (err: any) {
-      res.status(500).json({ message: "Erro no servidor!", error: err.message });
-    }
-  }
-
-  async logout(req: Request, res: Response): Promise<void> {
-    try {
-      const userId = (req as any).user?.id;
-      if (!userId) {
-        res.status(401).json({ message: "Usuário não autenticado!" });
-        return;
-      }
-
-      await User.update({ refreshToken: null }, { where: { id: userId } });
-      res.json({ message: "Logout bem-sucedido!" });
-    } catch (err: any) {
-      res.status(500).json({ message: "Erro no servidor!", error: err.message });
-    }
-  }
-
-  async me(req: Request, res: Response): Promise<void> {
-    try {
-      const userId = (req as any).user?.id;
-      if (!userId) {
-        res.status(401).json({ message: "Usuário não autenticado!" });
-        return;
-      }
-
-      const user = await User.findByPk(userId, {
-        attributes: { exclude: ['password', 'refreshToken'] }
+      await new Promise((resolve, reject) => {
+        jwt.verify(refreshToken, user.jwtSecret!, (err, _decoded) => {
+          if (err) reject(new Error("Refresh Token expirado!"));
+          resolve(true);
+        });
       });
 
-      if (!user) {
-        res.status(404).json({ message: "Usuário não encontrado!" });
-        return;
-      }
-
-      res.json(user);
-    } catch (err: any) {
-      res.status(500).json({ message: "Erro no servidor!", error: err.message });
+      const newAccessToken = await generateAccessToken(user);
+      return res.json({ accessToken: newAccessToken });
+    } catch (err) {
+      const error = err as Error;
+      return res.status(403).json({ message: error.message || "Erro no servidor!" });
     }
   }
 
-  async admin(_req: Request, res: Response): Promise<void> {
-    res.json({ message: "Acesso permitido ao administrador!" });
+  async logout(req: Request, res: Response) {
+    try {
+      await User.update({ refreshToken: null }, { where: { id: req.user?.id } });
+      return res.json({ message: "Logout bem-sucedido!" });
+    } catch (err) {
+      const error = err as Error;
+      return res.status(500).json({ message: "Erro no servidor!", error: error.message });
+    }
+  }
+
+  async me(req: Request, res: Response) {
+    try {
+      const user = await User.findByPk(req.user?.id);
+      if (!user) {
+        return res.status(404).json({ message: "Usuário não encontrado!" });
+      }
+
+      const userObj = user.get({ plain: true });
+      const { password, ...userWithoutPassword } = userObj;
+
+      return res.json(userWithoutPassword);
+    } catch (err) {
+      const error = err as Error;
+      console.error(error);
+      return res.status(500).json({
+        message: "Erro no servidor!",
+        error: error.message || "Erro desconhecido",
+      });
+    }
+  }
+  async admin(_req: Request, res: Response) {
+    return res.json({ message: "Acesso permitido ao administrador!" });
   }
 
   // Método para solicitar recuperação de senha
@@ -205,7 +207,6 @@ class AuthController {
       });
     }
   }
-
   // Método para redefinir senha
   async resetPassword(req: Request<{}, {}, ResetPasswordBody>, res: Response) {
     try {

@@ -1,4 +1,4 @@
-import { Sequelize, DataTypes, Model, Optional } from 'sequelize';
+import { DataTypes, Model, Optional } from 'sequelize';
 import sequelize from "../database"; // Ajuste o caminho conforme necessário
 
 // Atributos completos da entidade
@@ -6,26 +6,26 @@ export interface IUserAttributes {
   id: string;
   name: string;
   email: string;
-  RG?: string;
+  RG?: string | null;
   password: string;
-  category: string;
-  className: string;
-  refreshToken: string | null; // permite null
-  position: [number, number];
-  customIcon: string;
-  status: string;
-  isActive: boolean;
-  jwtSecret?: string;
+  category?: string | null;
+  className?: string | null;
+  refreshToken?: string | null;
+  jwtSecret?: string | null;
   resetPasswordToken?: string | null;
   resetPasswordExpires?: Date | null;
-  createdAt: Date;
-  updatedAt: Date;
+  position: [number, number];
+  customIcon?: string;
+  status?: string;
+  isActive: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 // Campos opcionais na criação
 type IUserCreationAttributes = Optional<
   IUserAttributes,
-  'id' | 'RG' | 'refreshToken' | 'jwtSecret' | 'status' | 'customIcon' | 'resetPasswordToken' | 'resetPasswordExpires' | 'createdAt' | 'updatedAt'
+  'id' | 'RG' | 'refreshToken' | 'jwtSecret' | 'status' | 'customIcon' | 'resetPasswordToken' | 'resetPasswordExpires' | 'position' | 'category' | 'className' | 'createdAt' | 'updatedAt'
 >;
 
 // Classe User
