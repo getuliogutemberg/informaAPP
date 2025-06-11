@@ -4,7 +4,7 @@ import axios, { AxiosInstance } from "axios";
 // Tipagem para o User
 interface User {
   customIcon: string;
-  _id: string;
+  id: string;
   name: string;
   email: string;
   category: string;
@@ -82,7 +82,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       return true;
     } catch (err) {
       await logout();
-      console.log(err)
       return false;
     }
   }, [logout]);
@@ -95,7 +94,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       try {
         await api.get("/me").then(({ data }) => setUser(data));
       } catch (error) {
-        console.log(error)
         // Tenta renovar se o accessToken estiver expirado
         const newToken = await refreshAccessToken();
         if (newToken) {
@@ -109,7 +107,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
   
     initializeAuth();
-  }, [accessToken, refreshAccessToken, logout, api]);
+  }, [accessToken, refreshAccessToken, logout]);
 
   // Interceptor para tratar erros 401
   useEffect(() => {
